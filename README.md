@@ -38,8 +38,8 @@ Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
 ```
 📁 01_custom_cnn/
 ├── main.py # Full pipeline: data loading → training → visualization
-├── model.py # SimpleCNN built from scratch + debug utilities
-├── preprocess.py # Custom Dataset, mean/std computation, dataloaders
+├── 📁 model/ # SimpleCNN basic block, structure, inspection tools and training loop setup
+├── 📁 preprocess/ # data manipulate tools
 └── README.md # Design decisions and key findings
 
 📁 02_transfer_learning/
