@@ -2,11 +2,11 @@
 > A physics-trained engineer's structured path through deep learning:  
 > building CNN intuition from first principles, then scaling to production-ready deployment.
 
-## Background: PhD in Wind Science & Engineering
-With expertise in computational fluid dynamics, large eddy simulation, 
+## Background: 
+PhD in Wind Science & Engineering with expertise in computational fluid dynamics, large eddy simulation, 
 and physical laboratory experimentation (tornado simulator). 
 This repository documents the transition from physical simulation 
-and experimental fluid dynamics to computer vision engineering.
+and computational fluid dynamics to computer vision engineering.
 
 ## Motivation
 
@@ -25,6 +25,8 @@ documents the reasoning behind each technical decision — the questions asked,
 the experiments that failed, and what was learned from them.
 
 ## Learning Roadmap
+This project is **not** a starting point. It is built on top of a self-directed curriculum of 700+ hours in machine learning and deep learning,  
+including completing Coursera’s Machine Learning Specialization (4 courses) and Deep Learning Specialization (8 courses), plus multiple applied projects on Kaggle and YOLO.
 ```
 Stage 1: SimpleCNN from scratch (PyTorch implementation)
 ↓
@@ -62,6 +64,20 @@ Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
 📁 assets/ # Training curves, Grad-CAM, confusion matrix
 README.md
 requirements.txt
-
-
 ```
+## AI Transparency — Who Did What?
+
+This project was built with a clear separation between **personal work** and
+**AI-assisted work**.
+
+| Phase      | Personal work                                                                               | AI-assisted work                                                                 |
+|-----------|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| Discover  | Selected the Oxford 102 Flowers dataset, defined the learning goals, and designed the 4-stage roadmap (scratch CNN → EfficientNet → MLflow → compression and deployment). | Asked for high-level learning resources and clarified trade-offs between different CV architectures. |
+| Design    | Designed the SimpleCNN architecture, data pipeline, and training strategy (optimizer, schedule, splits). | Used as a writing partner to refine naming, restructure modules, and compare alternative designs in plain language. |
+| Develop   | Implemented and debugged all training, preprocessing, and evaluation code; ran experiments; interpreted metrics and failure modes. | Used an LLM to draft some helper utilities (e.g., plotting functions, error-inspection snippets) and to sanity-check edge cases in the training loop. All AI-suggested code was reviewed, modified, and tested before inclusion. |
+| Document  | Decided what to disclose, summarized key findings, and curated the learning timeline and benchmarks. | Used to polish English phrasing and improve the clarity of explanations in README. |
+
+**Summary:** AI tools were used for **material search, code suggestions, and documentation support**, 
+not as an automatic end-to-end code generator. All model architectures, training logic, and 
+experimental decisions were owned, implemented, and validated by the author; the author assumes full responsibility for all code and results, 
+including parts initially drafted with AI assistance.
