@@ -153,7 +153,7 @@ trained_model, training_metrics = training_loop(
     loss_fn=loss_fn,
     optimizer=optimizer,
     device=device,
-    epochs=20
+    epochs=40
 )
 
 # =========================
