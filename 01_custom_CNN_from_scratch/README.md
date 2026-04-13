@@ -2,8 +2,8 @@
 
 ## Goal
 
-Before using any pre-trained model, this stage establishes a working 
-understanding of the common CNN pipeline — from raw data ingestion to 
+Before using any pre-trained model, this stage establishes a solid 
+understanding of CNN pipeline — from raw data ingestion to 
 training loop design — by building everything from scratch
 
 ## What This Stage Covers
