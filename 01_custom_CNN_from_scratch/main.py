@@ -79,7 +79,7 @@ train_loader, val_loader, test_loader = get_dataloaders(
     batch_size=32,
     train_transform=aug,
     val_transform=basic,
-    train_size=0.2,
+    train_size=0.8,
     val_size=0.15
 )
 
