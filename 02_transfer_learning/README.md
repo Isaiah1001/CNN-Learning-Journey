@@ -41,9 +41,11 @@ lightweight enough for futher CNN learning.
 
 | Metric | Value |
 |--------|-------|
-| Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | ?% |
+|Model | Classifier Header Fine-tuning|
+| Top-1 Accuracy | 92.02% |
 | Epochs | 40 |
-| Optimizer | SGD, lr=1e-3, weight_decay=1e-4 |
+| Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
+
+![Loss and Accuracy](result_classifier_header.png)
 
 ## Key Finding
