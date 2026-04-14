@@ -18,7 +18,7 @@ lightweight enough for futher CNN learning.
 
 ## What This Stage Covers
 
-- Classifier head fine-tuning
+- Classifier header fine-tuning
 - Last layer fine-tuning
 - Last three layer fine-tuning
 
@@ -36,12 +36,18 @@ lightweight enough for futher CNN learning.
 ## Key Design Decisions
 
 **1. Why EfficientNet-B0 **  
+EfficientNet-B0 (5.3M parameters) is the baseline of the EfficientNet family. For a 102-class fine-grained
+classification task on a small dataset (8,189 images), B0 offers a strong accuracy and efficiency trade-off.
+Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
+
+**2. Why classifier head -> last layer -> last three layers fine-tuning**
+To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing benefits. Besides, comparison among classifier head, last layer and last three layers unfreezing will show inference accuracy improving. Last, with gradual unfreezing strategy, the model training process will be under control.
 
 ## Results
 
 | Metric | Value |
 |--------|-------|
-|Model | Classifier Header Fine-tuning|
+|Model | Classifier Head Fine-tuning|
 | Top-1 Accuracy | 92.02% |
 | Epochs | 40 |
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
@@ -49,3 +55,6 @@ lightweight enough for futher CNN learning.
 ![Loss and Accuracy](result_classifier_header.png)
 
 ## Key Finding
+**1. Classifier head fine-tuning**
+With only 20 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at stage. Larger learning rate should be used for this stage, since the coefficients for head are randomly assigned and large lr will help them converged quickly
+
