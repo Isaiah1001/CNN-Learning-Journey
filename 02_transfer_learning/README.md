@@ -56,5 +56,5 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
-With only 20 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at stage. Larger learning rate should be used for this stage, since the coefficients for head are randomly assigned and large lr will help them converged quickly
+With only 20 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at **Stage 1**. This shows that the shallow layers and backbone, which have already been trained on large‑scale data, provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
 
