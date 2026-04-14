@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # =========================
     # 2) data loading and exploration
     # =========================
-    torch.manual_seed(42) # Set a fixed random seed for reproducibility
+    torch.manual_seed(42) # Set a fixed random seed for reproductivity
     # data location (for this project, the data is retrieved from 99_flower_data)
     data_folder = '99_flower_data'
     data_path = os.path.join(r'../', data_folder)
