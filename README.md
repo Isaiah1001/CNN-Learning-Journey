@@ -25,14 +25,14 @@ documents the reasoning behind each technical decision — the questions asked,
 the experiments that failed, and what was learned from them.
 
 ## Learning Roadmap
-This project is **not** a starting point. It is built on top of a self-directed curriculum of 700+ hours in machine learning and deep learning,  
+This project is **not** a starting point. It is built on top of a self-learning curriculum of 700+ hours in machine learning and deep learning,  
 including completing Coursera’s Machine Learning Specialization (4 courses) and Deep Learning Specialization (8 courses), plus multiple applied projects on Kaggle and YOLO.
 ```
 Stage 1: SimpleCNN from scratch (PyTorch implementation)
 ↓
-Stage 2: Transfer Learning with EfficientNet (fine-tuning, training tricks)
+Stage 2: Transfer Learning with EfficientNet (fine-tuning)
 ↓
-Stage 3: Experiment Management (MLflow tracking, hyperparameter search)
+Stage 3: Experiment Management (pipeline tools, MLflow tracking, training tricks, hyperparameter search)
 ↓
 Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
 ```
