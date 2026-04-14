@@ -37,7 +37,7 @@ Building SimpleCNN from scratch before using EfficientNet can help me obtain a
 clear understanding of some basic CNN knowledge and pipeline, e.g., how data augmentation, gradient flow, receptive fields, and 
 loss function definition and validation in practice.
 
-**3. Make full use of computer resources**
+**3. Make full use of computer resources**  
 GPU utilization during training was only ~20%, indicating that the data pipeline and batch configuration were under-optimized. That's due to dataloader without many tricks, like subprocesses.
 Thus, update preprocess/data_split_subset.py, improve training time from 46s/epoch to 6s/epoch. And set seed for productivity.
 
