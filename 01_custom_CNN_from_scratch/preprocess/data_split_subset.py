@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 from .subset_class import subsetTrans
 from torch.utils.data import  DataLoader, random_split, Subset
 
@@ -24,15 +23,15 @@ def get_dataloaders(dataset, batch_size, train_transform, val_transform, train_s
     val_size = int(val_size * total_size)
     test_size = total_size - train_size - val_size
     # split dataset
-    np.random.seed(42)  # Set a fixed random seed for reproducibility
     train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
     # apply transforms
     train_dataset = subsetTrans(train_dataset, transform=train_transform)
     val_dataset = subsetTrans(val_dataset, transform=val_transform)
     test_dataset = subsetTrans(test_dataset, transform=val_transform)
     # create dataloaders
-    torch.Generator().manual_seed(42) # set seed for dataloader
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8, pin_memory=True, persistent_workers=True, prefetch_factor=2)
+    g = torch.Generator()
+    g.manual_seed(42)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8, pin_memory=True, persistent_workers=True, prefetch_factor=2, generator=g)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=8, pin_memory=True, persistent_workers=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=8, pin_memory=True, persistent_workers=True)
     
