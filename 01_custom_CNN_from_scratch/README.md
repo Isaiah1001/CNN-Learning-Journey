@@ -46,7 +46,7 @@ Thus, update preprocess/data_split_subset.py, improve training time from 46s/epo
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | 40%~50% |
+| Top-1 Accuracy | 42.52% |
 | Epochs | 40 |
 | Optimizer | SGD, lr=1e-3, weight_decay=1e-4 |
 
