@@ -55,6 +55,6 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 ![Loss and Accuracy](result_classifier_header.png)
 
 ## Key Finding
-**1. Classifier head fine-tuning**
+**1. Classifier head fine-tuning**  
 With only 20 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at stage. Larger learning rate should be used for this stage, since the coefficients for head are randomly assigned and large lr will help them converged quickly
 
