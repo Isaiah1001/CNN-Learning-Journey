@@ -41,7 +41,7 @@ classification task on a small dataset (8,189 images), B0 offers a strong accura
 Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
 
 **2. Why classifier head -> last layer -> last three layers fine-tuning**
-To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing benefits. Besides, comparison among classifier head, last layer and last three layers unfreezing will show inference accuracy improving. Last, with gradual unfreezing strategy, the model training process will be under control.
+To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing benefits. Besides, comparison among classifier head, last layer and last three layers unfreezing will show inference accuracy improving gradually. Last, with gradual unfreezing strategy, the model training process will be under control.
 
 ## Results
 
