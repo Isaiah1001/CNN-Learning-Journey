@@ -22,7 +22,8 @@ training loop design — by building everything from scratch
 ├── main.py # Full pipeline: data loading → training → visualization
 ├── 📁 model/ # SimpleCNN basic block, structure, inspection tools and training loop setup
 ├── 📁 preprocess/ # data manipulate tools
-└── README.md # detailed procedures for custom CNN model training and key findings
+├── README.md # detailed procedures for custom CNN model training and key findings
+└── result.png # loss and accuracy plots
 ```
 
 ## Key Design Decisions
@@ -50,7 +51,7 @@ Thus, update preprocess/data_split_subset.py, improve training time from 46s/epo
 | Epochs | 40 |
 | Optimizer | SGD, lr=1e-3, weight_decay=1e-4 |
 
-![Loss vs Accuracy](result.png)
+![Loss and Accuracy](result.png)
 ## Key Finding
 
 Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
