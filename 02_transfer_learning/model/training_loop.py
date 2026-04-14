@@ -115,7 +115,7 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
             best_epoch = epoch + 1
         print(f"\n------ Epoch {epoch+1}/{epochs} Summary ------")    
         print(f'Time: {int(epoch_mins)}m{int(epoch_secs)}s')
-        print(f"Learning Rate: lr = {lr:.6f}")
+        print(f"Learning Rate: lr = {lr:.4f}")
         print(f'Train Loss: {train_loss:.4f}| Val. Loss: {val_loss:.4f}')
         print(f'Val. Acc: {val_accuracy*100:.2f}%')
     print("--- Finished Training ---")
