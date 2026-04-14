@@ -101,8 +101,6 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
         val_loss, val_accuracy = validation_epoch(model, val_loader, loss_fn, device)
         
         lr = optimizer.param_groups[0]["lr"]
-        print(f"Epoch {epoch+1}/{epochs} | lr={lr:.6f}")
-        # print(f"  Val:   loss={val_loss:.4f}, acc={val_accuracy*100:.2f}%")
         train_losses.append(train_loss)
         val_losses.append(val_loss)
         val_accuracies.append(val_accuracy)
@@ -115,10 +113,10 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
             
             best_model_state = copy.deepcopy(model.state_dict())
             best_epoch = epoch + 1
-            
-        print(f'Epoch {epoch+1}/{epochs} | Time: {int(epoch_mins)}m {int(epoch_secs)}s')
-        print(f"lr={lr:.6f}")
-        print(f'\tTrain Loss: {train_loss:.4f}| Val. Loss: {val_loss:.4f}')
+        print(f"\n------ Epoch {epoch+1}/{epochs} Summary ------")    
+        print(f'Time: {int(epoch_mins)}m{int(epoch_secs)}s')
+        print(f"Learning Rate: lr = {lr:.6f}")
+        print(f'Train Loss: {train_loss:.4f}| Val. Loss: {val_loss:.4f}')
         print(f'Val. Acc: {val_accuracy*100:.2f}%')
     print("--- Finished Training ---")
     
@@ -130,3 +128,4 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
     # Consolidate all metrics into a single list
     metrics = [train_losses, val_losses, val_accuracies]
     return model, metrics
+    
