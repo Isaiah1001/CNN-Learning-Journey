@@ -13,7 +13,7 @@ from scratch on a small dataset (8,189 images, 102 classes) cannot match
 the rich feature representations learned from large-scale pre-training.
 
 This stage applies **transfer learning** — leveraging an ImageNet pre-trained
-EfficientNet-B4 backbone — to close this gap while keeping the model
+EfficientNet-B0 backbone — to close this gap while keeping the model
 lightweight enough for futher CNN learning.
 
 ## What This Stage Covers
@@ -35,7 +35,7 @@ lightweight enough for futher CNN learning.
 
 ## Key Design Decisions
 
-**1. **  
+**1. Why EfficientNet-B0 **  
 
 ## Results
 
