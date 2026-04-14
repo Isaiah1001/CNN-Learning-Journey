@@ -11,13 +11,14 @@ import matplotlib.pyplot as plt
 
 import torch
 from preprocess import get_mean_std, data_access, data_manipulate, get_dataloaders
-from postprocess import *
-
+from postprocess import plot_image, plot_image_LD, plot_training_metrics
+from model import training_loop, count_parameters, save_checkpoint, load_checkpoint
 if __name__ == '__main__':
     # =========================
     # 2) data loading and exploration
     # =========================
-    torch.manual_seed(42) # Set a fixed random seed for reproductivity
+    torch.manual_seed(42) # Set a fixed random seed for reproducibility
+
     # data location (for this project, the data is retrieved from 99_flower_data)
     data_folder = '99_flower_data'
     data_path = os.path.join(r'../', data_folder)
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     dataset = data_access(data_folder)
 
     # plot image
-    
+
     plot_image(6316, dataset)
 
     # Get all labels from the dataset object.
@@ -60,14 +61,14 @@ if __name__ == '__main__':
         print(f'Label: {label}, Description: {dataset.retrieve_description(label)}')
         
     # calculate mean and std for normalization
-    mean, std = get_mean_std(data_path)
-    print(f'Calculated mean: {mean}, std: {std}')
-
-    # get transforms
-    # basic, aug = data_manipulate(mean, std)
+    # mean, std = get_mean_std(data_path)
     # to use the mean and std transforms calculated by this dataset，comment the following lines and uncomment above two lines
-    basic, aug = data_manipulate(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) # using the mean and std from ImageNet dataset
+    mean=[0.485, 0.456, 0.406] 
+    std=[0.229, 0.224, 0.225] # using the mean and std from ImageNet dataset
+    # get transforms
+    basic, aug = data_manipulate(mean, std)
 
+    print(f'Calculated mean: {mean}, std: {std}')
     # apply transforms and create dataloaders
     train_loader, val_loader, test_loader = get_dataloaders(
         dataset=dataset,
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     # 4) model
     # =========================
     import torchvision.models as tv_models
-    base_model = tv_models.efficientnet_b4(weights='IMAGENET1K_V1')
+    base_model = tv_models.efficientnet_b0(weights='IMAGENET1K_V1')
     print(base_model)
     for param in base_model.parameters():
         param.requires_grad = False  # freeze the base model
@@ -116,11 +117,14 @@ if __name__ == '__main__':
     print("Model's New Fully Connected Layer:",base_model.classifier)
     print("Model's Updated Structure:", base_model)
 
+    # check the number of trainable parameters and total parameters
+    total_params, trainable_params = count_parameters(base_model)
+    print(f"Total parameters: {total_params}")
+    print(f"Trainable parameters: {trainable_params}")
+
     # =========================
     # 5) training and evaluation
     # =========================
-    # import training loop
-    from model import training_loop
     # loss function and optimizer
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, base_model.parameters()), lr=1e-1, weight_decay=1e-4)
@@ -136,6 +140,12 @@ if __name__ == '__main__':
     )
 
     # =========================
-    # 6) Plot training and validation metrics
+    # 6) Save checkpoint
+    # =========================
+    checkpoint_path = os.path.join('checkpoints', 'efficientnet_b0_flower.pth')
+    save_checkpoint(trained_model, optimizer, epoch=40, metrics=training_metrics, filepath=checkpoint_path)
+
+    # =========================
+    # 7) Plot training and validation metrics
     # =========================
     plot_training_metrics(training_metrics)
