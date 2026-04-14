@@ -123,7 +123,7 @@ if __name__ == '__main__':
     from model import training_loop
     # loss function and optimizer
     loss_fn = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, base_model.parameters()), lr=1e-3, weight_decay=1e-4)
+    optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, base_model.parameters()), lr=1e-1, weight_decay=1e-4)
     # train the model
     trained_model, training_metrics = training_loop(
         model=base_model,
