@@ -18,17 +18,18 @@ lightweight enough for futher CNN learning.
 
 ## What This Stage Covers
 
-- head modified
-- last layer fine tuning
-- last three layer fine tuning
+- Classifier head fine-tuning
+- Last layer fine-tuning
+- Last three layer fine-tuning
 
 ## File Structure
 ```
 📁 01_custom_cnn/
-├── main.py # Full pipeline: data loading → training → visualization
-├── 📁 postprocess/ # 
+├── main.py # Full pipeline: data loading → pretrained model load and modified → training → visualization
+├── 📁 model/ # training loop definition
+├── 📁 postprocess/ # plot figures tools
 ├── 📁 preprocess/ # data manipulate tools
-├── README.md # detailed procedures for custom CNN model training and key findings
+├── README.md # detailed procedures for pretrained model, unfreeze proccess, training and key findings
 └── result.png # loss and accuracy plots
 ```
 
