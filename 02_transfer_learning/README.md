@@ -19,8 +19,8 @@ lightweight enough for futher CNN learning.
 ## What This Stage Covers
 
 - Classifier header fine-tuning
-- Last layer fine-tuning
-- Last three layer fine-tuning
+- Last layer + classifier head fine-tuning
+- Last three layer + classifier head fine-tuning
 
 ## File Structure
 ```
@@ -40,19 +40,31 @@ EfficientNet-B0 (5.3M parameters) is the baseline of the EfficientNet family. Fo
 classification task on a small dataset (8,189 images), B0 offers a strong accuracy and efficiency trade-off.
 Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
 
-**2. Why classifier head -> last layer -> last three layers fine-tuning**
+**2. Why classifier head -> last layer -> last three layers fine-tuning**  
 To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing benefits. Besides, comparison among classifier head, last layer and last three layers unfreezing will show inference accuracy improving gradually. Last, with gradual unfreezing strategy, the model training process will be under control.
 
 ## Results
-
+**1. Classifier head fine-tuning**  
 | Metric | Value |
 |--------|-------|
-|Model | Classifier Head Fine-tuning|
+| Dataset | Oxford 102 Flowers |
 | Top-1 Accuracy | 92.02% |
 | Epochs | 40 |
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
 ![Loss and Accuracy](result_classifier_header.png)
+
+**2. Last layer + classifier head fine-tuning**  
+Note that this step does not start from the original EfficientNet‑B0 checkpoint with only the classifier head and the last layer unfrozen.
+Instead, it continues training from the model obtained in the “classifier head fine‑tuning” stage, and then additionally unfreezes the
+last layer of the backbone.
+| Metric | Value |
+|--------|-------|
+| Dataset | Oxford 102 Flowers |
+| Top-1 Accuracy | 92.02% |
+| Epochs | 40 |
+| Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
+
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
