@@ -50,7 +50,8 @@ Thus, update preprocess/data_split_subset.py, improve training time from 46s/epo
 | Epochs | 40 |
 | Optimizer | SGD, lr=1e-3, weight_decay=1e-4 |
 
+![Loss vs Accuracy](result.png)
 ## Key Finding
 
 Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
-and 97.3% for EfficientNet-B0, better and advanced model should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
+and 97.3% for EfficientNet-B0, better data manipulation，training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
