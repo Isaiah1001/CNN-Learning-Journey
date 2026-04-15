@@ -58,7 +58,7 @@ Check 'efficientnet_b0_flower.pth' in './checkpoints'
 **2. Last layer + classifier head fine-tuning**  
 Note that this step does not start from the original EfficientNet‑B0 checkpoint with only the classifier head and the last layer unfrozen.
 Instead, it continues training from the model obtained in the “classifier head fine‑tuning” stage, and then additionally unfreezes the
-last layer of the backbone.
+last layer of the backbone.  
 Check 'efficientnet_b0_flower_last_block_head.pth' in './checkpoints'
 | Metric | Value |
 |--------|-------|
@@ -69,7 +69,7 @@ Check 'efficientnet_b0_flower_last_block_head.pth' in './checkpoints'
 
 ![Loss and Accuracy](./plot_results/last_layer/last_1e-3.png)
 
-Tried to use batch normalization, CosineAnnealingLR scheduler and LabelSmoothing, but accuracy just improves 0.57%.
+Tried to use batch normalization, CosineAnnealingLR scheduler and LabelSmoothing, but accuracy just improves 0.57%.  
 Check 'efficientnet_b0_flower_last_block_head_BNSchedulerLabelSmoothing.pth' in './checkpoints'
 
 | Metric | Value |
@@ -82,7 +82,7 @@ Check 'efficientnet_b0_flower_last_block_head_BNSchedulerLabelSmoothing.pth' in 
 ![Loss and Accuracy](./plot_results/last_layer/last_layer_BNSchedulerLabelSmoothing.png)
 
 
-The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. 
+The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
