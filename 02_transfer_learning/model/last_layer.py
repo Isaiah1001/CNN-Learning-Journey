@@ -7,17 +7,29 @@ def build_efficientnet_b0(num_classes=102, weights=None):
     model.classifier[1] = torch.nn.Linear(num_features, num_classes)
     return model
 
-def unfreeze_last_block_and_head(model, num_blocks=1):
-    """Unfreeze the last N blocks and the classifier head of the model"""
+def unfreeze_last_block_and_head(model):
+    """Unfreeze the last block and the classifier head of the model"""
     for param in model.parameters():
         param.requires_grad = False
 
-    for i in range(1, num_blocks + 1):
-        for param in model.features[-i].parameters():
-            param.requires_grad = True
+    for param in model.features[-1].parameters():
+        param.requires_grad = True
 
     for param in model.classifier.parameters():
         param.requires_grad = True
 
-    print(f"Trainable modules: features[-{num_blocks}:] and classifier")
+    print("Trainable modules: features[-1] and classifier")
 
+
+def unfreeze_last_3block_and_head(model):
+    """Unfreeze the last 3 block and the classifier head of the model"""
+    for param in model.parameters():
+        param.requires_grad = False
+
+    for param in model.features[-3:].parameters():
+        param.requires_grad = True
+
+    for param in model.classifier.parameters():
+        param.requires_grad = True
+
+    print("Trainable modules: features[-3:] and classifier")
