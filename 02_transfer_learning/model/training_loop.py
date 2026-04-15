@@ -1,7 +1,51 @@
 #model/training_loop.py
+import os
 import time
 import copy
 import torch
+
+
+def save_checkpoint(model, optimizer, epoch, metrics, filepath):
+    """Save model checkpoint for resuming training later.
+
+    Args:
+        model: trained model
+        optimizer: optimizer with current state
+        epoch: last completed epoch number
+        metrics: [train_losses, val_losses, val_accuracies]
+        filepath: path to save the checkpoint file
+    """
+    checkpoint = {
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'metrics': metrics,
+    }
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    torch.save(checkpoint, filepath)
+    print(f"Checkpoint saved to {filepath}")
+
+
+def load_checkpoint(filepath, model, optimizer=None, device='cpu'):
+    """Load a checkpoint to resume training or for inference.
+
+    Args:
+        filepath: path to the checkpoint file
+        model: model instance (must have the same architecture)
+        optimizer: optimizer instance (pass None for inference only)
+        device: device to map the checkpoint to
+
+    Returns:
+        tuple: (epoch, metrics) from the checkpoint
+    """
+    checkpoint = torch.load(filepath, map_location=device, weights_only=False)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    if optimizer is not None:
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    epoch = checkpoint['epoch']
+    metrics = checkpoint['metrics']
+    print(f"Checkpoint loaded from {filepath} (epoch {epoch})")
+    return epoch, metrics
 
 def train_epoch(model, dataloader, loss_fn, optimizer, device):
     """training epoch definition
@@ -70,7 +114,7 @@ def validation_epoch(model, dataloader, loss_fn, device):
     accuracy = correct / len(dataloader.dataset)
     return avg_loss, accuracy
 
-def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, epochs):
+def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, epochs, scheduler=None):
     """ loop for training and validation
 
     Args:
@@ -81,6 +125,7 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
         optimizer: optimizer definition
         device: cpu or gpu device
         epochs: number of epochs to train
+        scheduler: optional learning rate scheduler
 
     Returns:
         tuple: (trained model, training and validation metrics)
@@ -119,9 +164,11 @@ def training_loop(model, train_loader, val_loader, loss_fn, optimizer, device, e
             best_epoch = epoch + 1
         print(f"\n------ Epoch {epoch+1}/{epochs} Summary ------")    
         print(f'Time: {int(epoch_mins)}m{int(epoch_secs)}s')
-        print(f"Learning Rate: lr = {lr:.4f}")
+        print(f"Learning Rate: lr = {lr:.5f}")
         print(f'Train Loss: {train_loss:.4f}| Val. Loss: {val_loss:.4f}')
         print(f'Val. Acc: {val_accuracy*100:.2f}%')
+        if scheduler is not None:
+            scheduler.step()
     print("--- Finished Training ---")
     
     # Load the best model weights before returning

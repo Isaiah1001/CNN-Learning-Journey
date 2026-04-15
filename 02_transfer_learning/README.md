@@ -20,17 +20,23 @@ lightweight enough for futher CNN learning.
 
 - Classifier header fine-tuning
 - Last layer + classifier head fine-tuning
-- Last three layer + classifier head fine-tuning
+- Last three layers + classifier head fine-tuning
 
 ## File Structure
 ```
 📁 01_custom_cnn/
-├── main.py # Full pipeline: data loading → pretrained model load and modified → training → visualization
-├── 📁 model/ # training loop definition
+├── 📁 checkpoints/
+├── 📁 model/
+├── 📁 plot_results/
 ├── 📁 postprocess/ # plot figures tools
 ├── 📁 preprocess/ # data manipulate tools
 ├── README.md # detailed procedures for pretrained model, unfreeze proccess, training and key findings
-└── result.png # loss and accuracy plots
+├── classifier_head.py
+├── transfer_learning_last_layer.py
+├── transfer_learning_last_layer_Scheduler.py
+├── transfer_learning_last_3layer.py
+├── transfer_learning_last_3layer_Scheduler.py
+└── transfer_learning_last_3layer_difflr.py
 ```
 
 ## Key Design Decisions
@@ -45,6 +51,7 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 
 ## Results
 **1. Classifier head fine-tuning**  
+Check 'efficientnet_b0_flower.pth' in './checkpoints'
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -57,7 +64,8 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 **2. Last layer + classifier head fine-tuning**  
 Note that this step does not start from the original EfficientNet‑B0 checkpoint with only the classifier head and the last layer unfrozen.
 Instead, it continues training from the model obtained in the “classifier head fine‑tuning” stage, and then additionally unfreezes the
-last layer of the backbone.
+last layer of the backbone.  
+Check 'efficientnet_b0_flower_last_block_head.pth' in './checkpoints'
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -66,7 +74,21 @@ last layer of the backbone.
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
 ![Loss and Accuracy](./plot_results/last_layer/last_1e-3.png)
-The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. 
+
+Tried to use batch normalization, CosineAnnealingLR scheduler and LabelSmoothing, but accuracy just improves 0.57%.  
+Check 'efficientnet_b0_flower_last_block_head_BNSchedulerLabelSmoothing.pth' in './checkpoints'
+
+| Metric | Value |
+|--------|-------|
+| Dataset | Oxford 102 Flowers |
+| Top-1 Accuracy | 93.16% |
+| Epochs | 40 |
+| Optimizer | SGD, lr=0.01, CosineAnnealingLR,momentum = 0.9 weight_decay=1e-4 |
+
+![Loss and Accuracy](./plot_results/last_layer/last_layer_BNSchedulerLabelSmoothing.png)
+When we use labelsmoothing setup, we get a jump of train and valication loss. Check the manual for details.
+
+The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
