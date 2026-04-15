@@ -66,6 +66,18 @@ last layer of the backbone.
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
 ![Loss and Accuracy](./plot_results/last_layer/last_1e-3.png)
+
+Tried to use batch normalization, CosineAnnealingLR scheduler, but the accuracy doesnot improve
+| Metric | Value |
+|--------|-------|
+| Dataset | Oxford 102 Flowers |
+| Top-1 Accuracy | 92.59% |
+| Epochs | 40 |
+| Optimizer | SGD, lr=0.01, CosineAnnealingLR,momentum = 0.9 weight_decay=1e-4 |
+
+![Loss and Accuracy](./plot_results/last_layer/last_1e-3.png)
+
+
 The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. 
 
 ## Key Finding
