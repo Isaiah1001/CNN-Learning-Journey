@@ -17,6 +17,10 @@ def train_epoch(model, dataloader, loss_fn, optimizer, device):
         ave_loss: average loss of the epoch
     """
     model.train()
+    # Freeze BN in eval mode so it uses pretrained running stats
+    for m in model.modules():
+        if isinstance(m, torch.nn.BatchNorm2d):
+            m.eval()
     total_loss = 0
     for data, targets, _ in dataloader:
         data = data.to(device)
