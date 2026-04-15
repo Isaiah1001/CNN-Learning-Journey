@@ -80,7 +80,7 @@ Check 'efficientnet_b0_flower_last_block_head_BNSchedulerLabelSmoothing.pth' in 
 | Optimizer | SGD, lr=0.01, CosineAnnealingLR,momentum = 0.9 weight_decay=1e-4 |
 
 ![Loss and Accuracy](./plot_results/last_layer/last_layer_BNSchedulerLabelSmoothing.png)
-
+When we use labelsmoothing setup, we get a jump of train and valication loss. Check the manual for details.
 
 The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
 
