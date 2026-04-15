@@ -52,7 +52,7 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 | Epochs | 40 |
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
-![Loss and Accuracy](result_classifier_header.png)
+![Loss and Accuracy](./plot_results/head/result_classifier_header.png)
 
 **2. Last layer + classifier head fine-tuning**  
 Note that this step does not start from the original EfficientNet‑B0 checkpoint with only the classifier head and the last layer unfrozen.
@@ -61,12 +61,18 @@ last layer of the backbone.
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | 92.02% |
+| Top-1 Accuracy | 92.59% |
 | Epochs | 40 |
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
+![Loss and Accuracy](./plot_results/last_layer/last_1e-3.png)
+The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. 
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
 With only 20 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at **Stage 1**. This shows that the shallow layers and backbone, which have already been trained on large‑scale data, provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
 
+
+## Reference
+- Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020. 
+- Nilsback & Zisserman, [Automated Flower Classification over a Large Number of Classes](https://www.robots.ox.ac.uk/~vgg/publications/2008/Nilsback08/), ICCVGIP 2008.
