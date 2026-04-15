@@ -36,7 +36,7 @@ lightweight enough for futher CNN learning.
 ├── transfer_learning_last_layer_Scheduler.py
 ├── transfer_learning_last_3layer.py
 ├── transfer_learning_last_3layer_Scheduler.py
-└──  transfer_learning_last_3layer_difflr.py
+└── transfer_learning_last_3layer_difflr.py
 ```
 
 ## Key Design Decisions
