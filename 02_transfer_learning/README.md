@@ -57,12 +57,15 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | ?% (best:93.73%) |
+| Top-1 Accuracy | 93.49% (best:93.73%) |
 | Epochs | 40 |
 | Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
 Notes: Two types of accuracy are provided, one is accuracy after final epoch and another is best during training. Same for other tables
 ![Loss and Accuracy](./plot_results/classifier_head.png)
+As shown in the table and figure above, fine-tuning only the classifier head of the EfficientNet-B0 model for 10 epochs improves Top-1 accuracy from ~42%
+to ~90%. This result demonstrates that the pretrained backbone already encodes strong, transferable visual features — training the classifier head alone is
+sufficient to unlock most of its representational capacity for this task. Now, it is highly expected that what can be achieved, when more blocks of backbone are unfrozen.
 
 **2. Last layer + classifier head fine-tuning**  
 Note that this step does not start from the original EfficientNet‑B0 weights.
