@@ -6,7 +6,7 @@
 Stage 1 established a working CNN pipeline on the Oxford 102 Flowers dataset,
 but the custom SimpleCNN reached only ~42% top-1 accuracy — well below the
 SOTA benchmark of 99.85% (Efficient Adaptive Ensembling) and even the
-EfficientNet-B0 paper result of 97.3%.
+EfficientNet-B0 paper result of 97.3%[[1]](#references) .
 
 The accuracy gap points to a fundamental limitation: training a shallow CNN
 from scratch on a small dataset (8,189 images, 102 classes) cannot match
@@ -48,7 +48,7 @@ classification task on a small dataset (8,189 images), B0 offers a strong accura
 Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
 
 **2. Why classifier head -> last layer -> last three layers fine-tuning**  
-To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing benefits. Besides, comparison among classifier head, last layer and last three layers unfreezing will show inference accuracy improving gradually. Last, with gradual unfreezing strategy, the model training process will be under control.
+To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing offers good oppotunities. Besides, comparison among classifier head, last layer and last three layers unfreezing will show the contribution of each part of the CNN backbone and inference accuracy changing. Last, with gradual unfreezing strategy, the model training process will be under control. If go to last three layers + head fine-tuning directly, some avoid catastrophic forgetting occurs easily and the reasons are hard to seize. By unfreezing one stage at a time, the training process remains interpretable and any performance degradation can be traced back to a specific change.
 
 ## Results
 **1. Classifier head fine-tuning**  
@@ -130,7 +130,7 @@ last 3 layers of the backbone.
 | Optimizer | SGD, lr=??,momentum = 0.9 weight_decay=1e-4 |
 
 ![Loss and Accuracy](./plot_results/last3layer_plus_head_difflr.png)
-The BiT paper[[1]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
+The BiT paper[[2]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
@@ -138,5 +138,6 @@ With only 20 epoches, inference accuracy reach around 90%, which is a hugh impro
 
 
 ## Reference
+- Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
 - Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020. 
 - Nilsback & Zisserman, [Automated Flower Classification over a Large Number of Classes](https://www.robots.ox.ac.uk/~vgg/publications/2008/Nilsback08/), ICCVGIP 2008.
