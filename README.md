@@ -1,5 +1,5 @@
 # CNN-Learning-Journey — From Scratch to EfficientNet Deployment
-> A physics-trained engineer's structured path through deep learning:  
+> A physicist‑trained engineer's structured path through deep learning:  
 > building CNN intuition from first principles, then scaling to production-ready deployment.
 
 ## Background: 
@@ -25,14 +25,14 @@ documents the reasoning behind each technical decision — the questions asked,
 the experiments that failed, and what was learned from them.
 
 ## Learning Roadmap
-This project is **not** a starting point. It is built on top of a self-directed curriculum of 700+ hours in machine learning and deep learning,  
+This project is **not** a starting point. It is built on top of a self-learning curriculum of 700+ hours in machine learning and deep learning,  
 including completing Coursera’s Machine Learning Specialization (4 courses) and Deep Learning Specialization (8 courses), plus multiple applied projects on Kaggle and YOLO.
 ```
 Stage 1: SimpleCNN from scratch (PyTorch implementation)
 ↓
-Stage 2: Transfer Learning with EfficientNet (fine-tuning, training tricks)
+Stage 2: Transfer Learning with EfficientNet (fine-tuning)
 ↓
-Stage 3: Experiment Management (MLflow tracking, hyperparameter search)
+Stage 3: Experiment Management (pipeline tools, MLflow tracking, training tricks, hyperparameter search)
 ↓
 Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
 ```
@@ -72,7 +72,7 @@ This project was built with a clear separation between **personal work** and
 
 | Phase      | Personal work                                                                               | AI-assisted work                                                                 |
 |-----------|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| Discover  | Selected the Oxford 102 Flowers dataset, defined the learning goals, and designed the 4-stage roadmap (scratch CNN → EfficientNet → MLflow → compression and deployment). | Asked for high-level learning resources and clarified trade-offs between different CV architectures. |
+| Discover  | Selected the Oxford 102 Flowers dataset, defined the learning goals, and designed the 4-stage roadmap (scratch CNN → EfficientNet → Experiment → compression and deployment). | Asked for high-level learning resources and clarified trade-offs between different CV architectures. |
 | Design    | Designed the SimpleCNN architecture, data pipeline, and training strategy (optimizer, schedule, splits). | Used as a writing partner to refine naming, restructure modules, and compare alternative designs in plain language. |
 | Develop   | Implemented and debugged all training, preprocessing, and evaluation code; ran experiments; interpreted metrics and failure modes. | Used an LLM to draft some helper utilities (e.g., plotting functions, error-inspection snippets) and to sanity-check edge cases in the training loop. All AI-suggested code was reviewed, modified, and tested before inclusion. |
 | Document  | Decided what to disclose, summarized key findings, and curated the learning timeline and benchmarks. | Used to polish English phrasing and improve the clarity of explanations in README. |
