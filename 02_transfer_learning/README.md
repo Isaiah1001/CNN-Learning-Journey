@@ -96,7 +96,7 @@ reported to improve fine-tuning performance in the literature.
 
 **3. Last 3 layers + classifier head fine-tuning**  
 Note that this step does not start from the original EfficientNet‑B0 weights.
-It continues training from the model obtained in the “classifier head fine‑tuning” stage, then unfreezes the last layer of the backbone.  
+It continues training from the model obtained in the “classifier head fine‑tuning” stage, then unfreezes the last 3 layers of the backbone.  
 **3.1**  
 **Code:** transfer_learning_last_3layer.py  
 **Artifact:** ./checkpoints/efficientnet_b0_flower_last3layer_plus_head.pth  
