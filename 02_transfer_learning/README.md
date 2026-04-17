@@ -12,9 +12,7 @@ The accuracy gap points to a fundamental limitation: training a shallow CNN
 from scratch on a small dataset (8,189 images, 102 classes) cannot match
 the rich feature representations learned from large-scale pre-training.
 
-This stage applies **transfer learning** — leveraging an ImageNet pre-trained
-EfficientNet-B0 backbone — to close this gap while keeping the model
-lightweight enough for futher CNN learning.
+This stage applies **transfer learning** — leveraging an ImageNet pre-trained EfficientNet-B0 backbone.
 
 ## What This Stage Covers
 
@@ -166,8 +164,7 @@ Unfreezing the last 3 blocks yields the most significant jump (+2.85%), bringing
 on this dataset, and benefit from being fine-tuned rather than kept frozen.
 
 However, neither CosineAnnealingLR nor discriminative learning rates (1e-4 → 5e-4 → 1e-3 → 1e-2 across blocks) produced further gains.
-All three variants of the last-3-blocks stage converge to approximately the same accuracy (~96.4–97.3%), suggesting the performance ceiling
-for this fine-tuning strategy has been reached at this dataset scale.
+All three variants of the last-3-blocks stage converge to approximately the same accuracy (~96.4–97.3%).
 ## Questions  
 During model training, there are many practical questions and “to‑dos” that easily become overwhelming: how to fully utilize limited compute, how to
 increase training efficiency, how to log metrics and artifacts without producing an unmanageable number of files, and how to inspect the training
