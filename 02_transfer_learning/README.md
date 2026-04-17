@@ -20,7 +20,7 @@ This stage applies **transfer learning** — leveraging an ImageNet pre-trained 
 ## File Structure
 ```
 📁 02_transfer_learning/
-├── 📁 checkpoints/ # this folder contains the artifacts from runing python code
+├── 📁 checkpoints/ # this folder contains the artifacts from running python codes
 ├── 📁 model/  # training loop and fine tuning definition
 ├── 📁 plot_results/ # figures related to accuracy and loss for each run
 ├── 📁 postprocess/ # plot figures tools
