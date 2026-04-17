@@ -3,16 +3,13 @@
 
 ## Goal
 
-Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset,
-with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
+Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset, with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
 
-But the training process itself was messy: no unified way to log hyperparameters and metrics,
-no visibility into GPU/CPU utilization, and comparing runs required manually checking saved
-files one by one. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work, 
-he must first sharpen his tools). Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow friction.
+But the training process itself was messy: no unified way to log hyperparameters and metrics, no visibility into GPU/CPU utilization, which parts delaying training, and comparing runs required manually checking saved
+files one by one, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
+Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow friction.
 
-This stage introduces experiment management — setting up proper tooling to track, compare,
-and visualize training runs, then using this workflow to explore how key hyperparameters
+This stage introduces experiment management — setting up proper tooling to track, compare, and visualize training runs, then using this workflow to explore how key hyperparameters
 affect model accuracy.
 
 ## What This Stage Covers
