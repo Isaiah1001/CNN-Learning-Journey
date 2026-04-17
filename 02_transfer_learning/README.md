@@ -145,11 +145,11 @@ The BiT paper[[2]](#references) shows that fine-tuning will benefits without the
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
-With only 10 epoches, inference accuracy reach around 90%, which is a huge improvement, compared with model trained at **Stage 1**. This shows that the shallow layers and backbone, which have already been trained on large‑scale data, provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
+With only 10 epoches, inference accuracy reach around 90%, which is a huge improvement, compared with the model trained at **Stage 1**. This shows that the model backbone, especially the early layers， which have already been trained on large‑scale data, 
+provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
 
-**2.Unfreezing blocks of backbone + classifier head fine-tuning**  
-Progressively unfreezing deeper backbone blocks consistently improves accuracy,
-but with diminishing returns at each stage:
+**2.Unfreezing layers of backbone + classifier head fine-tuning**  
+Progressively unfreezing backbone blocks consistently improves accuracy, but with diminishing returns at each stage:
 
 | Stage | Trainable Params | Top-1 Accuracy (best) | Gain over previous |
 |-------|-----------------|----------------------|-------------------|
@@ -157,25 +157,19 @@ but with diminishing returns at each stage:
 | + Last 1 block | 542,822 | 94.46% | +0.73% |
 | + Last 3 blocks | 3,286,402 | 97.31% | +2.85% |
 
-Unfreezing the last 3 blocks yields the most significant jump (+2.85%),
-bringing the model to 97.31%. This confirms that deeper backbone
-layers encode more task-specific features for fine-grained flower classification.
+Unfreezing the last 3 blocks yields the most significant jump (+2.85%), bringing the model accuracy to 97.31%. This result indicates that the deeper backbone layers capture more task-specific, fine-grained features for flower classification
+on this dataset, and benefit from being fine-tuned rather than kept frozen.
 
-However, neither CosineAnnealingLR nor discriminative learning rates
-(1e-4 → 5e-4 → 1e-3 → 1e-2 across blocks) produced further gains.
-All three variants of the last-3-blocks stage converge to approximately
-the same accuracy (~96.4–97.3%), suggesting the performance ceiling
+However, neither CosineAnnealingLR nor discriminative learning rates (1e-4 → 5e-4 → 1e-3 → 1e-2 across blocks) produced further gains.
+All three variants of the last-3-blocks stage converge to approximately the same accuracy (~96.4–97.3%), suggesting the performance ceiling
 for this fine-tuning strategy has been reached at this dataset scale.
 ## Questions  
-During model training, there are many practical questions and “to‑dos” that
-easily become overwhelming: how to fully utilize limited compute, how to
-increase training efficiency, how to log metrics and artifacts without
-producing an unmanageable number of files, and how to inspect the training
-process in enough detail to decide when to stop or adjust hyperparameters.
-Ideally, we want tools and workflows that save time, compute, and personal
-energy: everyone wants the best possible model with minimal training time,
-reasonable hardware cost, simple algorithms, and as little manual intervention
-as possible. Stage 3 is designed to address exactly these concerns by
+During model training, there are many practical questions and “to‑dos” that easily become overwhelming: how to fully utilize limited compute, how to
+increase training efficiency, how to log metrics and artifacts withoutproducing an unmanageable number of files, and how to inspect the training
+process in enough detail to decide when to stop or adjust hyperparameters. 
+
+Ideally, we want tools and workflows that save time, compute, and personal energy: everyone wants the best possible model with minimal training time,
+reasonable hardware cost, simple algorithms, and as little manual intervention as possible. Stage 3 is designed to address exactly these concerns by
 introducing more systematic experiment tracking and workflow tooling.
 ## Reference
 - Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
