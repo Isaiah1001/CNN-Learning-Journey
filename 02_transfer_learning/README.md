@@ -3,17 +3,22 @@
 
 ## Goal
 
-Stage 1 established a working CNN pipeline on the Oxford 102 Flowers dataset, but the custom SimpleCNN reached only ~42% top-1 accuracy — well below the
-SOTA benchmark of 99.85% (Efficient Adaptive Ensembling) and even the EfficientNet-B0 paper result of 97.3%[[1]](#references) .
+Stage 1 established a working CNN pipeline on the Oxford 102 Flowers dataset,
+but the custom SimpleCNN reached only ~42% top-1 accuracy — well below the
+SOTA benchmark of 99.85% (Efficient Adaptive Ensembling) and even the
+EfficientNet-B0 paper result of 97.3%[[1]](#references) .
 
-The accuracy gap points to a fundamental limitation: training a shallow CNN from scratch on a small dataset (8,189 images, 102 classes) cannot match
+The accuracy gap points to a fundamental limitation: training a shallow CNN
+from scratch on a small dataset (8,189 images, 102 classes) cannot match
 the rich feature representations learned from large-scale pre-training.
 
-This stage applies **transfer learning** — leveraging an ImageNet pre-trained EfficientNet-B0 backbone.
+This stage applies **transfer learning** — leveraging an ImageNet pre-trained
+EfficientNet-B0 backbone — to close this gap while keeping the model
+lightweight enough for futher CNN learning.
 
 ## What This Stage Covers
 
-- Classifier head fine-tuning
+- Classifier header fine-tuning
 - Last layer + classifier head fine-tuning
 - Last three layers + classifier head fine-tuning
 
