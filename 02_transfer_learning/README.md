@@ -165,7 +165,7 @@ All three variants of the last-3-blocks stage converge to approximately the same
 for this fine-tuning strategy has been reached at this dataset scale.
 ## Questions  
 During model training, there are many practical questions and “to‑dos” that easily become overwhelming: how to fully utilize limited compute, how to
-increase training efficiency, how to log metrics and artifacts withoutproducing an unmanageable number of files, and how to inspect the training
+increase training efficiency, how to log metrics and artifacts without producing an unmanageable number of files, and how to inspect the training
 process in enough detail to decide when to stop or adjust hyperparameters. 
 
 Ideally, we want tools and workflows that save time, compute, and personal energy: everyone wants the best possible model with minimal training time,
