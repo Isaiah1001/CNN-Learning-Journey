@@ -18,7 +18,7 @@ lightweight enough for futher CNN learning.
 
 ## What This Stage Covers
 
-- Classifier header fine-tuning
+- Classifier head fine-tuning
 - Last layer + classifier head fine-tuning
 - Last three layers + classifier head fine-tuning
 
