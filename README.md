@@ -1,5 +1,5 @@
 # CNN-Learning-Journey — From Scratch to EfficientNet Deployment
-> A physics-trained engineer's structured path through deep learning:  
+> A physicist‑trained engineer's structured path through deep learning:  
 > building CNN intuition from first principles, then scaling to production-ready deployment.
 
 ## Background: 
