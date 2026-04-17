@@ -145,7 +145,7 @@ The BiT paper[[2]](#references) shows that fine-tuning will benefits without the
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
-With only 10 epoches, inference accuracy reach around 90%, which is a hugh improvement, compared with model trained at **Stage 1**. This shows that the shallow layers and backbone, which have already been trained on large‑scale data, provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
+With only 10 epoches, inference accuracy reach around 90%, which is a huge improvement, compared with model trained at **Stage 1**. This shows that the shallow layers and backbone, which have already been trained on large‑scale data, provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
 
 **2.Unfreezing blocks of backbone + classifier head fine-tuning**  
 Progressively unfreezing deeper backbone blocks consistently improves accuracy,
