@@ -56,26 +56,97 @@ Each experiment group fixes two variables and sweeps one. This makes causal attr
 if accuracy changes, the cause is unambiguous.
 
 ---  
+## Hyperparameter Experiment Plan
+
+### Group 1 — Learning Rate
+Fixed: `optimizer=AdamW`, `batch_size=64`
+
+| LR | Val Acc (%) | Best Epoch | Notes |
+|----|-------------|------------|-------|
+| 1e-4 | — | — | |
+| 3e-4 | — | — | |
+| 1e-3 | — | — | |
+| 3e-3 | — | — | |
+
+### Group 2 — Optimizer
+Fixed: `lr=3e-4`, `batch_size=64`
+
+| Optimizer | Val Acc (%) | Best Epoch | Notes |
+|-----------|-------------|------------|-------|
+| SGD + momentum=0.9 | — | — | Stage 2 baseline |
+| Adam | — | — | |
+| AdamW | — | — | |
+
+### Group 3 — Batch Size & DataLoader Efficiency
+Fixed: `optimizer=AdamW`, `lr=3e-4`
+
+| Batch Size | num_workers | Val Acc (%) | Epoch Time (s) | Notes |
+|------------|-------------|-------------|----------------|-------|
+| 32 | 4 | — | — | |
+| 64 | 4 | — | — | |
+| 128 | 4 | — | — | |
+| 64 | 2 | — | — | dataloader bottleneck check |
+| 64 | 8 | — | — | dataloader bottleneck check |
+
+*All tables will be filled in after experiments complete. Final results summary in `03_hyperparameters/results.md`.*
+
+---
 
 ## Results
-**1. Classifier head fine-tuning**  
-**Code:** classifier_head.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower.pth  
-| Metric | Value |
-|--------|-------|
-| Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | 93.49% (best:93.73%) |
-| Epochs | 40 |
-| Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
-Notes: Two types of accuracy are provided, one is accuracy after final epoch and another is best during training. Same for other tables
-![Loss and Accuracy](./plot_results/classifier_head.png)
+*(To be filled after experiments complete)*
 
-## Key Finding
-**1. Classifier head fine-tuning**  
+| Group | Best Config | Val Acc (%) | Key Finding |
+|-------|-------------|-------------|-------------|
+| LR sweep | — | — | — |
+| Optimizer | — | — | — |
+| Batch size | — | — | — |
 
+---
 
-## Questions  
+## How to Run
 
-## Reference
-- Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
+**1. Install dependencies**
+```bash
+pip install pytorch-lightning mlflow
+```
+
+**2. Train with default config**
+```bash
+cd 01_lightning_module
+python train.py
+```
+
+**3. Launch MLflow dashboard**
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+# Open http://localhost:5000 in browser
+```
+
+**4. Run full hyperparameter sweep**
+```bash
+cd 03_hyperparameters
+python run_experiments.py
+```
+
+---
+
+## Connection to Stage 2
+
+Stage 2 ended with a practical question (quoted from Stage 2 README):
+
+> *"How to log metrics and artifacts without producing an unmanageable number of files,
+> and how to inspect the training process in enough detail to decide when to stop or
+> adjust hyperparameters?"*
+
+Stage 3 directly answers this. The six separate scripts from Stage 2 collapse into a single
+`train.py` entry point, and all run history is stored and queryable in MLflow.
+
+---
+
+## References
+
+- Falcon et al., [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/), Lightning AI, 2019.
+- Zaharia et al., [MLflow: A Machine Learning Lifecycle Platform](https://mlflow.org), Databricks, 2018.
+- Selvaraju et al., [Grad-CAM: Visual Explanations from Deep Networks](https://arxiv.org/abs/1610.02391), ICCV 2017.
+- Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
