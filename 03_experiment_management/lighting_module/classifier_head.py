@@ -272,7 +272,7 @@ if __name__ == '__main__':
         schedule=torch.profiler.schedule(wait=1, warmup=2, active=7, repeat=80),
         profile_memory=False
     )
-    # save checkpoint callback
+    # 7. Save checkpoint callback
     checkpoint_callback = ModelCheckpoint(
         monitor="val_acc",
         filename="best-checkpoint",
@@ -280,7 +280,7 @@ if __name__ == '__main__':
         mode="max"
     )
 
-    # 7. Initialize Trainer
+    # 8. Initialize Trainer
     csv_logger = CSVLogger("logs", name="flower_experiment")
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
     trainer = pl.Trainer(
@@ -298,6 +298,6 @@ if __name__ == '__main__':
         enable_checkpointing=True
     )
 
-    # 8. Start training
+    # 9. Start training
     print("Starting training...")
     trainer.fit(model_module, datamodule=dm_loader)
