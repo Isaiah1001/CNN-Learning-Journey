@@ -49,14 +49,11 @@ Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
 └── README.md
 
 📁 03_experiment_tracking/
-├── mlflow_tracking.py
+├── ??
 └── README.md
 
 📁 04_compression_deployment/
-├── pruning.py
-├── quantization.py
-├── export_onnx.py
-├── inference.py
+├── ??
 └── README.md
 
 📁 99_flower_data/ # The data for model training
