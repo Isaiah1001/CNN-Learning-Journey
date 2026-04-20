@@ -1,4 +1,3 @@
-
 # Stage 3 — Experiment Management
 
 ## Goal
@@ -13,27 +12,20 @@ This stage introduces experiment management — setting up proper tooling to tra
 affect model accuracy.
 
 ## What This Stage Covers
-
-- 
+- Lighting module: 
+- MLFlow: save and track
+- hyperparameters: lr selections, optimizers, different training setups (batch, num_workers), etc..
+- Visualization: saliency and CAM showing inference accuracy for interpretability
 
 ## File Structure
 ```
-📁 02_transfer_learning/
-├── 📁 checkpoints/ # this folder contains the artifacts from running python codes
-├── 📁 model/  # training loop and fine tuning definition
-├── 📁 plot_results/ # figures related to accuracy and loss for each run
-├── 📁 postprocess/ # plot figures tools
-├── 📁 preprocess/ # data manipulate tools
-├── README.md # detailed procedures for pretrained model, unfreeze proccess, training and key findings
-├── classifier_head.py # only modified the head of EfficientNet-B0 model, let it fit flower category inference
-├── transfer_learning_last_layer.py # unfreeze last layer + head. 
-├── transfer_learning_last_layer_Scheduler.py # unfreeze last layer + head, schedule the lr during training
-├── transfer_learning_last_3layer.py # unfreeze last three layers + head
-├── transfer_learning_last_3layer_Scheduler.py # unfreeze last three layers + head, schedule the lr during training
-└── transfer_learning_last_3layer_difflr.py # unfreeze last three layers + head, different block uses different lr during training
-Notes: please pay attention to the difference for each strategy in terms of lr, momentum
+📁 03_experiment_management/
+├── 📁 01_lighting_module/ #FlowersDataModule, FlowerLightModule, Trainer
+├── 📁 02_mlflow/  # 
+├── 📁 03_hyperparameters/
+├── 📁 04_visualization/
+└── README.md 
 ```
-
 ## Key Design Decisions
 
 **1. Why EfficientNet-B0 **  
