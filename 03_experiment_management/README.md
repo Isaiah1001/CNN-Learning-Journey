@@ -6,14 +6,13 @@ Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 
 
 But the training process itself was messy: no unified way to log hyperparameters and metrics, no visibility into GPU/CPU utilization, which parts delaying training, and comparing runs required manually checking saved
 files one by one, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
-Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow friction.
+Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
-This stage introduces experiment management — setting up proper tooling to track, compare, and visualize training runs, then using this workflow to explore how key hyperparameters
+This stage introduces experiment management — setting up proper tooling to organize the structure of algorithmn, track, compare, and visualize training runs, then using this workflow to explore how key hyperparameters
 affect model accuracy.
 
 ## What This Stage Covers
-- Lighting module: Refactor EfficientNet-B0 training into `LightningModule` + `LightningDataModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging,
-  and `ModelCheckpoint` callbacks
+- Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - hyperparameters: Use the Lightning + MLflow workflow to systematically compare learning rates, optimizers, batch sizes, and num_workers; produce a clean results table.
 - Visualization: saliency and CAM showing inference accuracy for interpretability
