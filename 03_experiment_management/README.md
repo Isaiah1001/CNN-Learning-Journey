@@ -12,9 +12,10 @@ This stage introduces experiment management — setting up proper tooling to tra
 affect model accuracy.
 
 ## What This Stage Covers
-- Lighting module: 
-- MLFlow: save and track
-- hyperparameters: lr selections, optimizers, different training setups (batch, num_workers), etc..
+- Lighting module: Refactor EfficientNet-B0 training into `LightningModule` + `LightningDataModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging,
+  and `ModelCheckpoint` callbacks
+- MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
+- hyperparameters: Use the Lightning + MLflow workflow to systematically compare learning rates, optimizers, batch sizes, and num_workers; produce a clean results table.
 - Visualization: saliency and CAM showing inference accuracy for interpretability
 
 ## File Structure
@@ -26,9 +27,35 @@ affect model accuracy.
 ├── 📁 04_visualization/
 └── README.md 
 ```
-## Key Design Decisions
 
-**1. Why EfficientNet-B0 **  
+## Key Design Decisions
+**1. Why PyTorch Lightning**
+
+The Stage 2 training loop (`model/training_loop.py`) was clean but required manually managing:
+the epoch loop, metric accumulation, best-model tracking, device placement, and scheduler stepping.
+Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens
+(forward pass, loss, optimizer) — not *how* the loop runs. Additional benefits used in this stage:
+
+- Built-in `lr_monitor` callback: logs learning rate every epoch automatically, no manual tracking
+- `ModelCheckpoint`: saves best checkpoint by `val_acc` without custom save logic
+- `MLFlowLogger`: wires directly into `Trainer`, all metrics logged to MLflow with zero extra code
+
+**2. Why MLflow**
+
+Stage 2 produced six nearly identical scripts to track six experimental configurations. MLflow
+solves this by treating each training run as a named artifact with full parameter + metric history.
+Key capabilities used:
+
+- `mlflow ui`: browser-based dashboard to compare runs side by side
+- Artifact logging: best checkpoint `.pth` stored alongside its run, always traceable
+- No external server needed: local SQLite backend (`mlflow.db`) sufficient for solo projects
+
+**3. Experiment Design: Change One Variable at a Time**
+
+Each experiment group fixes two variables and sweeps one. This makes causal attribution clear —
+if accuracy changes, the cause is unambiguous.
+
+---  
 
 ## Results
 **1. Classifier head fine-tuning**  
