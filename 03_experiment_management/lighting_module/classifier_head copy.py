@@ -15,7 +15,7 @@ from torchmetrics import Accuracy
 
 import lightning.pytorch as pl
 from lightning.pytorch.loggers import CSVLogger
-from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, ModelCheckpoint
+from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, ModelCheckpoint, ModelSummary
 from lightning.pytorch.profilers import PyTorchProfiler
 
 from preprocess import data_access, get_dataset
@@ -196,8 +196,9 @@ class FlowerLightModule(pl.LightningModule):
         }
 
 # ==============================================
-# 4) progressive fine-tuning callback setup
+# 4) custom some callbacks
 # ==============================================
+# progressive fine-tuning callback setup
 class ProgressiveBackboneFinetuning(BaseFinetuning):
     def __init__(self, unfreeze_at_epoch_1=5, unfreeze_at_epoch_2=10):
         """define specific epoch to start and stop fine tuning
@@ -230,13 +231,41 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
         if current_epoch == self.unfreeze_at_epoch_2:
             self.make_trainable(pl_module.model.features[-5:])
 
+# model summary callback setup: prints whenever trainable params change
+class PostFreezeModelSummary(pl.Callback):
+    def __init__(self):
+        super().__init__()
+        self._last_trainable = None
+
+    def _print_if_changed(self, pl_module, epoch=None):
+        total = sum(p.numel() for p in pl_module.parameters())
+        trainable = sum(p.numel() for p in pl_module.parameters() if p.requires_grad)
+        if trainable != self._last_trainable:
+            frozen = total - trainable
+            label = f"Epoch {epoch}" if epoch is not None else "Train Start"
+            print(f"\n{'='*50}")
+            print(f"  [{label}] Trainable params changed!")
+            print(f"  Total params:     {total:,}")
+            print(f"  Trainable params: {trainable:,}")
+            print(f"  Frozen params:    {frozen:,}")
+            print(f"  Trainable %:      {trainable/total*100:.1f}%")
+            print(f"{'='*50}\n")
+            self._last_trainable = trainable
+
+    def on_train_start(self, trainer, pl_module):
+        self._print_if_changed(pl_module)
+
+    def on_train_epoch_start(self, trainer, pl_module):
+        self._print_if_changed(pl_module, epoch=trainer.current_epoch)
+
+
 # ==============================================
 # 5) run the training loop
 # ==============================================
 
 if __name__ == '__main__':
-    
-    # 1 data location (for this project, the data is retrieved from 99_flower_data)
+    pl.seed_everything(42, workers=True) # Set a fixed random seed for reproducibility, including worker processes
+    # 1. data location (for this project, the data is retrieved from 99_flower_data)
     data_folder = '99_flower_data'
     data_path = os.path.join(r'../', data_folder)
 
@@ -267,9 +296,12 @@ if __name__ == '__main__':
         dirpath=log_dir,
         filename="profile_report",
         schedule=torch.profiler.schedule(wait=5, warmup=2, active=20, repeat=2),
-        profile_memory=False
+        profile_memory=True
     )
-    # 7. Save checkpoint callback
+    # 7. Model summary callback (prints after trainable params change)
+    post_freeze_summary = PostFreezeModelSummary()
+
+    # 8. Save checkpoint callback
     checkpoint_callback = ModelCheckpoint(
         dirpath='./logs/checkpoints',
         monitor="val_acc",
@@ -279,25 +311,24 @@ if __name__ == '__main__':
         save_last=True
     )
 
-    # 8. Initialize Trainer
+    # 9. Initialize Trainer
     csv_logger = CSVLogger("logs", name="flower_experiment")
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
     trainer = pl.Trainer(
         max_epochs=80,
         max_steps=-1,
-        callbacks=[finetuning_callback, lr_monitor, checkpoint_callback],
-        profiler=profiler,
+        callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
+        profiler=profiler,  # profiler="advanced"
         accelerator="gpu",
         devices=1,
         precision="bf16-mixed",  
-        benchmark=True,          
+        deterministic=True,          
         log_every_n_steps=10,  
         logger=csv_logger,
         enable_model_summary=True,
         enable_checkpointing=True
     )
 
-    # 9. Start training
+    # 10. Start training
     print("Starting training...")
-    pl.seed_everything(42, workers=True)
     trainer.fit(model_module, datamodule=dm_loader)
