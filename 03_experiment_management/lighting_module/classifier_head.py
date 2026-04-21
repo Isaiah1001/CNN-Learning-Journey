@@ -15,7 +15,7 @@ from torchmetrics import Accuracy
 
 import lightning.pytorch as pl
 from lightning.pytorch.loggers import CSVLogger
-from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, ModelCheckpoint
+from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning
 from lightning.pytorch.profilers import PyTorchProfiler
 
 from preprocess import data_access, get_dataset
@@ -203,8 +203,8 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
         """define specific epoch to start and stop fine tuning
 
         Args:
-            unfreeze_at_epoch_1 (int, optional): epoch to unfreeze the last three layers of the backbone. Defaults to 5.
-            unfreeze_at_epoch_2 (int, optional): epoch to unfreeze the last five layers of the backbone. Defaults to 10.
+            unfreeze_at_epoch_1 (int, optional): epoch to unfreeze the last layer of the backbone. Defaults to 5.
+            unfreeze_at_epoch_2 (int, optional): epoch to unfreeze the last three layers of the backbone. Defaults to 10.
         """
         super().__init__()
         self.unfreeze_at_epoch_1 = unfreeze_at_epoch_1
@@ -213,7 +213,7 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
     def freeze_before_training(self, pl_module):
         """freeze all layers before training"""
         self.freeze(pl_module.model.features) 
-        """unfreeze the classifier head before training"""
+        self.freeze(pl_module.model.avgpool)
         self.make_trainable(pl_module.model.classifier)
 
     def finetune_function(self, pl_module, current_epoch, optimizer):
@@ -224,7 +224,7 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
             current_epoch (int): Current epoch number
             optimizer (torch.optim.Optimizer): Optimizer instance
         """
-        # === stage 1&2: unfreeze Backbone last 3 layer (features[-3:]) and last 5 layers (features[-5:]) ===
+        # === stage 1&2: unfreeze Backbone last layer (features[-1:]) and last 3 layers (features[-3:]) ===
         if current_epoch == self.unfreeze_at_epoch_1:
             self.make_trainable(pl_module.model.features[-3:])
         if current_epoch == self.unfreeze_at_epoch_2:
@@ -236,7 +236,10 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
 
 if __name__ == '__main__':
     
-    # 1 data location (for this project, the data is retrieved from 99_flower_data)
+    # 1 set random seed for reproducibility
+    torch.manual_seed(42) # Set a fixed random seed for reproducibility
+
+    # data location (for this project, the data is retrieved from 99_flower_data)
     data_folder = '99_flower_data'
     data_path = os.path.join(r'../', data_folder)
 
@@ -257,8 +260,8 @@ if __name__ == '__main__':
 
     # 5. Define callback
     finetuning_callback = ProgressiveBackboneFinetuning(
-        unfreeze_at_epoch_1=None, 
-        unfreeze_at_epoch_2=None
+        unfreeze_at_epoch_1=40, 
+        unfreeze_at_epoch_2=80
     )
 
     # 6. Configure Profiler
@@ -266,26 +269,17 @@ if __name__ == '__main__':
     profiler = PyTorchProfiler(
         dirpath=log_dir,
         filename="profile_report",
-        schedule=torch.profiler.schedule(wait=5, warmup=2, active=20, repeat=2),
+        schedule=torch.profiler.schedule(wait=1, warmup=2, active=7, repeat=80),
         profile_memory=False
     )
-    # 7. Save checkpoint callback
-    checkpoint_callback = ModelCheckpoint(
-        dirpath='./logs/checkpoints',
-        monitor="val_acc",
-        filename="checkpoint_epoch{epoch:02d}-val_acc{val_acc:.2f}",
-        save_top_k=1,
-        mode="max",
-        save_last=True
-    )
 
-    # 8. Initialize Trainer
+    # 7. Initialize Trainer
     csv_logger = CSVLogger("logs", name="flower_experiment")
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
     trainer = pl.Trainer(
         max_epochs=80,
         max_steps=-1,
-        callbacks=[finetuning_callback, lr_monitor, checkpoint_callback],
+        callbacks=[finetuning_callback, lr_monitor],
         profiler=profiler,
         accelerator="gpu",
         devices=1,
@@ -294,10 +288,9 @@ if __name__ == '__main__':
         log_every_n_steps=10,  
         logger=csv_logger,
         enable_model_summary=True,
-        enable_checkpointing=True
+        enable_checkpointing=False
     )
 
-    # 9. Start training
+    # 8. Start training
     print("Starting training...")
-    pl.seed_everything(42, workers=True)
     trainer.fit(model_module, datamodule=dm_loader)

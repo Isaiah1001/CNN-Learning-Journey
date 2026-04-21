@@ -1,10 +1,8 @@
-import matplotlib
-matplotlib.use('TkAgg')
 import pandas as pd
 import matplotlib.pyplot as plt
 
 # 读取日志
-metrics = pd.read_csv('./logs/flower_experiment/version_6/metrics.csv')
+metrics = pd.read_csv('./logs/flower_experiment1/version_1/metrics.csv')
 
 # ---- 关键修正 1：前向填充 lr ----
 lr_cols = [c for c in metrics.columns if c.startswith('lr-')]

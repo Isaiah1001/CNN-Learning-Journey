@@ -2,11 +2,7 @@
 # 1) Imports
 # =========================
 # libraries
-
 import os
-import time
-from scipy.io import loadmat
-
 import torch
 import torchvision.models as tv_models
 import torchvision.transforms as transforms
@@ -20,6 +16,7 @@ from lightning.pytorch.profilers import PyTorchProfiler
 
 from preprocess import data_access, get_dataset
 torch.set_float32_matmul_precision('medium') 
+
 # ==============================================
 # 1) load pre-trained weights and get the default transforms
 # ==============================================
@@ -52,7 +49,7 @@ train_transform = transforms.Compose([
 # ==============================================
 
 class FlowerDataModule(pl.LightningDataModule):
-    def __init__(self, data_path, train_transform, basic_transform, batch_size=32, num_workers=0):
+    def __init__(self, data_path, train_transform, basic_transform, batch_size=32, num_workers=2):
         """initialize the data module
         Args:
             data_path: path to the dataset
@@ -86,10 +83,8 @@ class FlowerDataModule(pl.LightningDataModule):
     def train_dataloader(self):
         """return training data loader
         """
-        g = torch.Generator()
-        g.manual_seed(42)
         return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
-                          shuffle=True, pin_memory=True, prefetch_factor=2, persistent_workers=True, generator=g)
+                          shuffle=True, pin_memory=True, prefetch_factor=2, persistent_workers=True)
 
     def val_dataloader(self):
         """return validation data loader
@@ -173,15 +168,17 @@ class FlowerLightModule(pl.LightningModule):
         # update and log validation accuracy
         self.val_accuracy.update(outputs, labels)
         self.log("val_acc", self.val_accuracy, on_step=False, on_epoch=True, prog_bar=True, batch_size=bs)
-        
+    
+    def on_train_epoch_end(self):
+        return self.train_accuracy.reset()
+    
+    def on_validation_epoch_end(self):
+        return self.val_accuracy.reset()
+    
     def configure_optimizers(self):
-        backbone_params = list(self.model.features.parameters())
-        head_params = list(self.model.classifier.parameters())
         optimizer = torch.optim.SGD(
-            [
-                {"params": backbone_params, "lr": 1e-3},   # backbone small lr
-                {"params": head_params, "lr": 1e-1},       # head large lr
-            ],
+            filter(lambda p: p.requires_grad, self.parameters()),
+            lr=self.learning_rate,
             momentum=self.momentum,
             weight_decay=self.weight_decay,
         )
@@ -213,23 +210,24 @@ class ProgressiveBackboneFinetuning(BaseFinetuning):
 
     def freeze_before_training(self, pl_module):
         """freeze all layers before training"""
-        self.freeze(pl_module.model.features) 
+        self.freeze(pl_module.model.features, train_bn=True) 
         """unfreeze the classifier head before training"""
         self.make_trainable(pl_module.model.classifier)
 
-    def finetune_function(self, pl_module, current_epoch, optimizer):
-        """ define procedure to unfreeze layers at specific epochs
-
-        Args:
-            pl_module (LightningModule): Lightning module
-            current_epoch (int): Current epoch number
-            optimizer (torch.optim.Optimizer): Optimizer instance
-        """
-        # === stage 1&2: unfreeze Backbone last 3 layer (features[-3:]) and last 5 layers (features[-5:]) ===
-        if current_epoch == self.unfreeze_at_epoch_1:
-            self.make_trainable(pl_module.model.features[-3:])
-        if current_epoch == self.unfreeze_at_epoch_2:
-            self.make_trainable(pl_module.model.features[-5:])
+    def finetune_function(self, pl_module, epoch, optimizer):
+        if epoch == self.unfreeze_at_epoch_1 and self.unfreeze_at_epoch_1 is not None:
+            self.unfreeze_and_add_param_group(
+                modules=pl_module.model.features[-3:],
+                optimizer=optimizer,
+                lr=1e-3,
+            )
+            
+        if epoch == self.unfreeze_at_epoch_2 and self.unfreeze_at_epoch_2 is not None:
+            self.unfreeze_and_add_param_group(
+                modules=pl_module.model.features[-5:],
+                optimizer=optimizer,
+                lr=1e-4,
+            )
 
 # model summary callback setup: prints whenever trainable params change
 class PostFreezeModelSummary(pl.Callback):
@@ -291,11 +289,11 @@ if __name__ == '__main__':
     )
 
     # 6. Configure Profiler
-    log_dir = "./profiler_output"
+    log_dir = "./profiler_output1"
     profiler = PyTorchProfiler(
         dirpath=log_dir,
         filename="profile_report",
-        schedule=torch.profiler.schedule(wait=5, warmup=2, active=20, repeat=2),
+        schedule=torch.profiler.schedule(wait=2, warmup=2, active=16, repeat=2),
         profile_memory=True
     )
     # 7. Model summary callback (prints after trainable params change)
@@ -305,17 +303,17 @@ if __name__ == '__main__':
     checkpoint_callback = ModelCheckpoint(
         dirpath='./logs/checkpoints',
         monitor="val_acc",
-        filename="checkpoint_epoch{epoch:02d}-val_acc{val_acc:.2f}",
+        filename="checkpoint_epoch{epoch:02d}-val_acc{val_acc:.4f}",
         save_top_k=1,
         mode="max",
         save_last=True
     )
 
     # 9. Initialize Trainer
-    csv_logger = CSVLogger("logs", name="flower_experiment")
+    csv_logger = CSVLogger("logs", name="flower_experiment1")
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
     trainer = pl.Trainer(
-        max_epochs=80,
+        max_epochs=40,
         max_steps=-1,
         callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
         profiler=profiler,  # profiler="advanced"
@@ -325,7 +323,7 @@ if __name__ == '__main__':
         deterministic=True,          
         log_every_n_steps=10,  
         logger=csv_logger,
-        enable_model_summary=True,
+        enable_model_summary=False,
         enable_checkpointing=True
     )
 
