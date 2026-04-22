@@ -22,8 +22,8 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 | Dataset | Oxford 102 Flowers |
 | Top-1 Accuracy | 95.28% (best:95.68%) |
 | Epochs | 40 |
-| Optimizer | SGD, lr=0.01, weight_decay=1e-4 |
+| Optimizer | SGD, lr=0.01, momentum =0.9, weight_decay=1e-4, |
 
-![Loss and Accuracy](./Lightning.png)  
+![Loss, Accuracy and Lr](./Lightning.png)  
 
 ## Key Finding
