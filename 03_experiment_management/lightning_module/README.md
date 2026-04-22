@@ -9,14 +9,13 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 ├── 📁 preprocess/ 
 ├── 📁 logs/
 ├── 📁 profiler_output/
-├── 📁 profiler_output/
 ├── lightning_flower.py
 └── README.md 
 ```
 
 ## Results
-**Code:** lightning_flower.py  
-**Artifact:**  
+**Code:** 'lightning_flower.py'  
+**Artifact:** './logs', './profiler_output'
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
