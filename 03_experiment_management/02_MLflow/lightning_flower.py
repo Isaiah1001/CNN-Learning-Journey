@@ -13,6 +13,8 @@ import lightning.pytorch as pl
 from lightning.pytorch.loggers import CSVLogger
 from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, ModelCheckpoint
 from lightning.pytorch.profilers import PyTorchProfiler
+from lightning.pytorch.profilers import SimpleProfiler
+from lightning.pytorch.loggers import MLFlowLogger
 
 from preprocess import data_access, get_dataset
 torch.set_float32_matmul_precision('medium') 
@@ -287,14 +289,8 @@ if __name__ == '__main__':
         unfreeze_at_epoch_2=None
     )
 
-    # 6. Configure Profiler
-    log_dir = "./profiler_output"
-    profiler = PyTorchProfiler(
-        dirpath=log_dir,
-        filename="profile_report",
-        schedule=torch.profiler.schedule(wait=2, warmup=2, active=16, repeat=2),
-        profile_memory=True
-    )
+    # # 6. Configure Profiler
+    profiler = SimpleProfiler(dirpath='./profiler_output', filename="simpleprof_logs", extended=True)
     # 7. Model summary callback (prints after trainable params change)
     post_freeze_summary = PostFreezeModelSummary()
 
@@ -309,19 +305,19 @@ if __name__ == '__main__':
     )
 
     # 9. Initialize Trainer
-    csv_logger = CSVLogger("logs", name="flower_experiment")
+    mlf_logger = MLFlowLogger(experiment_name="lightning_logs", tracking_uri="file:./ml-runs", run_name="efficientnet_b0_freeze_all")
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
     trainer = pl.Trainer(
         max_epochs=40,
         max_steps=-1,
         callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
-        profiler=profiler,  # profiler="advanced"
+        profiler=profiler,
         accelerator="gpu",
         devices=1,
         precision="bf16-mixed",  
         deterministic=True,          
         log_every_n_steps=10,  
-        logger=csv_logger,
+        logger=mlf_logger,
         enable_model_summary=False,
         enable_checkpointing=True
     )
