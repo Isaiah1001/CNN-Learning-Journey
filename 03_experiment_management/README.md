@@ -20,7 +20,7 @@ affect model accuracy.
 ## File Structure
 ```
 📁 03_experiment_management/
-├── 📁 01_lighting_module/ #FlowersDataModule, FlowerLightModule, Trainer
+├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer
 ├── 📁 02_mlflow/  # 
 ├── 📁 03_hyperparameters/
 ├── 📁 04_visualization/
@@ -31,13 +31,17 @@ affect model accuracy.
 **1. Why PyTorch Lightning**
 
 The Stage 2 training loop (`model/training_loop.py`) was clean but required manually managing:
-the epoch loop, metric accumulation, best-model tracking, device placement, and scheduler stepping.
+the epoch loop, metric accumulation, best-model tracking, device, and scheduler etc..
 Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens
 (forward pass, loss, optimizer) — not *how* the loop runs. Additional benefits used in this stage:
 
-- Built-in `lr_monitor` callback: logs learning rate every epoch automatically, no manual tracking
-- `ModelCheckpoint`: saves best checkpoint by `val_acc` without custom save logic
-- `MLFlowLogger`: wires directly into `Trainer`, all metrics logged to MLflow with zero extra code
+Built-in and customed callbacks: 
+-  lr_monitor: logs learning rate every epoch automatically, no manual tracking
+- Model Checkpoint: saves best or last checkpoint by `val_acc` without custom save logic
+- ProgressiveBackboneFinetuning: define the process of gradually fine-tuning
+- PostFreezeModelSummary: calculate the number of trainable parameters and total model parameters
+- 
+- Profile: record information for training 
 
 **2. Why MLflow**
 
