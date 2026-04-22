@@ -20,7 +20,7 @@ affect model accuracy.
 ## File Structure
 ```
 📁 03_experiment_management/
-├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer
+├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer and callbacks
 ├── 📁 02_mlflow/  # 
 ├── 📁 03_hyperparameters/
 ├── 📁 04_visualization/
