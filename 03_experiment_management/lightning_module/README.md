@@ -6,10 +6,10 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 ## File Structure
 ```
 📁 01_Lightning_module/
-├── 📁 preprocess/ 
-├── 📁 logs/
-├── 📁 profiler_output/
-├── lightning_flower.py
+├── 📁 preprocess/  # dataset access and split utilities
+├── 📁 logs/  # CSV logs and checkpoints
+├── 📁 profiler_output/  # Lightning profiler outputs and trace files
+├── lightning_flower.py  # DataModule, LightningModule, Trainer setup
 └── README.md 
 ```
 
@@ -25,5 +25,5 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 
 ![Loss, Accuracy and Lr](./Lightning.png)  
 
-The folder './profiler_output' inspects the cost of different operators and RAM inside the training model - both on the CPU and GPU. The detailed information can be viewed by luanching web perfetto and read the files inside.
+The folder './profiler_output' inspects the cost of different operators and RAM inside the training model - both on the CPU and GPU. The trace files can be inspected with Perfetto for detailed performance analysis. A deeper interpretation of profiler bottlenecks and anomalies will be added in a later stage.
 ## Key Finding
