@@ -20,7 +20,7 @@ affect model accuracy.
 ## File Structure
 ```
 📁 03_experiment_management/
-├── 📁 01_lighting_module/ #FlowersDataModule, FlowerLightModule, Trainer
+├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer and callbacks
 ├── 📁 02_mlflow/  # 
 ├── 📁 03_hyperparameters/
 ├── 📁 04_visualization/
@@ -28,16 +28,23 @@ affect model accuracy.
 ```
 
 ## Key Design Decisions
+
 **1. Why PyTorch Lightning**
 
-The Stage 2 training loop (`model/training_loop.py`) was clean but required manually managing:
-the epoch loop, metric accumulation, best-model tracking, device placement, and scheduler stepping.
-Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens
-(forward pass, loss, optimizer) — not *how* the loop runs. Additional benefits used in this stage:
+The Stage 2 training loop (`model/training_loop.py`) was reasonably clean, but it still required manually handling the epoch loop, metric accumulation, best‑model tracking, device placement, and learning‑rate scheduling. 
+PyTorch Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens (forward pass, loss, optimizer) rather than *how* the training loop is executed.
 
-- Built-in `lr_monitor` callback: logs learning rate every epoch automatically, no manual tracking
-- `ModelCheckpoint`: saves best checkpoint by `val_acc` without custom save logic
-- `MLFlowLogger`: wires directly into `Trainer`, all metrics logged to MLflow with zero extra code
+In this stage, I also take advantage of several built‑in and custom callbacks:
+
+- `LearningRateMonitor`: logs the learning rate each epoch automatically, with no manual tracking code.
+- `ModelCheckpoint`: saves the best and/or last checkpoints based on `val_acc` without any custom save logic.
+- `ProgressiveBackboneFinetuning`: encodes the gradual unfreezing strategy as a reusable callback, instead of hard‑coding it into the training loop.
+- `PostFreezeModelSummary`: prints the total and trainable parameter counts whenever the finetuning state changes.
+- `MLFlowLogger` (in folder '02_mlflow'): plugs directly into `Trainer` so that hyperparameters, metrics, and artifacts are logged to MLflow with minimal extra code.
+
+Other useful tools:
+
+- Profiler: records detailed timing and memory information during training to help identify performance bottlenecks.
 
 **2. Why MLflow**
 
