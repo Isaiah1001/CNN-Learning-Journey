@@ -1,21 +1,21 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 读取日志
-metrics = pd.read_csv('./logs/flower_experiment1/version_1/metrics.csv')
+# read csv
+metrics = pd.read_csv('./logs/flower_experiment/version_0/metrics.csv')
 
-# ---- 关键修正 1：前向填充 lr ----
+# read lr
 lr_cols = [c for c in metrics.columns if c.startswith('lr-')]
 metrics[lr_cols] = metrics[lr_cols].ffill()
 
-# ---- 关键修正 2：删除没有 epoch 的行 ----
+# delete rows without epoch
 metrics = metrics[metrics['epoch'].notna()]
 
-# ---- 关键修正 3：按 epoch 聚合 ----
+# re-orgnize
 metrics = metrics.groupby('epoch').mean()
 
 # ========================
-# 绘图
+# plot
 # ========================
 plt.figure(figsize=(15, 5))
 
@@ -50,7 +50,7 @@ if lr_cols:
     plt.ylabel('Learning Rate')
     plt.legend()
     plt.grid(True)
-    # plt.yscale('log')  # 如果想看对数尺度
+    # plt.yscale('log') 
 else:
     plt.text(0.5, 0.5, 'No LR Data', ha='center')
 
