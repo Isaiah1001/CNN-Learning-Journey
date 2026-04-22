@@ -15,6 +15,14 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 ```
 
 ## Results
+**Code:** lightning_flower.py  
+**Artifact:**  
+| Metric | Value |
+|--------|-------|
+| Dataset | Oxford 102 Flowers |
+| Top-1 Accuracy | 93.49% (best:93.73%) |
+| Epochs | 40 |
+| Optimizer | SGD, lr=0.1, weight_decay=1e-4 |
 
 ![Loss and Accuracy](./lightning.png)  
 
