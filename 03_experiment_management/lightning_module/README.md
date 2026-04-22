@@ -25,4 +25,5 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 
 ![Loss, Accuracy and Lr](./Lightning.png)  
 
+The folder './profiler_output' inspects the cost of different operators and RAM inside the training model - both on the CPU and GPU. The detailed information can be viewed by luanching web perfetto and read the files inside.
 ## Key Finding
