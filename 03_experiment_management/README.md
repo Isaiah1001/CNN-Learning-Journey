@@ -40,7 +40,9 @@ Built-in and customed callbacks:
 - Model Checkpoint: saves best or last checkpoint by `val_acc` without custom save logic
 - ProgressiveBackboneFinetuning: define the process of gradually fine-tuning
 - PostFreezeModelSummary: calculate the number of trainable parameters and total model parameters
-- 
+- `MLFlowLogger`: wires directly into `Trainer`, all metrics logged to MLflow with zero extra code
+
+Other easy-to-go tools:
 - Profile: record information for training 
 
 **2. Why MLflow**
