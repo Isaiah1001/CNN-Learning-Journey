@@ -4,7 +4,7 @@ This subfolder builds a complete training and experiment‑tracking pipeline for
 
 ## File Structure
 ```
-📁 02_MLflow/
+📁 02_mlflow/
 ├── 📁 preprocess/  # dataset access and split utilities
 ├── 📁 logs/  # checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files
