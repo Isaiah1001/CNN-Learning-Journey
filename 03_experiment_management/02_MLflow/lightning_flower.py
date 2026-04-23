@@ -8,6 +8,7 @@ import torchvision.models as tv_models
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchmetrics import Accuracy
+import mlflow
 
 import lightning.pytorch as pl
 # from lightning.pytorch.loggers import CSVLogger
@@ -85,18 +86,19 @@ class FlowerDataModule(pl.LightningDataModule):
         """return training data loader
         """
         return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
-                          shuffle=True, pin_memory=True, prefetch_factor=2, persistent_workers=True)
+                          shuffle=True, pin_memory=False, prefetch_factor=2, persistent_workers=True)
 
     def val_dataloader(self):
         """return validation data loader
         """
         return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
-                          persistent_workers=True, pin_memory=True )
+                          persistent_workers=True, pin_memory=False )
 
     def test_dataloader(self):
         """return test data loader
         """
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers)
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
+                          persistent_workers=True, pin_memory=False)
 
 # ==============================================
 # 3) lightning module setup
@@ -263,66 +265,68 @@ class PostFreezeModelSummary(pl.Callback):
 # ==============================================
 
 if __name__ == '__main__':
-    
-    pl.seed_everything(42, workers=True) # Set a fixed random seed for reproducibility, including worker processes
-    # 1. data location (for this project, the data is retrieved from 99_flower_data)
-    data_folder = '99_flower_data'
-    data_path = os.path.join(r'../', data_folder)
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")  # Set the tracking URI to your SQLite database
+    mlflow.set_experiment("lightning_logs")  # Set the experiment name
+    with mlflow.start_run(run_name="efficientnet_b0_freeze_all_bacth64_epoch3", log_system_metrics=True):
+        pl.seed_everything(42, workers=True) # Set a fixed random seed for reproducibility, including worker processes
+        # 1. data location (for this project, the data is retrieved from 99_flower_data)
+        data_folder = '99_flower_data'
+        data_path = os.path.join(r'../', data_folder)
 
-    # 2. Only print or check data in the main process
-    print("Initializing DataModule...")
-    
-    # 3. load data 
-    dm_loader = FlowerDataModule(
-        data_path=data_path,
-        train_transform=train_transform,
-        basic_transform=basic_transform,
-        batch_size=128,  
-        num_workers=8    
-    )
+        # 2. Only print or check data in the main process
+        print("Initializing DataModule...")
+        
+        # 3. load data 
+        dm_loader = FlowerDataModule(
+            data_path=data_path,
+            train_transform=train_transform,
+            basic_transform=basic_transform,
+            batch_size=64,  
+            num_workers=8    
+        )
 
-    # 4. Initialize model
-    model_module = FlowerLightModule()
+        # 4. Initialize model
+        model_module = FlowerLightModule()
 
-    # 5. Define callback
-    finetuning_callback = ProgressiveBackboneFinetuning(
-        unfreeze_at_epoch_1=None, 
-        unfreeze_at_epoch_2=None
-    )
+        # 5. Define callback
+        finetuning_callback = ProgressiveBackboneFinetuning(
+            unfreeze_at_epoch_1=None, 
+            unfreeze_at_epoch_2=None
+        )
 
-    # # 6. Configure Profiler
-    profiler = SimpleProfiler(dirpath='./profiler_output', filename="simpleprof_logs", extended=True)
-    # 7. Model summary callback (prints after trainable params change).  
-    post_freeze_summary = PostFreezeModelSummary()
+        # # 6. Configure Profiler
+        profiler = SimpleProfiler(dirpath='./profiler_output', filename="simpleprof_logs", extended=True)
+        # 7. Model summary callback (prints after trainable params change).  
+        post_freeze_summary = PostFreezeModelSummary()
 
-    # 8. Save checkpoint callback
-    checkpoint_callback = ModelCheckpoint(
-        dirpath='./logs/checkpoints',
-        monitor="val_acc",
-        filename="checkpoint_{epoch:02d}_{val_acc:.4f}",
-        save_top_k=1,
-        mode="max",
-        save_last=True
-    )
+        # 8. Save checkpoint callback
+        checkpoint_callback = ModelCheckpoint(
+            dirpath='./logs/checkpoints',
+            monitor="val_acc",
+            filename="checkpoint_{epoch:02d}_{val_acc:.4f}",
+            save_top_k=1,
+            mode="max",
+            save_last=True
+        )
 
-    # 9. Initialize Trainer
-    mlf_logger = MLFlowLogger(experiment_name="lightning_logs", tracking_uri="file:./ml-runs", run_name="efficientnet_b0_freeze_all")
-    lr_monitor = LearningRateMonitor(logging_interval='epoch')
-    trainer = pl.Trainer(
-        max_epochs=40,
-        max_steps=-1,
-        callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
-        profiler=profiler,
-        accelerator="gpu",
-        devices=1,
-        precision="bf16-mixed",  
-        deterministic=True,          
-        log_every_n_steps=10,  
-        logger=mlf_logger,
-        enable_model_summary=False,
-        enable_checkpointing=True
-    )
+        # 9. Initialize Trainer
+        mlf_logger = MLFlowLogger(experiment_name="lightning_logs", tracking_uri="sqlite:///mlflow.db", run_name="efficientnet_b0_freeze_all_bacth64_epoch3")
+        lr_monitor = LearningRateMonitor(logging_interval='epoch')
+        trainer = pl.Trainer(
+            max_epochs=3,
+            max_steps=-1,
+            callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
+            profiler=profiler,
+            accelerator="gpu",
+            devices=1,
+            precision="bf16-mixed",  
+            deterministic=True,          
+            log_every_n_steps=10,  
+            logger=mlf_logger,
+            enable_model_summary=False,
+            enable_checkpointing=True
+        )
 
-    # 10. Start training
-    print("Starting training...")
-    trainer.fit(model_module, datamodule=dm_loader)
+        # 10. Start training
+        print("Starting training...")
+        trainer.fit(model_module, datamodule=dm_loader)
