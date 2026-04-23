@@ -1,6 +1,6 @@
 
 # Stage 3.2 — MLflow
-This subfolder builds a complete training and experiment‑tracking pipeline for the Oxford 102 Flowers dataset using PyTorch Lightning and MLflow..
+This subfolder builds a complete training and experiment‑tracking pipeline for the Oxford 102 Flowers dataset using PyTorch Lightning and MLflow.
 
 ## File Structure
 ```
