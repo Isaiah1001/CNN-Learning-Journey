@@ -1,20 +1,21 @@
 
-# Stage 3.1 — Lightning Module
-This subfolder refactors the EfficientNet‑B0 fine‑tuning pipeline from a hand‑written training loop (Stage 2) into a PyTorch Lightning setup. It keeps the same model architecture and dataset（only training classifier head）, 
-but moves all training orchestration (epochs, device placement, checkpointing, LR logging, profiling) into `Trainer` and callbacks.
+# Stage 3.2 — MLflow
+This subfolder .
 
 ## File Structure
 ```
-📁 01_Lightning_module/
+📁 02_MLflow/
 ├── 📁 preprocess/  # dataset access and split utilities
-├── 📁 logs/  # CSV logs and checkpoints
+├── 📁 logs/  # checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files
-├── lightning_flower.py  # DataModule, LightningModule, Trainer setup
+├── MLflow_flower.py  # DataModule, LightningModule, Trainer setup
+├── mlflow.db
+├── mlflow.png
 └── README.md 
 ```
 
 ## Results
-**Code:** 'lightning_flower.py'  
+**Code:** 'MLflow_flower.py'  
 **Artifact:** './logs', './profiler_output'
 | Metric | Value |
 |--------|-------|
