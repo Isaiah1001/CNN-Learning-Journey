@@ -16,6 +16,7 @@ from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, Mod
 # from lightning.pytorch.profilers import PyTorchProfiler
 from lightning.pytorch.profilers import SimpleProfiler
 from lightning.pytorch.loggers import MLFlowLogger
+from lightning.pytorch.cli import LightningCLI
 
 from preprocess import data_access, get_dataset
 torch.set_float32_matmul_precision('medium') 
@@ -26,25 +27,6 @@ torch.set_float32_matmul_precision('medium')
 weights = tv_models.EfficientNet_B0_Weights.IMAGENET1K_V1
 auto_transforms = weights.transforms()
 model_input_size = auto_transforms.crop_size[0] 
-basic_transform = transforms.Compose([
-    transforms.Resize((model_input_size, model_input_size)),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], 
-                         std=[0.229, 0.224, 0.225])     # using the mean and std from ImageNet dataset
-])
-train_transform = transforms.Compose([
-    transforms.RandomResizedCrop(
-        size=model_input_size, 
-        scale=(0.8, 1.0),            
-        interpolation=transforms.InterpolationMode.BICUBIC 
-    ),
-    transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomRotation(degrees=10),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], 
-                         std=[0.229, 0.224, 0.225])     # using the mean and std from ImageNet dataset
-])
 
 
 # ==============================================
@@ -52,7 +34,12 @@ train_transform = transforms.Compose([
 # ==============================================
 
 class FlowerDataModule(pl.LightningDataModule):
-    def __init__(self, data_path, train_transform, basic_transform, batch_size=32, num_workers=2):
+    def __init__(self,
+                 batch_size: int = 128, 
+                 num_workers: int = 2,
+                 data_path: str = "../99_flower_data",
+                 image_size: int=model_input_size
+                 ):
         """initialize the data module
         Args:
             data_path: path to the dataset
@@ -62,9 +49,28 @@ class FlowerDataModule(pl.LightningDataModule):
             num_workers (int, optional): number of workers for data loading. Defaults to 0.
         """
         super().__init__()
+        self.save_hyperparameters()
+        self.basic_transform = transforms.Compose([
+            transforms.Resize((image_size, image_size)),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                                std=[0.229, 0.224, 0.225])     # using the mean and std from ImageNet dataset
+        ])
+        self.train_transform = transforms.Compose([
+            transforms.RandomResizedCrop(
+                size=image_size, 
+                scale=(0.8, 1.0),            
+                interpolation=transforms.InterpolationMode.BICUBIC 
+            ),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(degrees=10),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                                std=[0.229, 0.224, 0.225])     # using the mean and std from ImageNet dataset
+        ])
+
         self.data_path = data_path
-        self.train_transform = train_transform
-        self.basic_transform = basic_transform
         self.batch_size = batch_size
         self.num_workers = num_workers
 
@@ -85,19 +91,19 @@ class FlowerDataModule(pl.LightningDataModule):
     def train_dataloader(self):
         """return training data loader
         """
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
+        return DataLoader(self.train_dataset, batch_size=self.hparams.batch_size, num_workers=self.hparams.num_workers, 
                           shuffle=True, pin_memory=False, prefetch_factor=2, persistent_workers=True)
 
     def val_dataloader(self):
         """return validation data loader
         """
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
+        return DataLoader(self.val_dataset, batch_size=self.hparams.batch_size, num_workers=self.hparams.num_workers, 
                           persistent_workers=True, pin_memory=False )
 
     def test_dataloader(self):
         """return test data loader
         """
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers, 
+        return DataLoader(self.test_dataset, batch_size=self.hparams.batch_size, num_workers=self.hparams.num_workers, 
                           persistent_workers=True, pin_memory=False)
 
 # ==============================================
@@ -105,7 +111,7 @@ class FlowerDataModule(pl.LightningDataModule):
 # ==============================================
 
 class FlowerLightModule(pl.LightningModule):
-    def __init__(self, learning_rate= 1e-2, momentum =0.9, weight_decay=1e-4, num_classes=102):
+    def __init__(self, learning_rate: float = 1e-2, momentum: float = 0.9, weight_decay=1e-4, num_classes=102):
         """initialize the model module
 
         Args:
@@ -118,15 +124,11 @@ class FlowerLightModule(pl.LightningModule):
         # Save the hyperparameters passed to the constructor. This makes them
         # accessible via `self.hparams` and logs them automatically.
         self.save_hyperparameters()
-        
-        self.learning_rate = learning_rate
-        self.momentum = momentum
-        self.weight_decay = weight_decay
-        self.num_classes = num_classes
+
         # Import the pre-trained EfficientNet-B0 model and modify the classifier head.
         self.model = tv_models.efficientnet_b0(weights='IMAGENET1K_V1')
         in_features = self.model.classifier[1].in_features
-        new_fc_layer = torch.nn.Linear(in_features, self.num_classes)
+        new_fc_layer = torch.nn.Linear(in_features, self.hparams.num_classes)
         self.model.classifier[1] = new_fc_layer
         # Initialize the loss function.
         self.loss_fn = torch.nn.CrossEntropyLoss()
@@ -181,9 +183,9 @@ class FlowerLightModule(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(
             filter(lambda p: p.requires_grad, self.parameters()),
-            lr=self.learning_rate,
-            momentum=self.momentum,
-            weight_decay=self.weight_decay,
+            lr=self.hparams.learning_rate,
+            momentum=self.hparams.momentum,
+            weight_decay=self.hparams.weight_decay,
         )
 
         # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
@@ -194,7 +196,7 @@ class FlowerLightModule(pl.LightningModule):
             "optimizer": optimizer,
             # "lr_scheduler": {"scheduler": scheduler, "interval": "epoch"},
         }
-
+        
 # ==============================================
 # 4) custom some callbacks
 # ==============================================
@@ -259,78 +261,16 @@ class PostFreezeModelSummary(pl.Callback):
     def on_train_epoch_start(self, trainer, pl_module):
         self._print_if_changed(pl_module, epoch=trainer.current_epoch)
 
-
 # ==============================================
-# 5) run the training loop
+# 5) CLI setup
 # ==============================================
-
-if __name__ == '__main__':
-    pl.seed_everything(42, workers=True) # Set a fixed random seed for reproducibility, including worker processes
-    # hyperparameters and configurations
-    learning_rate = 1e-2
-    batch_size = 128
-    max_epochs = 40
-    num_workers = 8
-    
-    # 1. data location (for this project, the data is retrieved from 99_flower_data)
-    data_folder = '99_flower_data'
-    data_path = os.path.join(r'../', data_folder)
-
-    # 2. Only print or check data in the main process
-    print("Initializing DataModule...")
-    
-    # 3. load data 
-    dm_loader = FlowerDataModule(
-        data_path=data_path,
-        train_transform=train_transform,
-        basic_transform=basic_transform,
-        batch_size=batch_size,
-        num_workers=num_workers    
+def cli_main():
+    LightningCLI(
+        FlowerLightModule,
+        FlowerDataModule,
+        seed_everything_default=42,
+        save_config_callback=None,
     )
 
-    # 4. Initialize model
-    model_module = FlowerLightModule()
-
-    # 5. Define callback
-    finetuning_callback = ProgressiveBackboneFinetuning(
-        unfreeze_at_epoch_1=None, 
-        unfreeze_at_epoch_2=None
-    )
-
-    # # 6. Configure Profiler
-    profiler = SimpleProfiler(dirpath='./profiler_output', filename="simpleprof_logs", extended=True)
-    # 7. Model summary callback (prints after trainable params change).  
-    post_freeze_summary = PostFreezeModelSummary()
-
-    # 8. Save checkpoint callback
-    checkpoint_callback = ModelCheckpoint(
-        dirpath='./logs/checkpoints',
-        monitor="val_acc",
-        filename="checkpoint_{epoch:02d}_{val_acc:.4f}",
-        save_top_k=1,
-        mode="max",
-        save_last=True
-    )
-
-    # 9. Initialize Trainer
-    mlf_logger = MLFlowLogger(experiment_name="lightning_logs", tracking_uri="sqlite:///mlflow.db", run_name=f"{learning_rate:.4f}")
-    lr_monitor = LearningRateMonitor(logging_interval='epoch')
-    trainer = pl.Trainer(
-        max_epochs=max_epochs,
-        max_steps=-1,
-        callbacks=[finetuning_callback, post_freeze_summary, lr_monitor, checkpoint_callback],
-        profiler=profiler,
-        accelerator="gpu",
-        devices=1,
-        precision="bf16-mixed",  
-        deterministic=True,          
-        log_every_n_steps=10,  
-        logger=mlf_logger,
-        enable_model_summary=False,
-        enable_checkpointing=True
-    )
-
-    # 10. Start training
-    print("Starting training...")
-    trainer.fit(model_module, datamodule=dm_loader)
-    # run mlflow: mlflow ui --backend-store-uri sqlite:///mlflow.db
+if __name__ == "__main__":
+    cli_main()
