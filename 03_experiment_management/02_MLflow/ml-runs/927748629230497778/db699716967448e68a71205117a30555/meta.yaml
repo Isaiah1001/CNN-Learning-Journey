@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/huizhang/Documents/GitHub/CNN-Learning-Journey/03_experiment_management/02_MLflow/ml-runs/927748629230497778/db699716967448e68a71205117a30555/artifacts
+end_time: 1776915268727
+entry_point_name: ''
+experiment_id: '927748629230497778'
+lifecycle_stage: active
+run_id: db699716967448e68a71205117a30555
+run_name: efficientnet_b0_freeze_all
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1776909920438
+status: 3
+tags: []
+user_id: huizhang
