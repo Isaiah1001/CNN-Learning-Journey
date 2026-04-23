@@ -10,9 +10,9 @@ from torch.utils.data import DataLoader
 from torchmetrics import Accuracy
 
 import lightning.pytorch as pl
-from lightning.pytorch.loggers import CSVLogger
+# from lightning.pytorch.loggers import CSVLogger
 from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, ModelCheckpoint
-from lightning.pytorch.profilers import PyTorchProfiler
+# from lightning.pytorch.profilers import PyTorchProfiler
 from lightning.pytorch.profilers import SimpleProfiler
 from lightning.pytorch.loggers import MLFlowLogger
 
@@ -263,6 +263,7 @@ class PostFreezeModelSummary(pl.Callback):
 # ==============================================
 
 if __name__ == '__main__':
+    
     pl.seed_everything(42, workers=True) # Set a fixed random seed for reproducibility, including worker processes
     # 1. data location (for this project, the data is retrieved from 99_flower_data)
     data_folder = '99_flower_data'
@@ -291,7 +292,7 @@ if __name__ == '__main__':
 
     # # 6. Configure Profiler
     profiler = SimpleProfiler(dirpath='./profiler_output', filename="simpleprof_logs", extended=True)
-    # 7. Model summary callback (prints after trainable params change)
+    # 7. Model summary callback (prints after trainable params change).  
     post_freeze_summary = PostFreezeModelSummary()
 
     # 8. Save checkpoint callback
