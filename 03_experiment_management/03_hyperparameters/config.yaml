@@ -14,9 +14,9 @@ trainer:
   logger:
     class_path: lightning.pytorch.loggers.MLFlowLogger
     init_args:
-      experiment_name: lightning_logs
+      experiment_name: optimizer_test
       tracking_uri: sqlite:///mlflow.db
-      run_name: "1e-2"        
+      run_name: "adamw"        
 
   callbacks:
     - class_path: lightning.pytorch.callbacks.LearningRateMonitor
@@ -27,7 +27,7 @@ trainer:
       init_args:
         dirpath: ./logs/checkpoints
         monitor: val_acc
-        filename: checkpoint_{epoch:02d}_{val_acc:.4f}
+        filename: checkpoint_adamw_{epoch:02d}_{val_acc:.4f}
         save_top_k: 1
         mode: max
         save_last: true
@@ -44,12 +44,12 @@ trainer:
     class_path: lightning.pytorch.profilers.SimpleProfiler
     init_args:
       dirpath: ./profiler_output
-      filename: simpleprof_logs
+      filename: prof_logs_adamw
       extended: true
 
 model:
   learning_rate: 0.01
-  momentum: 0.9
+  momentum: 0.9 
   weight_decay: 0.0001
   num_classes: 102
 
@@ -58,3 +58,5 @@ data:
   num_workers: 8
   data_path: ../99_flower_data
   image_size: 224
+
+optimizer: torch.optim.AdamW
