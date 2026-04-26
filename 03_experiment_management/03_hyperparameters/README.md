@@ -10,15 +10,15 @@
 ├── 📁 yaml_lr/ # cli yaml files for different lr running
 ├── 📁 yaml_optimizer/ # cli yaml files for different optimizers running
 ├── hyperparameters_flower.py  # DataModule, LightningModule, lightningCLI setup
-├── mlflow.db
-├── lr.png
-├── optimizer.png
+├── mlflow.db # MLflow tracking database for all runs in this stage
+├── lr.png # summary plot for learning rate experiments
+├── optimizer.png # summary plot for optimizer experiments
 ├── run_config.py # helper scripts to run multiple YAML config
 └── README.md 
 ```
 
 ## Results
-**Code:** 'hyperparameters_flower.py'  and corresponding yaml files
+**Code:** 'hyperparameters_flower.py'  and corresponding yaml files  
 **Artifact:** './logs', './profiler_output', 'mlflow.db', 'lr.png', 'optimizer.png'
 ### Different lr 
 | Run name     | lr     | Final val acc | Final val loss | Notes                 |
