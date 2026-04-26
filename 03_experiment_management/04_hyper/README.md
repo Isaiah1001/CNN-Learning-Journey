@@ -27,6 +27,7 @@
 | sgd_lr1e-3  | 1e-3   | 0.8461        | 1.04           | Underfits after 40 ep |
 | sgd_lr1e-2  | 1e-2   | 0.9568          | 0.19           | Best trade-off        |
 | sgd_lr1e-1  | 1e-1   | 0.9739        | 0.11           | Diverges early        |
+
 ![Loss, Accuracy and Lr](./lr.png)  
 
 
