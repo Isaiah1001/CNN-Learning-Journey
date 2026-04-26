@@ -14,7 +14,7 @@ affect model accuracy.
 ## What This Stage Covers
 - Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
-- hyperparameters: Use the Lightning + MLflow workflow to systematically compare learning rates, optimizers, batch sizes, and num_workers; produce a clean results table.
+- hyperparameters: Use the LightningCLI + MLflow workflow to systematically compare learning rates, optimizers; produce a clean results table.
 - Visualization: saliency and CAM showing inference accuracy for interpretability
 
 ## File Structure
