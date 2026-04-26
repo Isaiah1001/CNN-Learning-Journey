@@ -270,6 +270,7 @@ def cli_main():
         FlowerDataModule,
         seed_everything_default=42,
         save_config_callback=None,
+        save_config_kwargs=True
     )
 
 if __name__ == "__main__":
