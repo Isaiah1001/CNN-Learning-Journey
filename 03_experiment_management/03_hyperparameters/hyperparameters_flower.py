@@ -16,7 +16,7 @@ from lightning.pytorch.callbacks import LearningRateMonitor, BaseFinetuning, Mod
 # from lightning.pytorch.profilers import PyTorchProfiler
 from lightning.pytorch.profilers import SimpleProfiler
 from lightning.pytorch.loggers import MLFlowLogger
-from lightning.pytorch.cli import LightningCLI
+from lightning.pytorch.cli import LightningCLI, OptimizerCallable
 
 from preprocess import data_access, get_dataset
 torch.set_float32_matmul_precision('medium') 
@@ -111,7 +111,8 @@ class FlowerDataModule(pl.LightningDataModule):
 # ==============================================
 
 class FlowerLightModule(pl.LightningModule):
-    def __init__(self, learning_rate: float = 1e-2, momentum: float = 0.9, weight_decay=1e-4, num_classes=102):
+    def __init__(self, num_classes: int=102,
+                 optimizer: OptimizerCallable = torch.optim.SGD):
         """initialize the model module
 
         Args:
@@ -124,7 +125,7 @@ class FlowerLightModule(pl.LightningModule):
         # Save the hyperparameters passed to the constructor. This makes them
         # accessible via `self.hparams` and logs them automatically.
         self.save_hyperparameters()
-
+        self.optimizer = optimizer
         # Import the pre-trained EfficientNet-B0 model and modify the classifier head.
         self.model = tv_models.efficientnet_b0(weights='IMAGENET1K_V1')
         in_features = self.model.classifier[1].in_features
@@ -181,12 +182,8 @@ class FlowerLightModule(pl.LightningModule):
         return self.val_accuracy.reset()
     
     def configure_optimizers(self):
-        optimizer = torch.optim.SGD(
-            filter(lambda p: p.requires_grad, self.parameters()),
-            lr=self.hparams.learning_rate,
-            momentum=self.hparams.momentum,
-            weight_decay=self.hparams.weight_decay,
-        )
+        optimizer = self.optimizer(
+            filter(lambda p: p.requires_grad, self.parameters()))
 
         # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         #     optimizer, T_max=10, eta_min=1e-4
@@ -270,7 +267,8 @@ def cli_main():
         FlowerDataModule,
         seed_everything_default=42,
         save_config_callback=None,
-        save_config_kwargs=True
+        save_config_kwargs=True,
+        # auto_configure_optimizers=False
     )
 
 if __name__ == "__main__":

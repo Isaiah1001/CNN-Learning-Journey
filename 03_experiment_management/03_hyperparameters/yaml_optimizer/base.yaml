@@ -47,16 +47,15 @@ trainer:
       filename: prof_logs_base
       extended: true
 
-model:
-  learning_rate: 0.01
-  momentum: 0.9 
-  weight_decay: 0.0001
-  num_classes: 102
+optimizer:
+  class_path: torch.optim.SGD
+  init_args:
+    lr: 1e-2
+    momentum: 0.9
+    weight_decay: 1e-4
 
 data:
   batch_size: 128
   num_workers: 8
   data_path: ../99_flower_data
   image_size: 224
-
-optimizer: torch.optim.SGD
