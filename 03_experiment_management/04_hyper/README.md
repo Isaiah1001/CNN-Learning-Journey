@@ -1,33 +1,34 @@
 
-# Stage 3.2 — MLflow
-This subfolder builds a complete training and experiment‑tracking pipeline for the Oxford 102 Flowers dataset using PyTorch Lightning and MLflow.
+# Stage 3.3 — Hyperparameters
 
 ## File Structure
 ```
-📁 02_mlflow/
+📁 03_hyperparameters/
 ├── 📁 preprocess/  # dataset access and split utilities
 ├── 📁 logs/  # checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files
-├── MLflow_flower.py  # DataModule, LightningModule, Trainer setup
+├── 📁 yaml_lr/ # cli yaml files for different lr running
+├── 📁 yaml_optimizer/ # cli yaml files for different optimizers running
+├── hyperparameters_flower.py  # DataModule, LightningModule, lightningCLI setup
 ├── mlflow.db
-├── mlflow.png
+├── lr.png
+├── optimizer.png
+├── run_config.py # helper scripts to run multiple YAML config
 └── README.md 
 ```
 
 ## Results
-**Code:** 'MLflow_flower.py'  
-**Artifact:** './logs', './profiler_output', 'mlflow.db', 'mlflow.png'
-| Metric | Value |
-|--------|-------|
-| Dataset | Oxford 102 Flowers |
-| Top-1 Accuracy | 95.3% (best:95.68%) |
-| Epochs | 40 |
-| Optimizer | SGD, lr=0.01, momentum =0.9, weight_decay=1e-4, |
-
-![Loss, Accuracy and Lr](./mlflow.png)  
+**Code:** 'hyperparameters_flower.py'  and corresponding yaml files
+**Artifact:** './logs', './profiler_output', 'mlflow.db', 'lr.png', 'optimizer.png'
+### Different lr 
+| Run name     | lr     | Final val acc | Final val loss | Notes                 |
+|-------------|--------|--------------:|---------------:|-----------------------|
+| sgd_lr1e-4  | 1e-4   | 0.2769          | 3.96           | Very slow learning    |
+| sgd_lr1e-3  | 1e-3   | 0.8461        | 1.04           | Underfits after 40 ep |
+| sgd_lr1e-2  | 1e-2   | 0.9568          | 0.19           | Best trade-off        |
+| sgd_lr1e-1  | 1e-1   | 0.9739        | 0.11           | Diverges early        |
+![Loss, Accuracy and Lr](./lr.png)  
 
 
 
 ## Key Finding  
-PyTorch Lightning is integrated with MLflow to automatically log hyperparameters, losses, accuracies, and learning rate schedules, while saving the best model checkpoints under `./logs/checkpoints` to support experiment reproducibility and model comparison.  
-Profiler outputs are stored in `./profiler_output`, enabling analysis of data‑loading and forward/backward pass bottlenecks for further optimization of training efficiency.
