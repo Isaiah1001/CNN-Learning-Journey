@@ -23,13 +23,24 @@
 ### Different lr 
 | Run name     | lr     | Final val acc | Final val loss | Notes                 |
 |-------------|--------|--------------:|---------------:|-----------------------|
-| sgd_lr1e-4  | 1e-4   | 0.2769          | 3.96           | Very slow learning    |
-| sgd_lr1e-3  | 1e-3   | 0.8461        | 1.04           | Underfits after 40 ep |
-| sgd_lr1e-2  | 1e-2   | 0.9568          | 0.19           | Best trade-off        |
-| sgd_lr1e-1  | 1e-1   | 0.9739        | 0.11           | Diverges early        |
+| 1e-4  | 1e-4   | 0.2769          | 3.96           | Very slow learning    |
+| 1e-3  | 1e-3   | 0.8461        | 1.04           | still learning after 40 ep |
+| 1e-2  | 1e-2   | 0.9568          | 0.19           | arrive 90% at 10th epoch        |
+| 1e-1  | 1e-1   | 0.9739        | 0.11           | fast learning       |
 
 ![Loss, Accuracy and Lr](./lr.png)  
 
+### Different optimizers
 
+### Different optimizers
+
+| Run name | lr   | Optimizer | Final val acc | Final val loss | Notes                                      |
+|---------|------|-----------|--------------:|---------------:|--------------------------------------------|
+| AdamW   | 1e-2 | AdamW     | 0.9650        | 0.20           | Fast, stable convergence, slightly best acc |
+| Adam    | 1e-2 | Adam      | 0.9471        | 0.25           | Converges quickly, final acc slightly lower |
+| base    | 1e-2 | SGD       | 0.9568        | 0.20           | Strong, stable baseline with simple SGD     |
+| RMSprop | 1e-2 | RMSprop   | 0.4414        | 5.42           | numerically unstable and poor final acc  |
+
+![Loss, Accuracy and Lr](./optimizer.png)  
 
 ## Key Finding  
