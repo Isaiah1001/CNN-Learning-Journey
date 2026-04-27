@@ -1,7 +1,7 @@
 sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
-31,0,97,'mexican petunia',54,'pelargonium',0.856358528137207,0
-87,0,68,'windflower',19,'giant white arum lily',0.6502333879470825,0
-14,0,3,'sweet pea',78,'toad lily',0.5168434977531433,0
-321,2,3,'sweet pea',42,'sword lily',0.3462934195995331,0
-348,2,82,'hibiscus',52,'primula',0.2525300681591034,0
-124,0,82,'hibiscus',36,'cape flower',0.2170595228672027,0
+31,0,97,'mexican petunia',54,'pelargonium',0.8563589453697205,0
+87,0,68,'windflower',19,'giant white arum lily',0.6502347588539124,0
+14,0,3,'sweet pea',78,'toad lily',0.5168447494506836,0
+321,2,3,'sweet pea',42,'sword lily',0.3462941348552704,0
+348,2,82,'hibiscus',52,'primula',0.2525317370891571,0
+124,0,82,'hibiscus',36,'cape flower',0.2170612961053848,0

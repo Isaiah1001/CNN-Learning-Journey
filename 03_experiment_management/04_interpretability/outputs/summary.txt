@@ -1,20 +1,29 @@
 Checkpoint: ./checkpoint_base_epoch=34_val_acc=0.9568.ckpt
-Device: cpu
 Samples: 410
 Overall test accuracy: 0.9439
 Wrong predictions: 23
 
+Macro metrics (averaged over classes):
+- Precision (macro): 0.9287
+- Recall   (macro): 0.9275
+- F1       (macro): 0.9216
+
+Weighted metrics (support-weighted over classes):
+- Precision (weighted): 0.9485
+- Recall   (weighted): 0.9439
+- F1       (weighted): 0.9417
+
 Worst 10 classes by accuracy:
-- 'bolero deep blue': 0.0000 (0/1)
 - 'spring crocus': 0.0000 (0/1)
+- 'bolero deep blue': 0.0000 (0/1)
 - 'desert-rose': 0.5000 (1/2)
 - 'mallow': 0.5000 (1/2)
-- 'gaura': 0.6667 (2/3)
-- 'sweet pea': 0.6667 (4/6)
-- 'siam tulip': 0.6667 (2/3)
-- 'peruvian lily': 0.6667 (2/3)
 - 'hibiscus': 0.6667 (4/6)
+- 'peruvian lily': 0.6667 (2/3)
+- 'sweet pea': 0.6667 (4/6)
 - 'trumpet creeper': 0.6667 (2/3)
+- 'gaura': 0.6667 (2/3)
+- 'siam tulip': 0.6667 (2/3)
 
 Top 10 confusion pairs:
 - 'sweet pea' -> 'toad lily': 1

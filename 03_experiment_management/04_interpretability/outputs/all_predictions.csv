@@ -1,411 +1,411 @@
 sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
-0,0,52,'primula',52,'primula',0.9870564937591553,1
-1,0,95,'camellia',95,'camellia',0.890773594379425,1
-2,0,36,'cape flower',36,'cape flower',0.9982193112373352,1
-3,0,60,'cautleya spicata',60,'cautleya spicata',0.9975977540016174,1
+0,0,52,'primula',52,'primula',0.9870563745498657,1
+1,0,95,'camellia',95,'camellia',0.8907750844955444,1
+2,0,36,'cape flower',36,'cape flower',0.9982194304466248,1
+3,0,60,'cautleya spicata',60,'cautleya spicata',0.9975976347923279,1
 4,0,39,'lenten rose',39,'lenten rose',0.9919654130935669,1
-5,0,78,'toad lily',78,'toad lily',0.9692226052284241,1
-6,0,75,'morning glory',75,'morning glory',0.9478315711021423,1
-7,0,45,'wallflower',45,'wallflower',0.9984164237976074,1
-8,0,52,'primula',52,'primula',0.969455897808075,1
-9,0,75,'morning glory',75,'morning glory',0.9984558820724487,1
-10,0,54,'pelargonium',54,'pelargonium',0.9830296635627747,1
-11,0,65,'osteospermum',65,'osteospermum',0.9939097166061401,1
-12,0,87,'cyclamen ',87,'cyclamen ',0.9948864579200745,1
-13,0,73,'rose',73,'rose',0.9902631044387817,1
-14,0,3,'sweet pea',78,'toad lily',0.5168434977531433,0
-15,0,16,'purple coneflower',16,'purple coneflower',0.8404870629310608,1
+5,0,78,'toad lily',78,'toad lily',0.9692228436470032,1
+6,0,75,'morning glory',75,'morning glory',0.9478316903114319,1
+7,0,45,'wallflower',45,'wallflower',0.998416543006897,1
+8,0,52,'primula',52,'primula',0.9694560170173645,1
+9,0,75,'morning glory',75,'morning glory',0.9984560012817383,1
+10,0,54,'pelargonium',54,'pelargonium',0.9830297827720642,1
+11,0,65,'osteospermum',65,'osteospermum',0.9939099550247192,1
+12,0,87,'cyclamen ',87,'cyclamen ',0.9948863387107849,1
+13,0,73,'rose',73,'rose',0.9902629852294922,1
+14,0,3,'sweet pea',78,'toad lily',0.5168447494506836,0
+15,0,16,'purple coneflower',16,'purple coneflower',0.8404883146286011,1
 16,0,68,'windflower',68,'windflower',0.9873263239860535,1
-17,0,39,'lenten rose',95,'camellia',0.6721794009208679,0
+17,0,39,'lenten rose',95,'camellia',0.6721764802932739,0
 18,0,88,'watercress',88,'watercress',0.9978224039077759,1
-19,0,14,'yellow iris',14,'yellow iris',0.7416797876358032,1
-20,0,62,'black-eyed susan',62,'black-eyed susan',0.9976602792739868,1
-21,0,17,'peruvian lily',17,'peruvian lily',0.9712299108505249,1
+19,0,14,'yellow iris',14,'yellow iris',0.7416800856590271,1
+20,0,62,'black-eyed susan',62,'black-eyed susan',0.9976605176925659,1
+21,0,17,'peruvian lily',17,'peruvian lily',0.9712300300598145,1
 22,0,3,'sweet pea',3,'sweet pea',0.98492032289505,1
-23,0,71,'azalea',71,'azalea',0.982900083065033,1
-24,0,39,'lenten rose',39,'lenten rose',0.2272210568189621,1
-25,0,80,'frangipani',80,'frangipani',0.9999686479568481,1
+23,0,71,'azalea',71,'azalea',0.9829003214836121,1
+24,0,39,'lenten rose',39,'lenten rose',0.22722271084785461,1
+25,0,80,'frangipani',80,'frangipani',0.9999685287475586,1
 26,0,30,'carnation',30,'carnation',0.8138198852539062,1
 27,0,9,'globe thistle',9,'globe thistle',0.9832354784011841,1
-28,0,36,'cape flower',36,'cape flower',0.9777529239654541,1
-29,0,75,'morning glory',75,'morning glory',0.9985274076461792,1
+28,0,36,'cape flower',36,'cape flower',0.9777528643608093,1
+29,0,75,'morning glory',75,'morning glory',0.9985272884368896,1
 30,0,65,'osteospermum',65,'osteospermum',0.994695246219635,1
-31,0,97,'mexican petunia',54,'pelargonium',0.856358528137207,0
-32,0,60,'cautleya spicata',60,'cautleya spicata',0.9745484590530396,1
-33,0,33,'mexican aster',33,'mexican aster',0.9441422820091248,1
-34,0,83,'columbine',83,'columbine',0.9258232116699219,1
-35,0,12,'king protea',12,'king protea',0.9986361861228943,1
-36,0,54,'pelargonium',54,'pelargonium',0.9648975729942322,1
-37,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9994509816169739,1
-38,0,79,'anthurium',79,'anthurium',0.9961470365524292,1
-39,0,79,'anthurium',79,'anthurium',0.8620748519897461,1
-40,0,30,'carnation',29,'sweet william',0.500849723815918,0
+31,0,97,'mexican petunia',54,'pelargonium',0.8563589453697205,0
+32,0,60,'cautleya spicata',60,'cautleya spicata',0.97454833984375,1
+33,0,33,'mexican aster',33,'mexican aster',0.9441419839859009,1
+34,0,83,'columbine',83,'columbine',0.9258235692977905,1
+35,0,12,'king protea',12,'king protea',0.9986364245414734,1
+36,0,54,'pelargonium',54,'pelargonium',0.9648973345756531,1
+37,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9994511008262634,1
+38,0,79,'anthurium',79,'anthurium',0.9961471557617188,1
+39,0,79,'anthurium',79,'anthurium',0.8620739579200745,1
+40,0,30,'carnation',29,'sweet william',0.5008474588394165,0
 41,0,62,'black-eyed susan',62,'black-eyed susan',0.9871079325675964,1
-42,0,58,'orange dahlia',58,'orange dahlia',0.9078859090805054,1
-43,0,67,'bearded iris',67,'bearded iris',0.9936650991439819,1
-44,0,2,'canterbury bells',2,'canterbury bells',0.7378180027008057,1
-45,0,100,'trumpet creeper',100,'trumpet creeper',0.9367071986198425,1
-46,0,94,'bougainvillea',94,'bougainvillea',0.6023443937301636,1
-47,0,93,'foxglove',93,'foxglove',0.9992369413375854,1
-48,0,78,'toad lily',78,'toad lily',0.960011899471283,1
-49,0,88,'watercress',88,'watercress',0.743320882320404,1
+42,0,58,'orange dahlia',58,'orange dahlia',0.9078851342201233,1
+43,0,67,'bearded iris',67,'bearded iris',0.9936649799346924,1
+44,0,2,'canterbury bells',2,'canterbury bells',0.7378177046775818,1
+45,0,100,'trumpet creeper',100,'trumpet creeper',0.9367069602012634,1
+46,0,94,'bougainvillea',94,'bougainvillea',0.6023438572883606,1
+47,0,93,'foxglove',93,'foxglove',0.9992371797561646,1
+48,0,78,'toad lily',78,'toad lily',0.9600116610527039,1
+49,0,88,'watercress',88,'watercress',0.7433226108551025,1
 50,0,50,'petunia',50,'petunia',0.9982208609580994,1
-51,0,73,'rose',73,'rose',0.9823709726333618,1
-52,0,28,'artichoke',28,'artichoke',0.9828553199768066,1
-53,0,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.944371223449707,1
-54,0,100,'trumpet creeper',100,'trumpet creeper',0.38681668043136597,1
+51,0,73,'rose',73,'rose',0.9823708534240723,1
+52,0,28,'artichoke',28,'artichoke',0.9828552007675171,1
+53,0,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.9443709254264832,1
+54,0,100,'trumpet creeper',100,'trumpet creeper',0.38681694865226746,1
 55,0,81,'clematis',81,'clematis',0.9963235855102539,1
-56,0,20,'fire lily',20,'fire lily',0.9577410817146301,1
+56,0,20,'fire lily',20,'fire lily',0.9577412009239197,1
 57,0,80,'frangipani',80,'frangipani',0.9909241795539856,1
-58,0,48,'oxeye daisy',48,'oxeye daisy',0.9598565697669983,1
-59,0,95,'camellia',95,'camellia',0.3986523151397705,1
+58,0,48,'oxeye daisy',48,'oxeye daisy',0.9598566889762878,1
+59,0,95,'camellia',95,'camellia',0.3986514210700989,1
 60,0,94,'bougainvillea',94,'bougainvillea',0.9922927618026733,1
-61,0,63,'silverbush',63,'silverbush',0.9221669435501099,1
-62,0,58,'orange dahlia',58,'orange dahlia',0.9740161299705505,1
-63,0,62,'black-eyed susan',62,'black-eyed susan',0.9825122356414795,1
-64,0,97,'mexican petunia',97,'mexican petunia',0.8799945712089539,1
+61,0,63,'silverbush',63,'silverbush',0.9221664667129517,1
+62,0,58,'orange dahlia',58,'orange dahlia',0.9740157127380371,1
+63,0,62,'black-eyed susan',62,'black-eyed susan',0.9825121164321899,1
+64,0,97,'mexican petunia',97,'mexican petunia',0.8799935579299927,1
 65,0,86,'magnolia',86,'magnolia',0.9895859360694885,1
-66,0,83,'columbine',83,'columbine',0.639346182346344,1
-67,0,30,'carnation',30,'carnation',0.8779901266098022,1
+66,0,83,'columbine',83,'columbine',0.6393455862998962,1
+67,0,30,'carnation',30,'carnation',0.8779900074005127,1
 68,0,29,'sweet william',29,'sweet william',0.9908786416053772,1
 69,0,74,'thorn apple',74,'thorn apple',0.9714275598526001,1
 70,0,94,'bougainvillea',94,'bougainvillea',0.9998027682304382,1
-71,0,62,'black-eyed susan',62,'black-eyed susan',0.9772763848304749,1
+71,0,62,'black-eyed susan',62,'black-eyed susan',0.9772765636444092,1
 72,0,88,'watercress',88,'watercress',0.9993743300437927,1
-73,0,73,'rose',73,'rose',0.9967537522315979,1
-74,0,33,'mexican aster',33,'mexican aster',0.9793967008590698,1
-75,0,56,'gaura',82,'hibiscus',0.7399265766143799,0
-76,0,53,'sunflower',53,'sunflower',0.9984392523765564,1
-77,0,49,'common dandelion',49,'common dandelion',0.9953536987304688,1
-78,0,45,'wallflower',45,'wallflower',0.9981707334518433,1
-79,0,57,'geranium',57,'geranium',0.9842817187309265,1
+73,0,73,'rose',73,'rose',0.9967536330223083,1
+74,0,33,'mexican aster',33,'mexican aster',0.9793964624404907,1
+75,0,56,'gaura',82,'hibiscus',0.739925742149353,0
+76,0,53,'sunflower',53,'sunflower',0.9984391331672668,1
+77,0,49,'common dandelion',49,'common dandelion',0.9953538179397583,1
+78,0,45,'wallflower',45,'wallflower',0.9981708526611328,1
+79,0,57,'geranium',57,'geranium',0.9842819571495056,1
 80,0,72,'water lily',72,'water lily',0.9993230104446411,1
-81,0,12,'king protea',12,'king protea',0.3415578007698059,1
-82,0,50,'petunia',50,'petunia',0.3650071620941162,1
-83,0,25,'corn poppy',25,'corn poppy',0.875920295715332,1
-84,0,63,'silverbush',63,'silverbush',0.9992308616638184,1
+81,0,12,'king protea',12,'king protea',0.3415590226650238,1
+82,0,50,'petunia',50,'petunia',0.3650062084197998,1
+83,0,25,'corn poppy',25,'corn poppy',0.8759206533432007,1
+84,0,63,'silverbush',63,'silverbush',0.9992309808731079,1
 85,0,71,'azalea',71,'azalea',0.9850364923477173,1
-86,0,73,'rose',73,'rose',0.9995212554931641,1
-87,0,68,'windflower',19,'giant white arum lily',0.6502333879470825,0
-88,0,25,'corn poppy',25,'corn poppy',0.9966477751731873,1
-89,0,4,'english marigold',4,'english marigold',0.9460430145263672,1
-90,0,77,'lotus',77,'lotus',0.4449675381183624,1
-91,0,17,'peruvian lily',76,'passion flower',0.2942243814468384,0
+86,0,73,'rose',73,'rose',0.9995211362838745,1
+87,0,68,'windflower',19,'giant white arum lily',0.6502347588539124,0
+88,0,25,'corn poppy',25,'corn poppy',0.9966476559638977,1
+89,0,4,'english marigold',4,'english marigold',0.9460427165031433,1
+90,0,77,'lotus',77,'lotus',0.4449676275253296,1
+91,0,17,'peruvian lily',76,'passion flower',0.2942242920398712,0
 92,0,68,'windflower',68,'windflower',0.9975069165229797,1
 93,0,76,'passion flower',76,'passion flower',0.9999563694000244,1
-94,0,10,'snapdragon',10,'snapdragon',0.9948278069496155,1
-95,0,45,'wallflower',45,'wallflower',0.9932430386543274,1
-96,0,71,'azalea',71,'azalea',0.7736173868179321,1
-97,0,39,'lenten rose',39,'lenten rose',0.9832329154014587,1
-98,0,97,'mexican petunia',97,'mexican petunia',0.9871277809143066,1
-99,0,37,'great masterwort',37,'great masterwort',0.21826601028442383,1
-100,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.990790843963623,1
-101,0,3,'sweet pea',3,'sweet pea',0.24152468144893646,1
-102,0,70,'gazania',70,'gazania',0.9889473915100098,1
-103,0,13,'spear thistle',13,'spear thistle',0.6299945712089539,1
+94,0,10,'snapdragon',10,'snapdragon',0.994827926158905,1
+95,0,45,'wallflower',45,'wallflower',0.9932429194450378,1
+96,0,71,'azalea',71,'azalea',0.7736154794692993,1
+97,0,39,'lenten rose',39,'lenten rose',0.9832326769828796,1
+98,0,97,'mexican petunia',97,'mexican petunia',0.9871280193328857,1
+99,0,37,'great masterwort',37,'great masterwort',0.21826604008674622,1
+100,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9907910823822021,1
+101,0,3,'sweet pea',3,'sweet pea',0.2415248155593872,1
+102,0,70,'gazania',70,'gazania',0.9889475107192993,1
+103,0,13,'spear thistle',13,'spear thistle',0.6299928426742554,1
 104,0,13,'spear thistle',13,'spear thistle',0.963934600353241,1
 105,0,88,'watercress',88,'watercress',0.9984512329101562,1
-106,0,77,'lotus',87,'cyclamen ',0.2736620604991913,0
-107,0,74,'thorn apple',74,'thorn apple',0.9726019501686096,1
-108,0,32,'love in the mist',32,'love in the mist',0.9783455729484558,1
-109,0,22,'fritillary',22,'fritillary',0.9937792420387268,1
-110,0,39,'lenten rose',39,'lenten rose',0.9734858274459839,1
+106,0,77,'lotus',87,'cyclamen ',0.273662269115448,0
+107,0,74,'thorn apple',74,'thorn apple',0.9726018309593201,1
+108,0,32,'love in the mist',32,'love in the mist',0.9783452153205872,1
+109,0,22,'fritillary',22,'fritillary',0.9937790036201477,1
+110,0,39,'lenten rose',39,'lenten rose',0.9734855890274048,1
 111,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9988211989402771,1
-112,0,43,'poinsettia',43,'poinsettia',0.9824861288070679,1
-113,0,81,'clematis',81,'clematis',0.9977464079856873,1
+112,0,43,'poinsettia',43,'poinsettia',0.9824858903884888,1
+113,0,81,'clematis',81,'clematis',0.9977462887763977,1
 114,0,28,'artichoke',28,'artichoke',0.9990687966346741,1
-115,0,71,'azalea',71,'azalea',0.9971838593482971,1
-116,0,34,'alpine sea holly',34,'alpine sea holly',0.9505764245986938,1
-117,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9973806738853455,1
-118,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9861729741096497,1
-119,0,85,'tree mallow',85,'tree mallow',0.4686198830604553,1
-120,0,93,'foxglove',93,'foxglove',0.9896989464759827,1
+115,0,71,'azalea',71,'azalea',0.9971837401390076,1
+116,0,34,'alpine sea holly',34,'alpine sea holly',0.9505762457847595,1
+117,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9973805546760559,1
+118,0,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9861727356910706,1
+119,0,85,'tree mallow',85,'tree mallow',0.46861904859542847,1
+120,0,93,'foxglove',93,'foxglove',0.9896988272666931,1
 121,0,46,'marigold',46,'marigold',0.9866074323654175,1
-122,0,40,'barbeton daisy',40,'barbeton daisy',0.9773122072219849,1
+122,0,40,'barbeton daisy',40,'barbeton daisy',0.977311909198761,1
 123,0,61,'japanese anemone',61,'japanese anemone',0.9990246295928955,1
-124,0,82,'hibiscus',36,'cape flower',0.21705952286720276,0
-125,0,7,'bird of paradise',7,'bird of paradise',0.997227132320404,1
-126,0,44,'bolero deep blue',3,'sweet pea',0.21195626258850098,0
-127,0,72,'water lily',72,'water lily',0.9945593476295471,1
-128,1,74,'thorn apple',74,'thorn apple',0.9339174628257751,1
+124,0,82,'hibiscus',36,'cape flower',0.21706129610538483,0
+125,0,7,'bird of paradise',7,'bird of paradise',0.9972272515296936,1
+126,0,44,'bolero deep blue',3,'sweet pea',0.21195633709430695,0
+127,0,72,'water lily',72,'water lily',0.9945595860481262,1
+128,1,74,'thorn apple',74,'thorn apple',0.9339170455932617,1
 129,1,45,'wallflower',45,'wallflower',0.9975972771644592,1
 130,1,76,'passion flower',76,'passion flower',0.9998722076416016,1
-131,1,87,'cyclamen ',87,'cyclamen ',0.9675190448760986,1
-132,1,93,'foxglove',93,'foxglove',0.9632327556610107,1
+131,1,87,'cyclamen ',87,'cyclamen ',0.9675186276435852,1
+132,1,93,'foxglove',93,'foxglove',0.9632323980331421,1
 133,1,65,'osteospermum',65,'osteospermum',0.9887356162071228,1
-134,1,81,'clematis',81,'clematis',0.948703944683075,1
-135,1,39,'lenten rose',39,'lenten rose',0.48673054575920105,1
-136,1,11,"""colt's foot""",11,"""colt's foot""",0.9918143153190613,1
-137,1,42,'sword lily',52,'primula',0.9055526852607727,0
-138,1,93,'foxglove',93,'foxglove',0.9997679591178894,1
+134,1,81,'clematis',81,'clematis',0.9487040042877197,1
+135,1,39,'lenten rose',39,'lenten rose',0.4867325723171234,1
+136,1,11,"""colt's foot""",11,"""colt's foot""",0.9918141961097717,1
+137,1,42,'sword lily',52,'primula',0.905552089214325,0
+138,1,93,'foxglove',93,'foxglove',0.9997678399085999,1
 139,1,76,'passion flower',76,'passion flower',0.9999631643295288,1
 140,1,48,'oxeye daisy',48,'oxeye daisy',0.9403082132339478,1
 141,1,7,'bird of paradise',7,'bird of paradise',0.9994356036186218,1
 142,1,76,'passion flower',76,'passion flower',0.999749481678009,1
-143,1,74,'thorn apple',74,'thorn apple',0.8912011981010437,1
-144,1,38,'siam tulip',38,'siam tulip',0.9725789427757263,1
+143,1,74,'thorn apple',74,'thorn apple',0.8912003636360168,1
+144,1,38,'siam tulip',38,'siam tulip',0.9725790619850159,1
 145,1,45,'wallflower',45,'wallflower',0.9985299110412598,1
-146,1,40,'barbeton daisy',40,'barbeton daisy',0.9936700463294983,1
-147,1,10,'snapdragon',10,'snapdragon',0.973861575126648,1
+146,1,40,'barbeton daisy',40,'barbeton daisy',0.9936694502830505,1
+147,1,10,'snapdragon',10,'snapdragon',0.9738614559173584,1
 148,1,60,'cautleya spicata',60,'cautleya spicata',0.9794530868530273,1
-149,1,85,'tree mallow',85,'tree mallow',0.9487608075141907,1
-150,1,3,'sweet pea',3,'sweet pea',0.8710456490516663,1
-151,1,50,'petunia',50,'petunia',0.866024911403656,1
-152,1,28,'artichoke',28,'artichoke',0.9444195032119751,1
-153,1,36,'cape flower',36,'cape flower',0.9811528921127319,1
-154,1,82,'hibiscus',82,'hibiscus',0.717138409614563,1
-155,1,50,'petunia',50,'petunia',0.9983248114585876,1
-156,1,94,'bougainvillea',94,'bougainvillea',0.9879056215286255,1
+149,1,85,'tree mallow',85,'tree mallow',0.9487613439559937,1
+150,1,3,'sweet pea',3,'sweet pea',0.8710460662841797,1
+151,1,50,'petunia',50,'petunia',0.8660247921943665,1
+152,1,28,'artichoke',28,'artichoke',0.9444198608398438,1
+153,1,36,'cape flower',36,'cape flower',0.9811525344848633,1
+154,1,82,'hibiscus',82,'hibiscus',0.7171372175216675,1
+155,1,50,'petunia',50,'petunia',0.9983249306678772,1
+156,1,94,'bougainvillea',94,'bougainvillea',0.987905740737915,1
 157,1,53,'sunflower',53,'sunflower',0.938896119594574,1
 158,1,45,'wallflower',45,'wallflower',0.9981889128684998,1
-159,1,31,'garden phlox',31,'garden phlox',0.7150649428367615,1
-160,1,51,'wild pansy',51,'wild pansy',0.9996554851531982,1
-161,1,85,'tree mallow',85,'tree mallow',0.7120486497879028,1
+159,1,31,'garden phlox',31,'garden phlox',0.7150654792785645,1
+160,1,51,'wild pansy',51,'wild pansy',0.9996556043624878,1
+161,1,85,'tree mallow',85,'tree mallow',0.7120485305786133,1
 162,1,22,'fritillary',22,'fritillary',0.9998118281364441,1
-163,1,31,'garden phlox',31,'garden phlox',0.985870897769928,1
-164,1,77,'lotus',77,'lotus',0.992359459400177,1
+163,1,31,'garden phlox',31,'garden phlox',0.9858711361885071,1
+164,1,77,'lotus',77,'lotus',0.9923593401908875,1
 165,1,6,'moon orchid',6,'moon orchid',0.9762366414070129,1
-166,1,96,'mallow',96,'mallow',0.8478989601135254,1
-167,1,71,'azalea',71,'azalea',0.9919769167900085,1
+166,1,96,'mallow',96,'mallow',0.8478990793228149,1
+167,1,71,'azalea',71,'azalea',0.991976797580719,1
 168,1,76,'passion flower',76,'passion flower',0.9999700784683228,1
-169,1,8,'monkshood',8,'monkshood',0.9777575135231018,1
-170,1,27,'stemless gentian',27,'stemless gentian',0.7666085362434387,1
-171,1,89,'canna lily',89,'canna lily',0.8675998449325562,1
+169,1,8,'monkshood',8,'monkshood',0.97775799036026,1
+170,1,27,'stemless gentian',27,'stemless gentian',0.766608715057373,1
+171,1,89,'canna lily',89,'canna lily',0.8675997853279114,1
 172,1,95,'camellia',95,'camellia',0.9740343689918518,1
-173,1,6,'moon orchid',6,'moon orchid',0.9462058544158936,1
-174,1,53,'sunflower',53,'sunflower',0.9970782995223999,1
+173,1,6,'moon orchid',6,'moon orchid',0.9462066292762756,1
+174,1,53,'sunflower',53,'sunflower',0.9970781803131104,1
 175,1,76,'passion flower',76,'passion flower',0.9996596574783325,1
-176,1,65,'osteospermum',65,'osteospermum',0.9929705262184143,1
-177,1,4,'english marigold',4,'english marigold',0.9897564053535461,1
-178,1,28,'artichoke',28,'artichoke',0.9235230088233948,1
-179,1,93,'foxglove',93,'foxglove',0.9851035475730896,1
-180,1,80,'frangipani',80,'frangipani',0.9990571141242981,1
-181,1,51,'wild pansy',51,'wild pansy',0.9973810315132141,1
+176,1,65,'osteospermum',65,'osteospermum',0.992970883846283,1
+177,1,4,'english marigold',4,'english marigold',0.9897562861442566,1
+178,1,28,'artichoke',28,'artichoke',0.9235235452651978,1
+179,1,93,'foxglove',93,'foxglove',0.9851034283638,1
+180,1,80,'frangipani',80,'frangipani',0.999056875705719,1
+181,1,51,'wild pansy',51,'wild pansy',0.9973811507225037,1
 182,1,78,'toad lily',78,'toad lily',0.9911842942237854,1
-183,1,80,'frangipani',80,'frangipani',0.6332885026931763,1
-184,1,5,'tiger lily',5,'tiger lily',0.9996457099914551,1
-185,1,43,'poinsettia',43,'poinsettia',0.7408508062362671,1
-186,1,76,'passion flower',76,'passion flower',0.9999639987945557,1
-187,1,87,'cyclamen ',87,'cyclamen ',0.9896977543830872,1
-188,1,45,'wallflower',45,'wallflower',0.999745786190033,1
-189,1,15,'globe-flower',15,'globe-flower',0.972862720489502,1
-190,1,75,'morning glory',75,'morning glory',0.9996738433837891,1
-191,1,43,'poinsettia',43,'poinsettia',0.9645655751228333,1
-192,1,19,'giant white arum lily',19,'giant white arum lily',0.8375306129455566,1
-193,1,34,'alpine sea holly',34,'alpine sea holly',0.6981109380722046,1
-194,1,73,'rose',73,'rose',0.8410670757293701,1
-195,1,88,'watercress',88,'watercress',0.787822425365448,1
-196,1,47,'buttercup',47,'buttercup',0.9269003868103027,1
+183,1,80,'frangipani',80,'frangipani',0.6332884430885315,1
+184,1,5,'tiger lily',5,'tiger lily',0.9996455907821655,1
+185,1,43,'poinsettia',43,'poinsettia',0.7408488392829895,1
+186,1,76,'passion flower',76,'passion flower',0.9999638795852661,1
+187,1,87,'cyclamen ',87,'cyclamen ',0.9896978735923767,1
+188,1,45,'wallflower',45,'wallflower',0.9997459053993225,1
+189,1,15,'globe-flower',15,'globe-flower',0.972862958908081,1
+190,1,75,'morning glory',75,'morning glory',0.99967360496521,1
+191,1,43,'poinsettia',43,'poinsettia',0.9645656943321228,1
+192,1,19,'giant white arum lily',19,'giant white arum lily',0.8375298976898193,1
+193,1,34,'alpine sea holly',34,'alpine sea holly',0.6981120705604553,1
+194,1,73,'rose',73,'rose',0.8410658836364746,1
+195,1,88,'watercress',88,'watercress',0.7878221869468689,1
+196,1,47,'buttercup',47,'buttercup',0.9269009232521057,1
 197,1,28,'artichoke',28,'artichoke',0.9966500401496887,1
 198,1,58,'orange dahlia',58,'orange dahlia',0.9979676604270935,1
-199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.5351399779319763,0
-200,1,10,'snapdragon',10,'snapdragon',0.9762247204780579,1
-201,1,22,'fritillary',22,'fritillary',0.9992496371269226,1
-202,1,22,'fritillary',22,'fritillary',0.996717631816864,1
-203,1,76,'passion flower',76,'passion flower',0.9989799857139587,1
-204,1,99,'blanket flower',99,'blanket flower',0.9419265985488892,1
-205,1,81,'clematis',81,'clematis',0.9466603398323059,1
-206,1,31,'garden phlox',31,'garden phlox',0.6038206815719604,1
-207,1,50,'petunia',50,'petunia',0.49130934476852417,1
-208,1,29,'sweet william',29,'sweet william',0.988252580165863,1
+199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.5351387858390808,0
+200,1,10,'snapdragon',10,'snapdragon',0.9762250185012817,1
+201,1,22,'fritillary',22,'fritillary',0.9992498755455017,1
+202,1,22,'fritillary',22,'fritillary',0.9967177510261536,1
+203,1,76,'passion flower',76,'passion flower',0.9989802241325378,1
+204,1,99,'blanket flower',99,'blanket flower',0.9419271349906921,1
+205,1,81,'clematis',81,'clematis',0.9466605186462402,1
+206,1,31,'garden phlox',31,'garden phlox',0.603819727897644,1
+207,1,50,'petunia',50,'petunia',0.4913129210472107,1
+208,1,29,'sweet william',29,'sweet william',0.9882524609565735,1
 209,1,93,'foxglove',93,'foxglove',0.9149848818778992,1
-210,1,79,'anthurium',79,'anthurium',0.9092186093330383,1
-211,1,89,'canna lily',89,'canna lily',0.8816511034965515,1
-212,1,77,'lotus',77,'lotus',0.4349823296070099,1
-213,1,99,'blanket flower',99,'blanket flower',0.9684466123580933,1
-214,1,51,'wild pansy',51,'wild pansy',0.992220938205719,1
+210,1,79,'anthurium',79,'anthurium',0.9092181921005249,1
+211,1,89,'canna lily',89,'canna lily',0.8816514015197754,1
+212,1,77,'lotus',77,'lotus',0.4349784851074219,1
+213,1,99,'blanket flower',99,'blanket flower',0.9684470295906067,1
+214,1,51,'wild pansy',51,'wild pansy',0.9922210574150085,1
 215,1,88,'watercress',88,'watercress',0.9758403897285461,1
-216,1,87,'cyclamen ',87,'cyclamen ',0.9724429845809937,1
-217,1,66,'spring crocus',80,'frangipani',0.3795740008354187,0
-218,1,27,'stemless gentian',27,'stemless gentian',0.9642460346221924,1
-219,1,86,'magnolia',86,'magnolia',0.7020074129104614,1
-220,1,93,'foxglove',93,'foxglove',0.903002142906189,1
+216,1,87,'cyclamen ',87,'cyclamen ',0.9724427461624146,1
+217,1,66,'spring crocus',80,'frangipani',0.3795747458934784,0
+218,1,27,'stemless gentian',27,'stemless gentian',0.9642458558082581,1
+219,1,86,'magnolia',86,'magnolia',0.702008068561554,1
+220,1,93,'foxglove',93,'foxglove',0.9030020236968994,1
 221,1,98,'bromelia',98,'bromelia',0.9958439469337463,1
-222,1,55,'bishop of llandaff',55,'bishop of llandaff',0.9948154091835022,1
-223,1,57,'geranium',57,'geranium',0.999671220779419,1
+222,1,55,'bishop of llandaff',55,'bishop of llandaff',0.9948152899742126,1
+223,1,57,'geranium',57,'geranium',0.9996713399887085,1
 224,1,73,'rose',73,'rose',0.9968361854553223,1
-225,1,61,'japanese anemone',61,'japanese anemone',0.983607292175293,1
-226,1,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9662052989006042,1
-227,1,70,'gazania',70,'gazania',0.9832682013511658,1
-228,1,55,'bishop of llandaff',55,'bishop of llandaff',0.9761693477630615,1
-229,1,82,'hibiscus',82,'hibiscus',0.9941819310188293,1
-230,1,75,'morning glory',75,'morning glory',0.9608319997787476,1
-231,1,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9657229781150818,1
-232,1,7,'bird of paradise',7,'bird of paradise',0.9802486300468445,1
-233,1,72,'water lily',72,'water lily',0.9747130870819092,1
-234,1,30,'carnation',30,'carnation',0.9328099489212036,1
-235,1,0,'pink primrose',0,'pink primrose',0.9624257683753967,1
-236,1,29,'sweet william',29,'sweet william',0.992656409740448,1
+225,1,61,'japanese anemone',61,'japanese anemone',0.9836070537567139,1
+226,1,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9662050008773804,1
+227,1,70,'gazania',70,'gazania',0.9832683205604553,1
+228,1,55,'bishop of llandaff',55,'bishop of llandaff',0.9761694669723511,1
+229,1,82,'hibiscus',82,'hibiscus',0.9941818118095398,1
+230,1,75,'morning glory',75,'morning glory',0.9608314037322998,1
+231,1,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.965722918510437,1
+232,1,7,'bird of paradise',7,'bird of paradise',0.9802488684654236,1
+233,1,72,'water lily',72,'water lily',0.9747129678726196,1
+234,1,30,'carnation',30,'carnation',0.9328101873397827,1
+235,1,0,'pink primrose',0,'pink primrose',0.9624254703521729,1
+236,1,29,'sweet william',29,'sweet william',0.9926561117172241,1
 237,1,9,'globe thistle',9,'globe thistle',0.9915469288825989,1
-238,1,83,'columbine',83,'columbine',0.7790279388427734,1
+238,1,83,'columbine',83,'columbine',0.7790273427963257,1
 239,1,27,'stemless gentian',27,'stemless gentian',0.9954591989517212,1
-240,1,86,'magnolia',77,'lotus',0.28430911898612976,0
-241,1,12,'king protea',12,'king protea',0.9177888035774231,1
-242,1,80,'frangipani',80,'frangipani',0.9991970658302307,1
-243,1,97,'mexican petunia',97,'mexican petunia',0.9689899682998657,1
-244,1,8,'monkshood',8,'monkshood',0.7663061022758484,1
-245,1,82,'hibiscus',82,'hibiscus',0.9975027441978455,1
+240,1,86,'magnolia',77,'lotus',0.284308522939682,0
+241,1,12,'king protea',12,'king protea',0.9177886843681335,1
+242,1,80,'frangipani',80,'frangipani',0.9991971850395203,1
+243,1,97,'mexican petunia',97,'mexican petunia',0.9689897298812866,1
+244,1,8,'monkshood',8,'monkshood',0.7663048505783081,1
+245,1,82,'hibiscus',82,'hibiscus',0.997502863407135,1
 246,1,50,'petunia',50,'petunia',0.9937073588371277,1
 247,1,88,'watercress',88,'watercress',0.9767497181892395,1
 248,1,16,'purple coneflower',16,'purple coneflower',0.999202311038971,1
 249,1,22,'fritillary',22,'fritillary',0.999313473701477,1
-250,1,22,'fritillary',22,'fritillary',0.9933145642280579,1
+250,1,22,'fritillary',22,'fritillary',0.9933146834373474,1
 251,1,10,'snapdragon',10,'snapdragon',0.953608512878418,1
-252,1,26,'prince of wales feathers',26,'prince of wales feathers',0.9934644103050232,1
-253,1,6,'moon orchid',6,'moon orchid',0.7303320169448853,1
+252,1,26,'prince of wales feathers',26,'prince of wales feathers',0.9934645295143127,1
+253,1,6,'moon orchid',6,'moon orchid',0.7303314208984375,1
 254,1,64,'californian poppy',64,'californian poppy',0.9838244915008545,1
-255,1,81,'clematis',81,'clematis',0.9989686012268066,1
-256,2,74,'thorn apple',74,'thorn apple',0.9853922724723816,1
-257,2,87,'cyclamen ',87,'cyclamen ',0.8662565350532532,1
-258,2,58,'orange dahlia',58,'orange dahlia',0.999327540397644,1
-259,2,96,'mallow',41,'daffodil',0.6811456084251404,0
-260,2,48,'oxeye daisy',48,'oxeye daisy',0.9473802447319031,1
-261,2,13,'spear thistle',13,'spear thistle',0.49256572127342224,1
-262,2,16,'purple coneflower',16,'purple coneflower',0.9998050332069397,1
-263,2,88,'watercress',88,'watercress',0.9853899478912354,1
-264,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9935901165008545,1
-265,2,52,'primula',52,'primula',0.4226638674736023,1
-266,2,94,'bougainvillea',94,'bougainvillea',0.9985355138778687,1
+255,1,81,'clematis',81,'clematis',0.9989688396453857,1
+256,2,74,'thorn apple',74,'thorn apple',0.9853925108909607,1
+257,2,87,'cyclamen ',87,'cyclamen ',0.8662574887275696,1
+258,2,58,'orange dahlia',58,'orange dahlia',0.9993276596069336,1
+259,2,96,'mallow',41,'daffodil',0.6811485290527344,0
+260,2,48,'oxeye daisy',48,'oxeye daisy',0.9473798274993896,1
+261,2,13,'spear thistle',13,'spear thistle',0.4925674498081207,1
+262,2,16,'purple coneflower',16,'purple coneflower',0.9998049139976501,1
+263,2,88,'watercress',88,'watercress',0.985390305519104,1
+264,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9935898780822754,1
+265,2,52,'primula',52,'primula',0.42266395688056946,1
+266,2,94,'bougainvillea',94,'bougainvillea',0.9985356330871582,1
 267,2,32,'love in the mist',32,'love in the mist',0.9731975793838501,1
 268,2,16,'purple coneflower',16,'purple coneflower',0.997016429901123,1
-269,2,77,'lotus',77,'lotus',0.9634649753570557,1
+269,2,77,'lotus',77,'lotus',0.9634650349617004,1
 270,2,90,'hippeastrum ',90,'hippeastrum ',0.998254120349884,1
-271,2,10,'snapdragon',10,'snapdragon',0.9838629961013794,1
-272,2,72,'water lily',72,'water lily',0.9997078776359558,1
+271,2,10,'snapdragon',10,'snapdragon',0.9838629364967346,1
+272,2,72,'water lily',72,'water lily',0.9997077584266663,1
 273,2,61,'japanese anemone',61,'japanese anemone',0.9960148334503174,1
-274,2,57,'geranium',57,'geranium',0.9988671541213989,1
-275,2,81,'clematis',81,'clematis',0.415951669216156,1
-276,2,60,'cautleya spicata',60,'cautleya spicata',0.9496896862983704,1
+274,2,57,'geranium',57,'geranium',0.9988670349121094,1
+275,2,81,'clematis',81,'clematis',0.4159529209136963,1
+276,2,60,'cautleya spicata',60,'cautleya spicata',0.9496891498565674,1
 277,2,68,'windflower',68,'windflower',0.9976913928985596,1
-278,2,38,'siam tulip',3,'sweet pea',0.36024343967437744,0
-279,2,82,'hibiscus',82,'hibiscus',0.9076637029647827,1
+278,2,38,'siam tulip',3,'sweet pea',0.3602462112903595,0
+279,2,82,'hibiscus',82,'hibiscus',0.907663106918335,1
 280,2,36,'cape flower',36,'cape flower',0.9969263672828674,1
-281,2,46,'marigold',46,'marigold',0.9914563298225403,1
-282,2,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9899263381958008,1
-283,2,97,'mexican petunia',97,'mexican petunia',0.9702182412147522,1
-284,2,50,'petunia',50,'petunia',0.9835431575775146,1
+281,2,46,'marigold',46,'marigold',0.9914562106132507,1
+282,2,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9899264574050903,1
+283,2,97,'mexican petunia',97,'mexican petunia',0.9702183604240417,1
+284,2,50,'petunia',50,'petunia',0.9835429191589355,1
 285,2,85,'tree mallow',85,'tree mallow',0.9954224228858948,1
 286,2,5,'tiger lily',5,'tiger lily',0.9977121353149414,1
-287,2,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.6668503880500793,1
+287,2,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.6668499112129211,1
 288,2,75,'morning glory',75,'morning glory',0.985072910785675,1
 289,2,46,'marigold',46,'marigold',0.9919353723526001,1
-290,2,0,'pink primrose',0,'pink primrose',0.9095678925514221,1
+290,2,0,'pink primrose',0,'pink primrose',0.9095679521560669,1
 291,2,13,'spear thistle',13,'spear thistle',0.9949578642845154,1
-292,2,22,'fritillary',22,'fritillary',0.9907135963439941,1
-293,2,23,'red ginger',23,'red ginger',0.9939689636230469,1
+292,2,22,'fritillary',22,'fritillary',0.9907137155532837,1
+293,2,23,'red ginger',23,'red ginger',0.993969202041626,1
 294,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9987720847129822,1
-295,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9891424179077148,1
-296,2,86,'magnolia',86,'magnolia',0.964809000492096,1
+295,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9891425967216492,1
+296,2,86,'magnolia',86,'magnolia',0.9648091197013855,1
 297,2,101,'blackberry lily',101,'blackberry lily',0.9983329176902771,1
 298,2,34,'alpine sea holly',34,'alpine sea holly',0.9846295714378357,1
-299,2,45,'wallflower',45,'wallflower',0.9964231848716736,1
-300,2,83,'columbine',83,'columbine',0.9645757675170898,1
-301,2,15,'globe-flower',15,'globe-flower',0.7420915961265564,1
-302,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9992238283157349,1
-303,2,32,'love in the mist',32,'love in the mist',0.9281688332557678,1
-304,2,51,'wild pansy',51,'wild pansy',0.9337913393974304,1
+299,2,45,'wallflower',45,'wallflower',0.9964233040809631,1
+300,2,83,'columbine',83,'columbine',0.9645757079124451,1
+301,2,15,'globe-flower',15,'globe-flower',0.7420928478240967,1
+302,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9992237091064453,1
+303,2,32,'love in the mist',32,'love in the mist',0.9281694293022156,1
+304,2,51,'wild pansy',51,'wild pansy',0.9337911009788513,1
 305,2,50,'petunia',50,'petunia',0.9954611659049988,1
 306,2,50,'petunia',50,'petunia',0.9996342658996582,1
 307,2,63,'silverbush',63,'silverbush',0.991800844669342,1
-308,2,21,'pincushion flower',21,'pincushion flower',0.9967052340507507,1
-309,2,42,'sword lily',42,'sword lily',0.7681530117988586,1
-310,2,94,'bougainvillea',94,'bougainvillea',0.8905633687973022,1
+308,2,21,'pincushion flower',21,'pincushion flower',0.9967053532600403,1
+309,2,42,'sword lily',42,'sword lily',0.7681536674499512,1
+310,2,94,'bougainvillea',94,'bougainvillea',0.8905622959136963,1
 311,2,76,'passion flower',76,'passion flower',0.9978396892547607,1
-312,2,19,'giant white arum lily',19,'giant white arum lily',0.6657657623291016,1
-313,2,33,'mexican aster',33,'mexican aster',0.976771891117096,1
-314,2,50,'petunia',50,'petunia',0.8706950545310974,1
-315,2,61,'japanese anemone',2,'canterbury bells',0.29732179641723633,0
-316,2,94,'bougainvillea',94,'bougainvillea',0.9737114906311035,1
-317,2,98,'bromelia',98,'bromelia',0.7952980399131775,1
-318,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9900278449058533,1
+312,2,19,'giant white arum lily',19,'giant white arum lily',0.6657662391662598,1
+313,2,33,'mexican aster',33,'mexican aster',0.9767720103263855,1
+314,2,50,'petunia',50,'petunia',0.8706952333450317,1
+315,2,61,'japanese anemone',2,'canterbury bells',0.29732099175453186,0
+316,2,94,'bougainvillea',94,'bougainvillea',0.9737115502357483,1
+317,2,98,'bromelia',98,'bromelia',0.7953000664710999,1
+318,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9900277256965637,1
 319,2,55,'bishop of llandaff',55,'bishop of llandaff',0.9987236857414246,1
-320,2,50,'petunia',82,'hibiscus',0.30889612436294556,0
-321,2,3,'sweet pea',42,'sword lily',0.3462934195995331,0
+320,2,50,'petunia',82,'hibiscus',0.3088954985141754,0
+321,2,3,'sweet pea',42,'sword lily',0.3462941348552704,0
 322,2,40,'barbeton daisy',40,'barbeton daisy',0.9987320303916931,1
-323,2,94,'bougainvillea',94,'bougainvillea',0.995071291923523,1
-324,2,54,'pelargonium',54,'pelargonium',0.9597076773643494,1
-325,2,31,'garden phlox',31,'garden phlox',0.9458974003791809,1
+323,2,94,'bougainvillea',94,'bougainvillea',0.9950711727142334,1
+324,2,54,'pelargonium',54,'pelargonium',0.9597079753875732,1
+325,2,31,'garden phlox',31,'garden phlox',0.9458979368209839,1
 326,2,40,'barbeton daisy',40,'barbeton daisy',0.9873630404472351,1
-327,2,76,'passion flower',76,'passion flower',0.9993661046028137,1
-328,2,37,'great masterwort',37,'great masterwort',0.9301196932792664,1
-329,2,89,'canna lily',89,'canna lily',0.7356078624725342,1
-330,2,84,'desert-rose',84,'desert-rose',0.8817107081413269,1
-331,2,12,'king protea',12,'king protea',0.9972121119499207,1
-332,2,88,'watercress',88,'watercress',0.7110230922698975,1
-333,2,12,'king protea',12,'king protea',0.9974088072776794,1
-334,2,27,'stemless gentian',27,'stemless gentian',0.9543344974517822,1
-335,2,80,'frangipani',80,'frangipani',0.9964642524719238,1
+327,2,76,'passion flower',76,'passion flower',0.9993659853935242,1
+328,2,37,'great masterwort',37,'great masterwort',0.9301191568374634,1
+329,2,89,'canna lily',89,'canna lily',0.73560631275177,1
+330,2,84,'desert-rose',84,'desert-rose',0.8817105889320374,1
+331,2,12,'king protea',12,'king protea',0.9972119927406311,1
+332,2,88,'watercress',88,'watercress',0.7110222578048706,1
+333,2,12,'king protea',12,'king protea',0.9974085688591003,1
+334,2,27,'stemless gentian',27,'stemless gentian',0.9543338418006897,1
+335,2,80,'frangipani',80,'frangipani',0.9964643716812134,1
 336,2,51,'wild pansy',51,'wild pansy',0.9998711347579956,1
 337,2,9,'globe thistle',9,'globe thistle',0.9942746758460999,1
-338,2,83,'columbine',83,'columbine',0.9176374077796936,1
-339,2,7,'bird of paradise',7,'bird of paradise',0.9953008890151978,1
-340,2,52,'primula',52,'primula',0.9275489449501038,1
+338,2,83,'columbine',83,'columbine',0.9176369905471802,1
+339,2,7,'bird of paradise',7,'bird of paradise',0.9953007698059082,1
+340,2,52,'primula',52,'primula',0.9275486469268799,1
 341,2,41,'daffodil',41,'daffodil',0.9585171937942505,1
-342,2,75,'morning glory',75,'morning glory',0.9932436347007751,1
-343,2,14,'yellow iris',14,'yellow iris',0.9985514283180237,1
-344,2,91,'bee balm',91,'bee balm',0.998755693435669,1
-345,2,91,'bee balm',91,'bee balm',0.862060546875,1
-346,2,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.9993534684181213,1
-347,2,84,'desert-rose',31,'garden phlox',0.2978173792362213,0
-348,2,82,'hibiscus',52,'primula',0.2525300681591034,0
-349,2,74,'thorn apple',74,'thorn apple',0.984043538570404,1
-350,2,71,'azalea',71,'azalea',0.45071637630462646,1
-351,2,27,'stemless gentian',27,'stemless gentian',0.9055294990539551,1
-352,2,51,'wild pansy',51,'wild pansy',0.9998977184295654,1
-353,2,40,'barbeton daisy',40,'barbeton daisy',0.6812861561775208,1
-354,2,93,'foxglove',93,'foxglove',0.9988048076629639,1
-355,2,50,'petunia',50,'petunia',0.9944484233856201,1
+342,2,75,'morning glory',75,'morning glory',0.9932435154914856,1
+343,2,14,'yellow iris',14,'yellow iris',0.9985515475273132,1
+344,2,91,'bee balm',91,'bee balm',0.9987558126449585,1
+345,2,91,'bee balm',91,'bee balm',0.8620606660842896,1
+346,2,1,'hard-leaved pocket orchid',1,'hard-leaved pocket orchid',0.9993535876274109,1
+347,2,84,'desert-rose',31,'garden phlox',0.29781854152679443,0
+348,2,82,'hibiscus',52,'primula',0.2525317370891571,0
+349,2,74,'thorn apple',74,'thorn apple',0.9840431809425354,1
+350,2,71,'azalea',71,'azalea',0.45071589946746826,1
+351,2,27,'stemless gentian',27,'stemless gentian',0.9055303931236267,1
+352,2,51,'wild pansy',51,'wild pansy',0.999897837638855,1
+353,2,40,'barbeton daisy',40,'barbeton daisy',0.681285560131073,1
+354,2,93,'foxglove',93,'foxglove',0.9988049268722534,1
+355,2,50,'petunia',50,'petunia',0.9944483041763306,1
 356,2,94,'bougainvillea',94,'bougainvillea',0.9965817332267761,1
-357,2,15,'globe-flower',15,'globe-flower',0.8633807301521301,1
-358,2,76,'passion flower',76,'passion flower',0.7496116161346436,1
-359,2,12,'king protea',12,'king protea',0.9880726337432861,1
-360,2,62,'black-eyed susan',62,'black-eyed susan',0.7470886707305908,1
-361,2,81,'clematis',81,'clematis',0.9902151823043823,1
-362,2,54,'pelargonium',54,'pelargonium',0.5555474162101746,1
+357,2,15,'globe-flower',15,'globe-flower',0.8633801937103271,1
+358,2,76,'passion flower',76,'passion flower',0.7496121525764465,1
+359,2,12,'king protea',12,'king protea',0.9880727529525757,1
+360,2,62,'black-eyed susan',62,'black-eyed susan',0.7470880746841431,1
+361,2,81,'clematis',81,'clematis',0.9902153015136719,1
+362,2,54,'pelargonium',54,'pelargonium',0.5555480718612671,1
 363,2,55,'bishop of llandaff',55,'bishop of llandaff',0.966658353805542,1
-364,2,81,'clematis',81,'clematis',0.9997497200965881,1
-365,2,71,'azalea',71,'azalea',0.9448073506355286,1
-366,2,56,'gaura',56,'gaura',0.9975723624229431,1
-367,2,94,'bougainvillea',94,'bougainvillea',0.9953721165657043,1
-368,2,61,'japanese anemone',61,'japanese anemone',0.3524399399757385,1
+364,2,81,'clematis',81,'clematis',0.9997498393058777,1
+365,2,71,'azalea',71,'azalea',0.944806694984436,1
+366,2,56,'gaura',56,'gaura',0.9975722432136536,1
+367,2,94,'bougainvillea',94,'bougainvillea',0.9953719973564148,1
+368,2,61,'japanese anemone',61,'japanese anemone',0.3524387776851654,1
 369,2,25,'corn poppy',25,'corn poppy',0.9848507642745972,1
-370,2,42,'sword lily',42,'sword lily',0.9931700229644775,1
-371,2,56,'gaura',56,'gaura',0.9710903763771057,1
-372,2,98,'bromelia',98,'bromelia',0.996062695980072,1
-373,2,81,'clematis',76,'passion flower',0.3723719120025635,0
-374,2,83,'columbine',83,'columbine',0.9757056832313538,1
+370,2,42,'sword lily',42,'sword lily',0.993169903755188,1
+371,2,56,'gaura',56,'gaura',0.9710904955863953,1
+372,2,98,'bromelia',98,'bromelia',0.9960628151893616,1
+373,2,81,'clematis',76,'passion flower',0.37237271666526794,0
+374,2,83,'columbine',83,'columbine',0.9757054448127747,1
 375,2,85,'tree mallow',85,'tree mallow',0.9856271743774414,1
-376,2,37,'great masterwort',37,'great masterwort',0.9884588122367859,1
-377,2,42,'sword lily',42,'sword lily',0.3743896484375,1
+376,2,37,'great masterwort',37,'great masterwort',0.9884589314460754,1
+377,2,42,'sword lily',42,'sword lily',0.374390572309494,1
 378,2,77,'lotus',77,'lotus',0.9977297186851501,1
-379,2,87,'cyclamen ',87,'cyclamen ',0.9911496639251709,1
-380,2,93,'foxglove',93,'foxglove',0.9999879598617554,1
-381,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9977914094924927,1
-382,2,95,'camellia',95,'camellia',0.9203245043754578,1
-383,2,12,'king protea',12,'king protea',0.9833722710609436,1
-384,3,74,'thorn apple',74,'thorn apple',0.8509889841079712,1
+379,2,87,'cyclamen ',87,'cyclamen ',0.9911494255065918,1
+380,2,93,'foxglove',93,'foxglove',0.9999880790710449,1
+381,2,59,'pink-yellow dahlia?',59,'pink-yellow dahlia?',0.9977915287017822,1
+382,2,95,'camellia',95,'camellia',0.9203246235847473,1
+383,2,12,'king protea',12,'king protea',0.9833726286888123,1
+384,3,74,'thorn apple',74,'thorn apple',0.8509877920150757,1
 385,3,80,'frangipani',80,'frangipani',0.9999911785125732,1
-386,3,76,'passion flower',76,'passion flower',0.99591064453125,1
-387,3,20,'fire lily',20,'fire lily',0.9786675572395325,1
+386,3,76,'passion flower',76,'passion flower',0.9959105253219604,1
+387,3,20,'fire lily',20,'fire lily',0.9786673188209534,1
 388,3,77,'lotus',77,'lotus',0.9737042188644409,1
-389,3,64,'californian poppy',64,'californian poppy',0.9943966865539551,1
+389,3,64,'californian poppy',64,'californian poppy',0.9943965673446655,1
 390,3,35,'ruby-lipped cattleya',35,'ruby-lipped cattleya',0.9982507824897766,1
-391,3,32,'love in the mist',32,'love in the mist',0.9869602918624878,1
-392,3,3,'sweet pea',3,'sweet pea',0.9673255085945129,1
-393,3,80,'frangipani',80,'frangipani',0.9991117119789124,1
-394,3,95,'camellia',95,'camellia',0.9849467277526855,1
+391,3,32,'love in the mist',32,'love in the mist',0.9869601726531982,1
+392,3,3,'sweet pea',3,'sweet pea',0.9673256278038025,1
+393,3,80,'frangipani',80,'frangipani',0.9991118311882019,1
+394,3,95,'camellia',95,'camellia',0.9849469661712646,1
 395,3,75,'morning glory',75,'morning glory',0.9958056211471558,1
 396,3,87,'cyclamen ',87,'cyclamen ',0.2689705789089203,1
-397,3,98,'bromelia',98,'bromelia',0.9475818872451782,1
-398,3,98,'bromelia',98,'bromelia',0.9729112386703491,1
-399,3,11,"""colt's foot""",11,"""colt's foot""",0.9640638828277588,1
-400,3,38,'siam tulip',38,'siam tulip',0.8584932684898376,1
-401,3,47,'buttercup',47,'buttercup',0.9244105815887451,1
-402,3,100,'trumpet creeper',10,'snapdragon',0.4797021448612213,0
+397,3,98,'bromelia',98,'bromelia',0.9475817084312439,1
+398,3,98,'bromelia',98,'bromelia',0.9729114770889282,1
+399,3,11,"""colt's foot""",11,"""colt's foot""",0.9640641808509827,1
+400,3,38,'siam tulip',38,'siam tulip',0.858494222164154,1
+401,3,47,'buttercup',47,'buttercup',0.9244097471237183,1
+402,3,100,'trumpet creeper',10,'snapdragon',0.47970083355903625,0
 403,3,17,'peruvian lily',17,'peruvian lily',0.9983047246932983,1
-404,3,37,'great masterwort',37,'great masterwort',0.9918355941772461,1
-405,3,29,'sweet william',29,'sweet william',0.7080630660057068,1
-406,3,79,'anthurium',79,'anthurium',0.9741065502166748,1
-407,3,37,'great masterwort',37,'great masterwort',0.9240128397941589,1
+404,3,37,'great masterwort',37,'great masterwort',0.9918354749679565,1
+405,3,29,'sweet william',29,'sweet william',0.708064079284668,1
+406,3,79,'anthurium',79,'anthurium',0.9741069674491882,1
+407,3,37,'great masterwort',37,'great masterwort',0.9240122437477112,1
 408,3,55,'bishop of llandaff',55,'bishop of llandaff',0.9979068040847778,1
 409,3,46,'marigold',46,'marigold',0.9942284822463989,1

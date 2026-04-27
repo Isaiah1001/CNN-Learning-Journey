@@ -1,24 +1,24 @@
 sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
-14,0,3,'sweet pea',78,'toad lily',0.5168434977531433,0
-17,0,39,'lenten rose',95,'camellia',0.6721794009208679,0
-31,0,97,'mexican petunia',54,'pelargonium',0.856358528137207,0
-40,0,30,'carnation',29,'sweet william',0.500849723815918,0
-75,0,56,'gaura',82,'hibiscus',0.7399265766143799,0
-87,0,68,'windflower',19,'giant white arum lily',0.6502333879470825,0
-91,0,17,'peruvian lily',76,'passion flower',0.2942243814468384,0
-106,0,77,'lotus',87,'cyclamen ',0.2736620604991913,0
-124,0,82,'hibiscus',36,'cape flower',0.21705952286720276,0
-126,0,44,'bolero deep blue',3,'sweet pea',0.21195626258850098,0
-137,1,42,'sword lily',52,'primula',0.9055526852607727,0
-199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.5351399779319763,0
-217,1,66,'spring crocus',80,'frangipani',0.3795740008354187,0
-240,1,86,'magnolia',77,'lotus',0.28430911898612976,0
-259,2,96,'mallow',41,'daffodil',0.6811456084251404,0
-278,2,38,'siam tulip',3,'sweet pea',0.36024343967437744,0
-315,2,61,'japanese anemone',2,'canterbury bells',0.29732179641723633,0
-320,2,50,'petunia',82,'hibiscus',0.30889612436294556,0
-321,2,3,'sweet pea',42,'sword lily',0.3462934195995331,0
-347,2,84,'desert-rose',31,'garden phlox',0.2978173792362213,0
-348,2,82,'hibiscus',52,'primula',0.2525300681591034,0
-373,2,81,'clematis',76,'passion flower',0.3723719120025635,0
-402,3,100,'trumpet creeper',10,'snapdragon',0.4797021448612213,0
+14,0,3,'sweet pea',78,'toad lily',0.5168447494506836,0
+17,0,39,'lenten rose',95,'camellia',0.6721764802932739,0
+31,0,97,'mexican petunia',54,'pelargonium',0.8563589453697205,0
+40,0,30,'carnation',29,'sweet william',0.5008474588394165,0
+75,0,56,'gaura',82,'hibiscus',0.739925742149353,0
+87,0,68,'windflower',19,'giant white arum lily',0.6502347588539124,0
+91,0,17,'peruvian lily',76,'passion flower',0.2942242920398712,0
+106,0,77,'lotus',87,'cyclamen ',0.273662269115448,0
+124,0,82,'hibiscus',36,'cape flower',0.21706129610538483,0
+126,0,44,'bolero deep blue',3,'sweet pea',0.21195633709430695,0
+137,1,42,'sword lily',52,'primula',0.905552089214325,0
+199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.5351387858390808,0
+217,1,66,'spring crocus',80,'frangipani',0.3795747458934784,0
+240,1,86,'magnolia',77,'lotus',0.284308522939682,0
+259,2,96,'mallow',41,'daffodil',0.6811485290527344,0
+278,2,38,'siam tulip',3,'sweet pea',0.3602462112903595,0
+315,2,61,'japanese anemone',2,'canterbury bells',0.29732099175453186,0
+320,2,50,'petunia',82,'hibiscus',0.3088954985141754,0
+321,2,3,'sweet pea',42,'sword lily',0.3462941348552704,0
+347,2,84,'desert-rose',31,'garden phlox',0.29781854152679443,0
+348,2,82,'hibiscus',52,'primula',0.2525317370891571,0
+373,2,81,'clematis',76,'passion flower',0.37237271666526794,0
+402,3,100,'trumpet creeper',10,'snapdragon',0.47970083355903625,0
