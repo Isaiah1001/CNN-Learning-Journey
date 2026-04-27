@@ -1,0 +1,28 @@
+Checkpoint: ./checkpoint_base_epoch=34_val_acc=0.9568.ckpt
+Samples: 410
+Overall test accuracy: 0.9439
+Wrong predictions: 23
+
+Worst 10 classes by accuracy:
+- 'bolero deep blue': 0.0000 (0/1)
+- 'spring crocus': 0.0000 (0/1)
+- 'desert-rose': 0.5000 (1/2)
+- 'mallow': 0.5000 (1/2)
+- 'gaura': 0.6667 (2/3)
+- 'sweet pea': 0.6667 (4/6)
+- 'siam tulip': 0.6667 (2/3)
+- 'peruvian lily': 0.6667 (2/3)
+- 'hibiscus': 0.6667 (4/6)
+- 'trumpet creeper': 0.6667 (2/3)
+
+Top 10 confusion pairs:
+- 'sweet pea' -> 'toad lily': 1
+- 'lenten rose' -> 'camellia': 1
+- 'mexican petunia' -> 'pelargonium': 1
+- 'carnation' -> 'sweet william': 1
+- 'gaura' -> 'hibiscus': 1
+- 'windflower' -> 'giant white arum lily': 1
+- 'peruvian lily' -> 'passion flower': 1
+- 'lotus' -> 'cyclamen ': 1
+- 'hibiscus' -> 'cape flower': 1
+- 'bolero deep blue' -> 'sweet pea': 1

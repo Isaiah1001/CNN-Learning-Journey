@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 from collections import Counter
+import matplotlib
+matplotlib.use("Agg", force=True)
+
 
 import torch
 import pandas as pd
