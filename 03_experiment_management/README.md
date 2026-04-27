@@ -8,14 +8,13 @@ But the training process itself was messy: no unified way to log hyperparameters
 files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
 Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
-This stage introduces experiment management — setting up proper tooling to organize the structure of algorithmn, track, compare, and interpret training runs, then using this workflow to explore how key hyperparameters
-affect model accuracy.
+This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, and interpret model behavior, then using this workflow to study how key hyperparameters affect accuracy..
 
 ## What This Stage Covers
 - Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - Hyperparameters: Use the LightningCLI + MLflow workflow to systematically compare learning rates, optimizers; produce a clean results table.
-- Interpretability: saliency and CAM showing inference accuracy for interpretability
+- Interpretability: Saliency maps and CAM/Grad-CAM to visualize which regions drive predictions, error analysis to show more prediction details.
 
 ## File Structure
 ```
@@ -58,8 +57,11 @@ Key capabilities used:
 
 **3. Experiment Design: Change One Variable at a Time**
 
-At this stage, each experiment group has only one variable, like lr or optimizer. This makes direct comparison clear for variable changing.
+At this stage, lightningCLI is used for speedup, in case of messy  each experiment group has only one variable, like lr or optimizer. This makes direct comparison clear for variable changing.
 
+**4. Interpretability: use tool to interpret the inference results instead of only just from accuracy**
+- Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
+- Confusion matrix, per-class accuracy, and a few failure examples to see which flower classes are hardest and how the model makes mistakes.
 ---  
 ## Hyperparameter Experiment Plan
 
