@@ -59,9 +59,10 @@ Key capabilities used:
 
 At this stage, lightningCLI is used for speedup, in case of messy  each experiment group has only one variable, like lr or optimizer. This makes direct comparison clear for variable changing.
 
-**4. Interpretability: use tool to interpret the inference results instead of only just from accuracy**
+**4. Interpretability: use tools to understand model behavior instead of relying only on accuracy**
 - Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
 - Confusion matrix, per-class accuracy, and a few failure examples to see which flower classes are hardest and how the model makes mistakes.
+  
 ---  
 ## Hyperparameter Experiment Plan
 
