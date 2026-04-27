@@ -14,9 +14,9 @@ trainer:
   logger:
     class_path: lightning.pytorch.loggers.MLFlowLogger
     init_args:
-      experiment_name: lr_test
+      experiment_name: optimizer_test
       tracking_uri: sqlite:///mlflow.db
-      run_name: "1e-2"        
+      run_name: "base"        
 
   callbacks:
     - class_path: lightning.pytorch.callbacks.LearningRateMonitor
@@ -27,7 +27,7 @@ trainer:
       init_args:
         dirpath: ./logs/checkpoints
         monitor: val_acc
-        filename: checkpoint_1e-2_{epoch:02d}_{val_acc:.4f}
+        filename: checkpoint_base_{epoch:02d}_{val_acc:.4f}
         save_top_k: 1
         mode: max
         save_last: false
@@ -44,16 +44,16 @@ trainer:
     class_path: lightning.pytorch.profilers.SimpleProfiler
     init_args:
       dirpath: ./profiler_output
-      filename: prof_logs_1e-2
+      filename: prof_logs_base
       extended: true
 
-model:
-  optimizer:
-      class_path: torch.optim.SGD
-      init_args:
-        lr: 1e-2
-        momentum: 0.9
-        weight_decay: 1e-4
+optimizer:
+  class_path: torch.optim.SGD
+  init_args:
+    lr: 1e-2
+    momentum: 0.9
+    weight_decay: 1e-4
+
 data:
   batch_size: 128
   num_workers: 8
