@@ -1,9 +1,9 @@
 
-# Stage 3.3 — Hyperparameters
+# Stage 3.4 — interpretability
 
 ## File Structure
 ```
-📁 03_hyperparameters/
+📁 04_hyperparameters/
 ├── 📁 preprocess/  # dataset access and split utilities
 ├── 📁 logs/  # checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files
@@ -11,9 +11,7 @@
 ├── 📁 yaml_optimizer/ # cli yaml files for different optimizers running
 ├── hyperparameters_flower.py  # DataModule, LightningModule, lightningCLI setup
 ├── mlflow.db # MLflow tracking database for all runs in this stage
-├── lr.png # summary plot for learning rate experiments
-├── optimizer.png # summary plot for optimizer experiments
-├── run_config.py # helper scripts to run multiple YAML config
+├── base.yaml #  YAML config
 └── README.md 
 ```
 
