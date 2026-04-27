@@ -1,0 +1,9 @@
+sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
+277,2,68,'windflower',68,'windflower',0.9976913928985596,1
+92,0,68,'windflower',68,'windflower',0.9975069165229796,1
+245,1,82,'hibiscus',82,'hibiscus',0.9975027441978456,1
+229,1,82,'hibiscus',82,'hibiscus',0.9941819310188292,1
+98,0,97,'mexican petunia',97,'mexican petunia',0.9871277809143066,1
+22,0,3,'sweet pea',3,'sweet pea',0.98492032289505,1
+283,2,97,'mexican petunia',97,'mexican petunia',0.9702182412147522,1
+392,3,3,'sweet pea',3,'sweet pea',0.9673255085945128,1

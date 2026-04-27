@@ -1,9 +1,9 @@
 
-# Stage 3.4 — interpretability
+# Stage 3.4 — Interpretability
 
 ## File Structure
 ```
-📁 04_hyperparameters/
+📁 04_interpretability/
 ├── 📁 preprocess/  # dataset access and split utilities
 ├── 📁 logs/  # checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files

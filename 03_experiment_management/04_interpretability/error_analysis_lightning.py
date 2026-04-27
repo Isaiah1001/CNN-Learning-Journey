@@ -11,7 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import lightning.pytorch as pl
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
 from lightning.pytorch.callbacks import Callback
 
 from hyperparameters_flower import FlowerLightModule, FlowerDataModule
@@ -118,6 +118,18 @@ class ErrorAnalysisCallback(Callback):
     def _save_summary(self, df, per_class_df):
         overall_acc = df["correct"].mean()
         wrong_count = int((df["correct"] == 0).sum())
+
+        y_true = df["true_label"].to_numpy()
+        y_pred = df["pred_label"].to_numpy()
+
+        # Macro / weighted precision, recall, F1
+        prec_macro, rec_macro, f1_macro, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="macro", zero_division=0
+        )
+        prec_weighted, rec_weighted, f1_weighted, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="weighted", zero_division=0
+        )
+
         wrong_df = df[df["correct"] == 0]
         pair_counts = Counter(zip(wrong_df["true_class"], wrong_df["pred_class"]))
 
@@ -126,6 +138,16 @@ class ErrorAnalysisCallback(Callback):
             f.write(f"Samples: {len(df)}\n")
             f.write(f"Overall test accuracy: {overall_acc:.4f}\n")
             f.write(f"Wrong predictions: {wrong_count}\n\n")
+
+            f.write("Macro metrics (averaged over classes):\n")
+            f.write(f"- Precision (macro): {prec_macro:.4f}\n")
+            f.write(f"- Recall   (macro): {rec_macro:.4f}\n")
+            f.write(f"- F1       (macro): {f1_macro:.4f}\n\n")
+
+            f.write("Weighted metrics (support-weighted over classes):\n")
+            f.write(f"- Precision (weighted): {prec_weighted:.4f}\n")
+            f.write(f"- Recall   (weighted): {rec_weighted:.4f}\n")
+            f.write(f"- F1       (weighted): {f1_weighted:.4f}\n\n")
 
             f.write("Worst 10 classes by accuracy:\n")
             for _, row in per_class_df.head(10).iterrows():

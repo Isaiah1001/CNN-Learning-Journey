@@ -1,4 +1,5 @@
 Checkpoint: ./checkpoint_base_epoch=34_val_acc=0.9568.ckpt
+Device: cpu
 Samples: 410
 Overall test accuracy: 0.9439
 Wrong predictions: 23
