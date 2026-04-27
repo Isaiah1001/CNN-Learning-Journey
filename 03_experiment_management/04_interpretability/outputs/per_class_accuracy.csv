@@ -1,0 +1,99 @@
+true_label,true_class,total,correct,accuracy
+66,'spring crocus',1,0,0.0
+44,'bolero deep blue',1,0,0.0
+84,'desert-rose',2,1,0.5
+96,'mallow',2,1,0.5
+82,'hibiscus',6,4,0.6666666666666666
+17,'peruvian lily',3,2,0.6666666666666666
+3,'sweet pea',6,4,0.6666666666666666
+100,'trumpet creeper',3,2,0.6666666666666666
+56,'gaura',3,2,0.6666666666666666
+38,'siam tulip',3,2,0.6666666666666666
+86,'magnolia',4,3,0.75
+42,'sword lily',4,3,0.75
+68,'windflower',4,3,0.75
+30,'carnation',4,3,0.75
+97,'mexican petunia',5,4,0.8
+35,'ruby-lipped cattleya',5,4,0.8
+61,'japanese anemone',5,4,0.8
+39,'lenten rose',6,5,0.8333333333333334
+77,'lotus',7,6,0.8571428571428571
+81,'clematis',9,8,0.8888888888888888
+50,'petunia',12,11,0.9166666666666666
+64,'californian poppy',2,2,1.0
+63,'silverbush',3,3,1.0
+62,'black-eyed susan',5,5,1.0
+60,'cautleya spicata',4,4,1.0
+67,'bearded iris',1,1,1.0
+59,'pink-yellow dahlia?',8,8,1.0
+58,'orange dahlia',4,4,1.0
+57,'geranium',3,3,1.0
+65,'osteospermum',4,4,1.0
+70,'gazania',2,2,1.0
+75,'morning glory',8,8,1.0
+72,'water lily',4,4,1.0
+99,'blanket flower',2,2,1.0
+98,'bromelia',5,5,1.0
+95,'camellia',5,5,1.0
+94,'bougainvillea',10,10,1.0
+93,'foxglove',9,9,1.0
+91,'bee balm',2,2,1.0
+90,'hippeastrum ',1,1,1.0
+89,'canna lily',3,3,1.0
+71,'azalea',7,7,1.0
+88,'watercress',9,9,1.0
+85,'tree mallow',5,5,1.0
+83,'columbine',6,6,1.0
+80,'frangipani',8,8,1.0
+79,'anthurium',4,4,1.0
+78,'toad lily',3,3,1.0
+76,'passion flower',12,12,1.0
+74,'thorn apple',7,7,1.0
+73,'rose',6,6,1.0
+87,'cyclamen ',7,7,1.0
+55,'bishop of llandaff',8,8,1.0
+0,'pink primrose',2,2,1.0
+53,'sunflower',3,3,1.0
+21,'pincushion flower',1,1,1.0
+20,'fire lily',2,2,1.0
+19,'giant white arum lily',2,2,1.0
+16,'purple coneflower',4,4,1.0
+15,'globe-flower',3,3,1.0
+14,'yellow iris',2,2,1.0
+13,'spear thistle',4,4,1.0
+12,'king protea',7,7,1.0
+22,'fritillary',7,7,1.0
+11,"""colt's foot""",2,2,1.0
+9,'globe thistle',3,3,1.0
+8,'monkshood',2,2,1.0
+7,'bird of paradise',4,4,1.0
+6,'moon orchid',3,3,1.0
+5,'tiger lily',2,2,1.0
+4,'english marigold',2,2,1.0
+2,'canterbury bells',1,1,1.0
+1,'hard-leaved pocket orchid',3,3,1.0
+10,'snapdragon',5,5,1.0
+23,'red ginger',1,1,1.0
+25,'corn poppy',3,3,1.0
+26,'prince of wales feathers',1,1,1.0
+52,'primula',4,4,1.0
+51,'wild pansy',6,6,1.0
+49,'common dandelion',1,1,1.0
+48,'oxeye daisy',3,3,1.0
+47,'buttercup',2,2,1.0
+46,'marigold',4,4,1.0
+45,'wallflower',8,8,1.0
+43,'poinsettia',3,3,1.0
+41,'daffodil',1,1,1.0
+40,'barbeton daisy',5,5,1.0
+37,'great masterwort',5,5,1.0
+36,'cape flower',4,4,1.0
+34,'alpine sea holly',3,3,1.0
+33,'mexican aster',3,3,1.0
+32,'love in the mist',4,4,1.0
+31,'garden phlox',4,4,1.0
+29,'sweet william',4,4,1.0
+28,'artichoke',5,5,1.0
+27,'stemless gentian',5,5,1.0
+54,'pelargonium',4,4,1.0
+101,'blackberry lily',1,1,1.0
