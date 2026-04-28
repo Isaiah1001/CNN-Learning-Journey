@@ -43,7 +43,7 @@ GPU utilization during training was only ~20%, indicating that the data pipeline
 Thus, update preprocess/data_split_subset.py, improve training time from 46s/epoch to 6s/epoch. And set seed for productivity.
 
 ## Results
-
+**Code:** `main.py`
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
