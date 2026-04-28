@@ -23,8 +23,10 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 ├── select_wrong_prediction.py  # Tools to select misclassified samples
 ```
 
-## Results
-**Code:** 'run_code.py' 
+## Code
+`run_code.py`: the bash of running those following codes
+`hyperparameters_flower.py`: lightning data and model module with hyperparameters defined in `base.yaml`to produce `checkpoint_base_epoch=34_val_acc=0.9568.ckpt`
+
 | Script | Technique | Purpose |
 |--------|-----------|---------|
 | `gradcam_flower*.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
@@ -32,7 +34,20 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 | `error_analysis_lightning.py` | Error Analysis | Analyze misclassified samples to understand model weaknesses |
 | `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for analysis |
 | `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for analysis |
-**Artifact:**  './output'
+
+## Artifact
+The artifacts are inside folder `./outputs`
+| Name |  Purpose |
+|--------|---------|
+| `all_predictions.csv` | the results for all 410 test cases |
+| `condusion_matrix.png` | plot to show confusion matrix of all 410 test cases |
+| `per_class_accuracy.csv` | inference accuracy for every class, from worst to best |
+| `summary.txt` | accuracy, f1 scores, precision and recall calculations are here |
+| `wrong_predictions.csv` | Filter misclassified samples for analysis |
+| `gradcam_targets.csv` | Analyze misclassified samples to understand model weaknesses |
+| `gradcam_targets_true.csv` | Filter correctly classified samples for analysis |
+
+
 
 ## Results
 **Code:** `hyperparameters_flower.py` and corresponding yaml files  
