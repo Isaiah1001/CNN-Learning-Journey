@@ -177,7 +177,7 @@ For the mexican petunia class, Grad-CAM highlights different parts of the flower
   >
 </figure>
 
-For the wind flower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
+For the windflower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
 
 - In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges, the intricate structures near the center and leaf.
 - In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
