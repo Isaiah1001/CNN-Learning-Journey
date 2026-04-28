@@ -128,7 +128,7 @@ Fixed: `lr=1e-2`, `batch_size=64`, `epochs = 40`
 | SGD       | 0.9568      | 34         | Strong, stable baseline with simple SGD     |
 | RMSprop   | 0.4414      | 27         | numerically unstable and poor final acc  |
 
-*All tables will be filled in after experiments complete. Final results summary in `03_hyperparameters/README.md`.*
+*All information are summarized in `03_hyperparameters/README.md`.*
 
 ---
 
@@ -140,6 +140,55 @@ Fixed: `lr=1e-2`, `batch_size=64`, `epochs = 40`
 | Optimizer | AdamW       | 96.50       | The choice of optimizer has a noticeable impact on convergence and final accuracy. |
 
 ---
+
+## (Grad-)CAM and Saliency heatmap  
+**windflower**  
+  - Wrong: sample **ID 87**, true `windflower` but predicted `giant white arum lily` with confidence **0.650**.  
+  - Correct: sample **ID 277**, true `windflower`, predicted `windflower` with confidence **0.998**.  
+
+<figure>
+  <figcaption>CAM – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./04_interpretability/outputs/gradcam_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="CAM ID 31"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>CAM – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./04_interpretability/outputs/gradcam_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="CAM ID 98"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./04_interpretability/outputs/saliency_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="Saliency ID 87"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./04_interpretability/outputs/saliency_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="Saliency ID 277"
+    width="400"
+  >
+</figure>
+
+For the windflower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
+
+- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges, the intricate structures near the center and leaf.
+- In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
+- The saliency maps show clear difference among misclassified and correctly classified examples.  
+
+*All information are summarized in `04_interpretability/README.md`.*
 
 ## How to Run
 
