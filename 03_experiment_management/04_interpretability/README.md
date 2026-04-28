@@ -94,16 +94,43 @@ For each class, we compare at least one misclassified sample with one correctly 
 
 - **mexican petunia**  
   - Wrong: sample **ID 31**, true `mexican petunia` but predicted `pelargonium` with confidence **0.856**.  
-  - Correct: sample **ID 283**, true `mexican petunia`, predicted `mexican petunia` with confidence **0.970**.  
+  - Correct: sample **ID 98**, true `mexican petunia`, predicted `mexican petunia` with confidence **0.987**.  
   These two cases illustrate how similar purple flowers can lead the model to focus on slightly different petal/leaf regions.
 
 <figure>
-  <img src="./outputs/gradcam_images/mexican_petunia/id31_true_97_pred_54_pelargonium_conf_0.856.png" alt="CAM ID 31">
-  <figcaption>CAM –misclassified(ID 31, conf 0.856)</figcaption>
+  <figcaption>CAM – misclassified (ID 31, conf 0.856)</figcaption>
+  <img
+    src="./outputs/gradcam_images/mexican_petunia/id31_true_97_pred_54_pelargonium_conf_0.856.png"
+    alt="CAM ID 31"
+    width="400"
+  >
 </figure>
+
 <figure>
-  <img src="./outputs/gradcam_images/mexican_petunia/id283_true_97_pred_97_mexican_petunia_conf_0.970.png" alt="CAM ID 283">
-  <figcaption>CAM –Correctly classified(ID 283, conf 0.970)</figcaption>
+  <figcaption>CAM – correctly classified (ID 98, conf 0.987)</figcaption>
+  <img
+    src="./outputs/gradcam_images/mexican_petunia/id98_true_97_pred_97_mexican_petunia_conf_0.987.png"
+    alt="CAM ID 98"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – misclassified (ID 31, conf 0.856)</figcaption>
+  <img
+    src="./outputs/saliency_images/mexican_petunia/id31_true_97_pred_54_pelargonium_conf_0.856.png"
+    alt="Saliency ID 31"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – correctly classified (ID 98, conf 0.987)</figcaption>
+  <img
+    src="./outputs/saliency_images/mexican_petunia/id98_true_97_pred_97_mexican_petunia_conf_0.987.png"
+    alt="Saliency ID 98"
+    width="400"
+  >
 </figure>
 
 - **windflower**  
@@ -111,15 +138,123 @@ For each class, we compare at least one misclassified sample with one correctly 
   - Correct: sample **ID 277**, true `windflower`, predicted `windflower` with confidence **0.998**.  
   Here we compare a confusion between two white flowers against a clean, high-confidence success.
 
+<figure>
+  <figcaption>CAM – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./outputs/gradcam_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="CAM ID 31"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>CAM – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./outputs/gradcam_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="CAM ID 98"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./outputs/saliency_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="Saliency ID 87"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./outputs/saliency_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="Saliency ID 277"
+    width="400"
+  >
+</figure>
+
 - **sweet pea**  
   - Wrong: sample **ID 14**, true `sweet pea` but predicted `toad lily` with confidence **0.517**.  
   - Correct: sample **ID 22**, true `sweet pea`, predicted `sweet pea` with confidence **0.985**.  
   This pair shows how the model sometimes misinterprets spotted or striped petal patterns.
 
+<figure>
+  <figcaption>CAM – misclassified (ID 14, conf 0.517)</figcaption>
+  <img
+    src="./outputs/gradcam_images/sweet_pea/id14_true_3_pred_78_toad_lily_conf_0.517.png"
+    alt="CAM ID 14"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>CAM – correctly classified (ID 22, conf 0.985)</figcaption>
+  <img
+    src="./outputs/gradcam_images/sweet_pea/id22_true_3_pred_3_sweet_pea_conf_0.985.png"
+    alt="CAM ID 22"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – misclassified (ID 14 conf 0.517)</figcaption>
+  <img
+    src="./outputs/saliency_images/sweet_pea/id14_true_3_pred_78_toad_lily_conf_0.517.png"
+    alt="Saliency ID 14"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – correctly classified (ID 22, conf 0.985)</figcaption>
+  <img
+    src="./outputs/saliency_images/sweet_pea/id22_true_3_pred_3_sweet_pea_conf_0.985.png"
+    alt="Saliency ID 22"
+    width="400"
+  >
+</figure>
+
 - **hibiscus**  
   - Wrong: sample **ID 124**, true `hibiscus` but predicted `cape flower` with confidence **0.217**.  
   - Correct: sample **ID 229**, true `hibiscus`, predicted `hibiscus` with confidence **0.994**.  
   These examples highlight when the model correctly focuses on the large central petals versus when it is distracted by background or other structures.
+
+<figure>
+  <figcaption>CAM – misclassified (ID 124, conf 0.217)</figcaption>
+  <img
+    src="./outputs/gradcam_images/hibiscus/id124_true_82_pred_36_cape_flower_conf_0.217.png"
+    alt="CAM ID 124"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>CAM – correctly classified (ID 229, conf 0.994)</figcaption>
+  <img
+    src="./outputs/gradcam_images/hibiscus/id229_true_82_pred_82_hibiscus_conf_0.994.png"
+    alt="CAM ID 229"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – misclassified (ID 124, conf 0.217)</figcaption>
+  <img
+    src="./outputs/saliency_images/hibiscus/id124_true_82_pred_36_cape_flower_conf_0.217.png"
+    alt="Saliency ID 124"
+    width="400"
+  >
+</figure>
+
+<figure>
+  <figcaption>Saliency – correctly classified (ID 229, conf 0.994)</figcaption>
+  <img
+    src="./outputs/saliency_images/hibiscus/id229_true_82_pred_82_hibiscus_conf_0.994.png"
+    alt="Saliency ID 229"
+    width="400"
+  >
+</figure>
 
 ## Key Findings
 - **Learning rate** is critical: lr=1e-2 reaches ~0.9 validation accuracy by epoch 10 and stabilizes around 0.96
