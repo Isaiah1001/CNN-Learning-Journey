@@ -50,7 +50,7 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 
 ## Results
 **1. Classifier head fine-tuning**  
-**Code:** `classifier_head.py` 
+**Code:** `classifier_head.py`  
 **Artifact:** `./checkpoints/efficientnet_b0_flower.pth`   
 | Metric | Value |
 |--------|-------|
