@@ -18,8 +18,8 @@
 ```
 
 ## Results
-**Code:** 'hyperparameters_flower.py'  and corresponding yaml files  
-**Artifact:** './logs', './profiler_output', 'mlflow.db', 'lr.png', 'optimizer.png'
+**Code:** `hyperparameters_flower.py`  and corresponding yaml files  
+**Artifact:** `./logs`, `./profiler_output`, `mlflow.db`, `lr.png`, `optimizer.png`
 ### Different lr 
 | Run name     | lr     | Final val acc | Final val loss | Notes                 |
 |-------------|--------|--------------:|---------------:|-----------------------|

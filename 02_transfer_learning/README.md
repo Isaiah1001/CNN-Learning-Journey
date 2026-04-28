@@ -40,7 +40,7 @@ Notes: please pay attention to the difference for each strategy in terms of lr, 
 
 ## Key Design Decisions
 
-**1. Why EfficientNet-B0 **  
+**1. Why EfficientNet-B0**  
 EfficientNet-B0 (5.3M parameters) is the baseline of the EfficientNet family. For a 102-class fine-grained
 classification task on a small dataset (8,189 images), B0 offers a strong accuracy and efficiency trade-off.
 Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
@@ -50,8 +50,8 @@ To better understanding the magic of fine-tuning art and the performance of CNN 
 
 ## Results
 **1. Classifier head fine-tuning**  
-**Code:** classifier_head.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower.pth  
+**Code:** `classifier_head.py`  
+**Artifact:** `./checkpoints/efficientnet_b0_flower.pth`   
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -69,8 +69,8 @@ sufficient to unlock most of its representational capacity for this task. It is 
 Note that this step does not start from the original EfficientNet‑B0 weights.
 It continues training from the model obtained in the “classifier head fine‑tuning” stage, then unfreezes the last layer of the backbone.  
 **2.1**  
-**Code:** transfer_learning_last_layer.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower_lastlayer_plus_head.pth  
+**Code:** `transfer_learning_last_layer.py`  
+**Artifact:** `./checkpoints/efficientnet_b0_flower_lastlayer_plus_head.pth`  
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -83,8 +83,8 @@ Unfreezing the last block of the backbone increases the number of trainable para
 yields only a marginal accuracy gain of 0.83%. Several adjustments could be made to improve performance at this stage. Tried schedule in below section. 
 
 **2.2**  
-**Code:** transfer_learning_last_layer_Scheduler.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower_lastlayer_plus_head_Scheduler.pth  
+**Code:** `transfer_learning_last_layer_Scheduler.py`  
+**Artifact:** `./checkpoints/efficientnet_b0_flower_lastlayer_plus_head_Scheduler.pth`  
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -101,8 +101,8 @@ reported to improve fine-tuning performance in the literature.
 Note that this step does not start from the original EfficientNet‑B0 weights.
 It continues training from the model obtained in the “classifier head fine‑tuning” stage, then unfreezes the last 3 layers of the backbone.  
 **3.1**  
-**Code:** transfer_learning_last_3layer.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower_last3layer_plus_head.pth  
+**Code:** `transfer_learning_last_3layer.py`  
+**Artifact:** `./checkpoints/efficientnet_b0_flower_last3layer_plus_head.pth`  
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -116,8 +116,8 @@ trainable). Despite this substantial increase in trainable capacity, the accurac
 deeper layers on this dataset. The following section explores whether a learning rate schedule can further improve performance.
 
 **3.2**  
-**Code:** transfer_learning_last_3layer_Scheduler.py   
-**Artifact:** ./checkpoints/efficientnet_b0_flower_last3layer_plus_head_Scheduler.pth  
+**Code:** `transfer_learning_last_3layer_Scheduler.py`   
+**Artifact:** `./checkpoints/efficientnet_b0_flower_last3layer_plus_head_Scheduler.pth`  
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -129,8 +129,8 @@ deeper layers on this dataset. The following section explores whether a learning
 
 
 **3.3**  
-**Code:** transfer_learning_last_3layer_difflr.py  
-**Artifact:** ./checkpoints/efficientnet_b0_flower_last3layer_plus_head_difflr.pth
+**Code:** `transfer_learning_last_3layer_difflr.py`  
+**Artifact:** `./checkpoints/efficientnet_b0_flower_last3layer_plus_head_difflr.pth`
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |

@@ -23,42 +23,36 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 ├── select_wrong_prediction.py  # Tools to select misclassified samples
 ```
 
-## Quick Start
-
-Run interpretability analysis:
-```bash
-python run_code.py
-```
-
-## Available Techniques
+## Code
+`run_code.py`: the bash of running those following codes  
+`hyperparameters_flower.py`: lightning data and model module with hyperparameters defined in `base.yaml`to produce `checkpoint_base_epoch=34_val_acc=0.9568.ckpt`
 
 | Script | Technique | Purpose |
 |--------|-----------|---------|
-| `gradcam_flower.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
-| `saliency_flower.py` | Saliency Maps | Show pixel-level importance based on gradient |
-| `error_analysis_lightning.py` | Error Analysis | Analyze misclassified samples to understand model weaknesses |
-| `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for analysis |
-| `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for analysis |
+| `gradcam_flower*.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
+| `saliency_flower*.py` | Saliency Maps | Show pixel-level importance based on gradient |
+| `error_analysis_lightning.py` | Error Analysis | Evaluate the checkpoint on the 410-image test set, show the inference statistics |
+| `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for CAM and Saliency map |
+| `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for CAM and Saliency map |
+
+## Artifact
+The artifacts are inside folder `./outputs`
+| Name |  Purpose |
+|--------|---------|
+| `all_predictions.csv` | the results for all 410 test cases |
+| `condusion_matrix.png` | plot to show confusion matrix of all 410 test cases |
+| `per_class_accuracy.csv` | inference accuracy for every class, from worst to best |
+| `summary.txt` | accuracy, f1 scores, precision recall calculations and statistics are here |
+| `wrong_predictions.csv` |  misclassified samples |
+| `gradcam_targets.csv` | filter 4 types of misclassified samples for CAM and Saliency map  |
+| `gradcam_targets_true.csv` | filter 4 types of correctly classified samples for CAM and Saliency map |
+
+
 
 ## Results
-**Code:** `hyperparameters_flower.py` and corresponding yaml files  
-**Artifact:** `checkpoint_base_epoch=34_val_acc=0.9568.ckpt`, `./outputs/`
+### Statistics
 
-### Learning Rate Comparison
-| Run name | lr     | Final val acc | Final val loss | Notes |
-|----------|--------|--------------:|---------------:|-------|
-| 1e-4     | 1e-4   | 0.2769        | 3.96           | Very slow learning |
-| 1e-3     | 1e-3   | 0.8461        | 1.04           | Slow learning, underfits after 40 epochs |
-| 1e-2     | 1e-2   | 0.9568        | 0.19           | Fast, stable convergence; ~0.9 val acc by epoch 10 |
-| 1e-1     | 1e-1   | 0.9739        | 0.11           | Fast learning, best validation acc |
-
-### Optimizer Comparison
-| Run name | lr   | Optimizer | Final val acc | Final val loss | Notes |
-|----------|------|-----------|--------------:|---------------:|-------|
-| AdamW    | 1e-2 | AdamW     | 0.9650        | 0.20           | Fast, stable, slightly best acc |
-| Adam     | 1e-2 | Adam      | 0.9471        | 0.25           | Quick convergence, slightly lower final acc |
-| base     | 1e-2 | SGD       | 0.9568        | 0.20           | Strong, stable baseline |
-| RMSprop  | 1e-2 | RMSprop   | 0.4414        | 5.42           | Numerically unstable, poor acc |
+### CAM and Saliency
 
 ## Key Findings
 - **Learning rate** is critical: lr=1e-2 reaches ~0.9 validation accuracy by epoch 10 and stabilizes around 0.96

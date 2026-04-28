@@ -15,8 +15,8 @@ This subfolder builds a complete training and experiment‑tracking pipeline for
 ```
 
 ## Results
-**Code:** 'MLflow_flower.py'  
-**Artifact:** './logs', './profiler_output', 'mlflow.db', 'mlflow.png'
+**Code:** `MLflow_flower.py`  
+**Artifact:** `./logs`, `./profiler_output`, `mlflow.db`, `mlflow.png`
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
