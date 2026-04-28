@@ -96,7 +96,15 @@ For each class, we compare at least one misclassified sample with one correctly 
   - Wrong: sample **ID 31**, true `mexican petunia` but predicted `pelargonium` with confidence **0.856**.  
   - Correct: sample **ID 283**, true `mexican petunia`, predicted `mexican petunia` with confidence **0.970**.  
   These two cases illustrate how similar purple flowers can lead the model to focus on slightly different petal/leaf regions.
-![CAM ID 31](./outputs/gradcam_images/mexican_petunia/)  
+
+<figure>
+  <img src="./outputs/gradcam_images/mexican_petunia/id31_true_97_pred_54_pelargonium_conf_0.856.png" alt="CAM ID 31">
+  <figcaption>CAM –misclassified(ID 31, conf 0.856)</figcaption>
+</figure>
+<figure>
+  <img src="./outputs/gradcam_images/mexican_petunia/id283_true_97_pred_97_mexican_petunia_conf_0.970.png" alt="CAM ID 283">
+  <figcaption>CAM –Correctly classified(ID 283, conf 0.970)</figcaption>
+</figure>
 
 - **windflower**  
   - Wrong: sample **ID 87**, true `windflower` but predicted `giant white arum lily` with confidence **0.650**.  
