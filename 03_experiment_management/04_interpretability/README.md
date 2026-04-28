@@ -24,7 +24,7 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 ```
 
 ## Code
-`run_code.py`: the bash of running those following codes
+`run_code.py`: the bash of running those following codes  
 `hyperparameters_flower.py`: lightning data and model module with hyperparameters defined in `base.yaml`to produce `checkpoint_base_epoch=34_val_acc=0.9568.ckpt`
 
 | Script | Technique | Purpose |
