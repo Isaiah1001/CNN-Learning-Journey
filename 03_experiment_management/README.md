@@ -194,23 +194,21 @@ For the windflower class, Grad-CAM and saliency map highlight different parts of
 
 - A structured experiment-management setup (PyTorch Lightning + MLflow + LightningCLI) makes it much easier to run, reproduce, and compare many CNN experiments than hand-written training loops and ad‑hoc scripts. It turns hyperparameter tuning into a traceable, data-driven process rather than guesswork.
 
-- On Oxford 102 Flowers, a relatively large learning rate for the new classifier head (1e‑1 with SGD) achieves the best validation accuracy (97.39%), and the choice of optimizer (AdamW vs SGD vs Adam vs RMSprop) has a clear impact on convergence speed and final performance.
+- On Oxford 102 Flowers, a relatively large learning rate for the classifier head (1e‑1 with SGD) achieves the best validation accuracy (97.39%), and the choice of optimizer (AdamW vs SGD vs Adam vs RMSprop) has a clear impact on convergence speed and final performance.
 
-- Detailed error analysis (per-class accuracy, confusion matrix, `wrong_predictions.csv`) shows that most remaining errors come from very small or visually similar classes, rather than from a fundamentally flawed model, which explains the gap between macro and weighted metrics.
+- Detailed error analysis (per-class accuracy, confusion matrix, f1 scores) shows that most remaining errors come from very small or visually similar classes, rather than from a fundamentally flawed model, which explains the gap between macro and weighted metrics.
 
 - Grad-CAM and saliency maps confirm that the model mostly focuses on meaningful flower structures (petals, center, filaments) instead of background artifacts; when it fails, the attention patterns reveal whether the model is confused by similar petal textures or distracted by leaves and background.
 
 - The interpretability results directly suggest next steps: improve data balance for tail classes, strengthen background-robust augmentations, and consider fine-grained methods (e.g. better backbones or metric-learning losses) to separate species with very similar petal shapes and textures.
 
-## Questions / Open Points
+## Questions
 
-- How far can performance be improved on the hardest, low-sample classes by only adjusting data-related factors (class-balanced sampling, targeted augmentation, mixup / CutMix), before changing the backbone architecture?
+- For low-sample classes, how can we improve their accuracy without simply collecting more data (e.g. class-balanced sampling, targeted augmentation, or loss re-weighting), and which techniques are most effective in practice?
 
-- Would a slightly larger backbone (e.g. EfficientNet-B1/B2) or a fine-grained loss (center loss, ArcFace, contrastive loss) give a meaningful boost on confusing pairs such as `mexican petunia → pelargonium` and `sweet pea → toad lily`?
+- Interpretability clearly helps us understand model behavior behind the screen. Based on the Grad-CAM and saliency figures in this stage, what are the most important next steps to improve the model, and are there established best practices we can follow?
 
-- Can we design augmentations that specifically reduce the model’s reliance on leaves and background (as seen in some sweet pea failures) without hurting overall accuracy on the easier classes?
-
-- How well does this experiment-management and interpretability workflow generalize to other datasets (e.g. non-flower natural images or industrial inspection data), and what needs to change to reuse it quickly in a new project?
+- In an industrial pipeline, once we have a model with satisfactory accuracy on a benchmark dataset, what should happen next before deployment? In particular, how should we evaluate inference latency, throughput, and model size for edge devices, and what optimization techniques (quantization, pruning, distillation) are appropriate?
 ---
 
 ## References
