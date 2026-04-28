@@ -5,7 +5,7 @@
 Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset, with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
 
 But the training process itself was messy: no unified way to log hyperparameters and metrics, no visibility into GPU/CPU utilization, which parts delaying training, and comparing runs required manually checking saved
-files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
+files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: `工欲善其事，必先利其器` (if a craftsman wants to do good work,  he must first sharpen his tools). 
 Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
 This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Last, use CAM and saliency map to interpret model behavior.
@@ -13,7 +13,7 @@ This stage introduces experiment management: setting up proper tooling to organi
 ## What This Stage Covers
 - Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
-- Hyperparameters: Use the 'LightningCLI' + MLflow workflow to systematically compare learning rates, optimizers; produce a clean results table.
+- Hyperparameters: Use the `LightningCLI` + `MLflow` workflow to systematically compare learning rates, optimizers; produce a clean results table.
 - Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions.
 
 ## File Structure
@@ -74,17 +74,17 @@ This stage introduces experiment management: setting up proper tooling to organi
 The Stage 2 training loop (`model/training_loop.py`) was reasonably clean, but it still required manually handling the epoch loop, metric accumulation, best‑model tracking, device placement, and learning‑rate scheduling. 
 PyTorch Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens (forward pass, loss, optimizer) rather than *how* the training loop is executed.
 
-In this stage, I also take advantage of several built‑in and custom callbacks:
+In this stage, several built‑in and custom callbacks are also deployed:
 
 - `LearningRateMonitor`: logs the learning rate each epoch automatically, with no manual tracking code.
 - `ModelCheckpoint`: saves the best and/or last checkpoints based on `val_acc` without any custom save logic.
 - `ProgressiveBackboneFinetuning`: encodes the gradual unfreezing strategy as a reusable callback, instead of hard‑coding it into the training loop.
 - `PostFreezeModelSummary`: prints the total and trainable parameter counts whenever the finetuning state changes.
-- `MLFlowLogger` (in folder '02_mlflow'): plugs directly into `Trainer` so that hyperparameters, metrics, and artifacts are logged to MLflow with minimal extra code.
+- `MLFlowLogger` (in folder `02_mlflow`): plugs directly into `Trainer` so that hyperparameters, metrics, and artifacts are logged to MLflow with minimal extra code.
 
 Other useful tools:
 
-- Profiler: records detailed timing and memory information during training to help identify performance bottlenecks.
+- `Profiler`: records detailed timing and memory information during training to help identify performance bottlenecks.
 
 **2. Why MLflow**
 
@@ -98,12 +98,13 @@ Key capabilities used:
 
 **3. Experiment Design: Change One Variable at a Time**
 
-At this stage, lightningCLI is used for speedup, in case of messy  each experiment group has only one variable, like lr or optimizer. This makes direct comparison clear for variable changing.
+At this stage I use LightningCLI to speed up running multiple experiments. Each experiment group changes **only one** variable (for example, learning rate or optimizer), while keeping all other settings fixed. 
+This makes it easy to compare runs and see the isolated effect of that single change.
 
 **4. Interpretability: use tools to understand model behavior instead of relying only on accuracy**
-- Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
 - Confusion matrix, per-class accuracy, and a few failure examples to see which flower classes are hardest and how the model makes mistakes.
-  
+- Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
+
 ---  
 ## Hyperparameter Experiment Plan
 
