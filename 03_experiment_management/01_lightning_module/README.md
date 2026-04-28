@@ -14,8 +14,8 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 ```
 
 ## Results
-**Code:** 'lightning_flower.py'  
-**Artifact:** './logs', './profiler_output'
+**Code:** `lightning_flower.py` 
+**Artifact:** `./logs`, `./profiler_output`
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
@@ -25,7 +25,7 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 
 ![Loss, Accuracy and Lr](./Lightning.png)  
 
-The folder './profiler_output' inspects the cost of different operators and RAM inside the training model - both on the CPU and GPU. The trace files can be inspected with Perfetto for detailed performance analysis. 
+The folder `./profiler_output` inspects the cost of different operators and RAM inside the training model - both on the CPU and GPU. The trace files can be inspected with Perfetto for detailed performance analysis. 
 A deeper interpretation of profiler bottlenecks and anomalies will be added in a later stage.
 
 ## Key Finding  
