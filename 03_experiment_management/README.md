@@ -19,48 +19,51 @@ This stage introduces experiment management: setting up proper tooling to organi
 ## File Structure
 ```
 📁 03_experiment_management/
-├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer and callbacks
-    ├── 📁 preprocess/  
-    ├── 📁 logs/ 
-    ├── 📁 profiler_output/  
-    ├── lightning_flower.py
-    └── README.md 
-├── 📁 02_mlflow/  # mlflow to show experiment
-    ├── 📁 preprocess/  
-    ├── 📁 logs/  
-    ├── 📁 profiler_output/  
-    ├── MLflow_flower.py
-    ├── mlflow.db
-    ├── mlflow.png
-    └── README.md 
-├── 📁 03_hyperparameters/ # different lr and optimizers experiment by lightningCLI
-    ├── 📁 preprocess/  
-    ├── 📁 logs/  
-    ├── 📁 profiler_output/ 
-    ├── 📁 yaml_lr/
-    ├── 📁 yaml_optimizer/
-    ├── hyperparameters_flower.py 
-    ├── mlflow.db
-    ├── lr.png
-    ├── optimizer.png
-    ├── run_config.py
-    └── README.md 
-├── 📁 04_interpretability/ # error analysis, Grad-CAM and saliency map for interpretation
-    ├── 📁 preprocess/          
-    ├── 📁 outputs/            
-    ├── base.yaml               
-    ├── checkpoint_base_epoch=34_val_acc=0.9568.ckpt 
-    ├── hyperparameters_flower.py
-    ├── run_code.py          
-    │
-    ├── # Interpretability Scripts
-    ├── gradcam_flower.py         
-    ├── gradcam_flower_true.py    
-    ├── saliency_flower.py        
-    ├── saliency_flower_true.py    
-    ├── error_analysis_lightning.py
-    ├── select_right_prediction.py 
-    ├── select_wrong_prediction.py
+├── 📁 01_lightning_module/ # Single-run baseline with Lightning (data module, model, trainer, callbacks)
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/ 
+│   ├── 📁 profiler_output/  
+│   ├── lightning_flower.py
+│   └── README.md
+│
+├── 📁 02_mlflow/  # MLflow experiment tracking for a single run
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/  
+│   ├── 📁 profiler_output/  
+│   ├── MLflow_flower.py
+│   ├── mlflow.db
+│   ├── mlflow.png
+│   └── README.md
+│
+├── 📁 03_hyperparameters/ # Hyperparameter search (LR / optimizer) with LightningCLI + MLflow
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/  
+│   ├── 📁 profiler_output/ 
+│   ├── 📁 yaml_lr/
+│   ├── 📁 yaml_optimizer/
+│   ├── hyperparameters_flower.py 
+│   ├── mlflow.db
+│   ├── lr.png
+│   ├── optimizer.png
+│   ├── run_config.py
+│   └── README.md
+│
+├── 📁 04_interpretability/ # Error analysis, Grad-CAM, and saliency for model interpretation
+│   ├── 📁 preprocess/          
+│   ├── 📁 outputs/            
+│   ├── base.yaml               
+│   ├── checkpoint_base_epoch=34_val_acc=0.9568.ckpt 
+│   ├── hyperparameters_flower.py
+│   ├── run_code.py          
+│   ├── # Interpretability Scripts
+│   ├── gradcam_flower.py         
+│   ├── gradcam_flower_true.py    
+│   ├── saliency_flower.py        
+│   ├── saliency_flower_true.py    
+│   ├── error_analysis_lightning.py
+│   ├── select_right_prediction.py 
+│   ├── select_wrong_prediction.py
+│
 └── README.md 
 ```
 
