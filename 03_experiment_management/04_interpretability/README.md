@@ -84,9 +84,33 @@ Typical confusion pairs (true → predicted, count) include:
 - `hibiscus` → `cape flower`: 1
 - `bolero deep blue` → `sweet pea`: 1
 
-Most confusions occur between visually similar species (e.g. `carnation` vs `sweet william`, `sweet pea` vs `toad lily`), which motivates the interpretability analysis in this folder (Grad-CAM and saliency maps on both correct and misclassified samples).
+Most confusions occur between visually similar species (e.g. `mexican petunia` vs `pelargonium`, `sweet pea` vs `toad lily`), which motivates the interpretability analysis in this folder (Grad-CAM and saliency maps on both correct and misclassified samples).
 
-### CAM and Saliency
+### CAM and saliency examples
+
+We visualize both Grad-CAM and saliency maps on four flower classes:
+`mexican petunia`, `windflower`, `sweet pea`, and `hibiscus`.  
+For each class, we compare at least one misclassified sample with one correctly classified sample at high confidence.
+
+- **mexican petunia**  
+  - Wrong: sample **ID 31**, true `mexican petunia` but predicted `pelargonium` with confidence **0.856**.  
+  - Correct: sample **ID 283**, true `mexican petunia`, predicted `mexican petunia` with confidence **0.970**.  
+  These two cases illustrate how similar purple flowers can lead the model to focus on slightly different petal/leaf regions.
+
+- **windflower**  
+  - Wrong: sample **ID 87**, true `windflower` but predicted `giant white arum lily` with confidence **0.650**.  
+  - Correct: sample **ID 277**, true `windflower`, predicted `windflower` with confidence **0.998**.  
+  Here we compare a confusion between two white flowers against a clean, high-confidence success.
+
+- **sweet pea**  
+  - Wrong: sample **ID 14**, true `sweet pea` but predicted `toad lily` with confidence **0.517**.  
+  - Correct: sample **ID 22**, true `sweet pea`, predicted `sweet pea` with confidence **0.985**.  
+  This pair shows how the model sometimes misinterprets spotted or striped petal patterns.
+
+- **hibiscus**  
+  - Wrong: sample **ID 124**, true `hibiscus` but predicted `cape flower` with confidence **0.217**.  
+  - Correct: sample **ID 229**, true `hibiscus`, predicted `hibiscus` with confidence **0.994**.  
+  These examples highlight when the model correctly focuses on the large central petals versus when it is distracted by background or other structures.
 
 ## Key Findings
 - **Learning rate** is critical: lr=1e-2 reaches ~0.9 validation accuracy by epoch 10 and stabilizes around 0.96
