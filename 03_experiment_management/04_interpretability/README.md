@@ -265,10 +265,8 @@ For the sweet pea class, the misclassified sample shows Grad-CAM and saliency sp
 </figure>
 
 In the misclassified sample , the attention is still roughly on the flower, but Grad-CAM spreads more diffusely across the petals and nearby structures, and the saliency map shows noisier responses.
+## Key findings
 
-## Key Findings
-- **Learning rate** is critical: lr=1e-2 reaches ~0.9 validation accuracy by epoch 10 and stabilizes around 0.96
-- With lr=1e-2, SGD, Adam, and AdamW all achieve similar final accuracy (~0.95–0.97); AdamW is slightly best
-- **Default configuration**: SGD (lr=1e-2, momentum=0.9, weight_decay=1e-4) — simple, stable, competitive
-- Using **LightningCLI + YAML configs**, experiments are defined declaratively with MLflow logging
+- Detailed test-set statistics are more informative than a single accuracy number. They clearly expose the class imbalance in Oxford 102 (some classes have only 1–3 test images), which explains why macro metrics are lower than weighted metrics and why a few minority classes remain difficult.
 
+- Grad-CAM and saliency maps reveal how the model makes its decisions: which parts of the flower (petals, center, leaves, background) it focuses on, and why certain visually similar species are confused. These visualizations also highlight concrete next steps, such as improving data balance, strengthening background-robust augmentations, focusing on fine-grained petal/texture cues for the hardest classes, and using advanced model architectures.
