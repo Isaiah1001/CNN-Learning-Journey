@@ -190,44 +190,27 @@ For the windflower class, Grad-CAM and saliency map highlight different parts of
 
 *All information are summarized in `04_interpretability/README.md`.*
 
-## How to Run
+## Key Findings
 
-**1. Install dependencies**
-```bash
-pip install pytorch-lightning mlflow
-```
+- A structured experiment-management setup (PyTorch Lightning + MLflow + LightningCLI) makes it much easier to run, reproduce, and compare many CNN experiments than hand-written training loops and ad‑hoc scripts. It turns hyperparameter tuning into a traceable, data-driven process rather than guesswork.
 
-**2. Train with default config**
-```bash
-cd 01_lightning_module
-python train.py
-```
+- On Oxford 102 Flowers, a relatively large learning rate for the new classifier head (1e‑1 with SGD) achieves the best validation accuracy (97.39%), and the choice of optimizer (AdamW vs SGD vs Adam vs RMSprop) has a clear impact on convergence speed and final performance.
 
-**3. Launch MLflow dashboard**
-```bash
-mlflow ui --backend-store-uri sqlite:///mlflow.db
-# Open http://localhost:5000 in browser
-```
+- Detailed error analysis (per-class accuracy, confusion matrix, `wrong_predictions.csv`) shows that most remaining errors come from very small or visually similar classes, rather than from a fundamentally flawed model, which explains the gap between macro and weighted metrics.
 
-**4. Run full hyperparameter sweep**
-```bash
-cd 03_hyperparameters
-python run_experiments.py
-```
+- Grad-CAM and saliency maps confirm that the model mostly focuses on meaningful flower structures (petals, center, filaments) instead of background artifacts; when it fails, the attention patterns reveal whether the model is confused by similar petal textures or distracted by leaves and background.
 
----
+- The interpretability results directly suggest next steps: improve data balance for tail classes, strengthen background-robust augmentations, and consider fine-grained methods (e.g. better backbones or metric-learning losses) to separate species with very similar petal shapes and textures.
 
-## Connection to Stage 2
+## Questions / Open Points
 
-Stage 2 ended with a practical question (quoted from Stage 2 README):
+- How far can performance be improved on the hardest, low-sample classes by only adjusting data-related factors (class-balanced sampling, targeted augmentation, mixup / CutMix), before changing the backbone architecture?
 
-> *"How to log metrics and artifacts without producing an unmanageable number of files,
-> and how to inspect the training process in enough detail to decide when to stop or
-> adjust hyperparameters?"*
+- Would a slightly larger backbone (e.g. EfficientNet-B1/B2) or a fine-grained loss (center loss, ArcFace, contrastive loss) give a meaningful boost on confusing pairs such as `mexican petunia → pelargonium` and `sweet pea → toad lily`?
 
-Stage 3 directly answers this. The six separate scripts from Stage 2 collapse into a single
-`train.py` entry point, and all run history is stored and queryable in MLflow.
+- Can we design augmentations that specifically reduce the model’s reliance on leaves and background (as seen in some sweet pea failures) without hurting overall accuracy on the easier classes?
 
+- How well does this experiment-management and interpretability workflow generalize to other datasets (e.g. non-flower natural images or industrial inspection data), and what needs to change to reuse it quickly in a new project?
 ---
 
 ## References
