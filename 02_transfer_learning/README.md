@@ -116,8 +116,8 @@ trainable). Despite this substantial increase in trainable capacity, the accurac
 deeper layers on this dataset. The following section explores whether a learning rate schedule can further improve performance.
 
 **3.2**  
-**Code:** transfer_learning_last_3layer_Scheduler.py   
-**Artifact:** ./checkpoints/efficientnet_b0_flower_last3layer_plus_head_Scheduler.pth  
+**Code:** `transfer_learning_last_3layer_Scheduler.py`   
+**Artifact:** `./checkpoints/efficientnet_b0_flower_last3layer_plus_head_Scheduler.pth`  
 | Metric | Value |
 |--------|-------|
 | Dataset | Oxford 102 Flowers |
