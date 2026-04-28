@@ -109,48 +109,35 @@ This makes it easy to compare runs and see the isolated effect of that single ch
 ## Hyperparameter Experiment Plan
 
 ### Group 1 — Learning Rate
-Fixed: `optimizer=AdamW`, `batch_size=64`
+Fixed: `optimizer=SGD`, `batch_size=128`, `epochs = 40`
 
 | LR | Val Acc (%) | Best Epoch | Notes |
 |----|-------------|------------|-------|
-| 1e-4 | — | — | |
-| 3e-4 | — | — | |
-| 1e-3 | — | — | |
-| 3e-3 | — | — | |
+| 1e-4| 0.2769     | 40    | Very slow learning    |
+| 1e-3| 0.8461     | 40    | slow learning and still underfits after 40 epochs |
+| 1e-2| 0.9568     | 34    | Fast, stable convergence; reaches ~0.9 validation acc by epoch 10        |
+| 1e-1| 0.9739     | 35    | fast learning, better validation acc       |
 
 ### Group 2 — Optimizer
-Fixed: `lr=3e-4`, `batch_size=64`
+Fixed: `lr=1e-2`, `batch_size=64`, `epochs = 40` 
 
 | Optimizer | Val Acc (%) | Best Epoch | Notes |
 |-----------|-------------|------------|-------|
-| SGD + momentum=0.9 | — | — | Stage 2 baseline |
-| Adam | — | — | |
-| AdamW | — | — | |
+| AdamW     | 0.9650      | 38         | Fast, stable convergence, slightly best acc |
+| Adam      | 0.9471      | 04         | Converges quickly, final acc slightly lower |
+| SGD       | 0.9568      | 34         | Strong, stable baseline with simple SGD     |
+| RMSprop   | 0.4414      | 27         | numerically unstable and poor final acc  |
 
-### Group 3 — Batch Size & DataLoader Efficiency
-Fixed: `optimizer=AdamW`, `lr=3e-4`
-
-| Batch Size | num_workers | Val Acc (%) | Epoch Time (s) | Notes |
-|------------|-------------|-------------|----------------|-------|
-| 32 | 4 | — | — | |
-| 64 | 4 | — | — | |
-| 128 | 4 | — | — | |
-| 64 | 2 | — | — | dataloader bottleneck check |
-| 64 | 8 | — | — | dataloader bottleneck check |
-
-*All tables will be filled in after experiments complete. Final results summary in `03_hyperparameters/results.md`.*
+*All tables will be filled in after experiments complete. Final results summary in `03_hyperparameters/README.md`.*
 
 ---
 
 ## Results
 
-*(To be filled after experiments complete)*
-
-| Group | Best Config | Val Acc (%) | Key Finding |
-|-------|-------------|-------------|-------------|
-| LR sweep | — | — | — |
-| Optimizer | — | — | — |
-| Batch size | — | — | — |
+| Group      | Best config | Val acc (%) | Key finding                                           |
+|-----------|-------------|-------------|-------------------------------------------------------|
+| LR sweep  | 1e-1        | 97.39       | A relatively large learning rate works best for the newly added classifier head. |
+| Optimizer | AdamW       | 96.50       | The choice of optimizer has a noticeable impact on convergence and final accuracy. |
 
 ---
 
