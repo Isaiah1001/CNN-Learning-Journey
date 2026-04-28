@@ -5,24 +5,65 @@
 Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset, with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
 
 But the training process itself was messy: no unified way to log hyperparameters and metrics, no visibility into GPU/CPU utilization, which parts delaying training, and comparing runs required manually checking saved
-files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
+files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: `工欲善其事，必先利其器` (if a craftsman wants to do good work,  he must first sharpen his tools). 
 Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
-This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, and interpret model behavior, then using this workflow to study how key hyperparameters affect accuracy..
+This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Last, use CAM and saliency map to interpret model behavior.
 
 ## What This Stage Covers
-- Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
-- MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
-- Hyperparameters: Use the 'LightningCLI' + MLflow workflow to systematically compare learning rates, optimizers; produce a clean results table.
-- Interpretability: Saliency maps and CAM/Grad-CAM to visualize which regions drive predictions, error analysis to show more prediction details.
+- Lighting module[[1]](#references): Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
+- MLFlow[[2]](#references): Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
+- Hyperparameters: Use the `LightningCLI` + `MLflow` workflow to systematically compare learning rates, optimizers; produce a clean results table.
+- Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[[3]](#references)[[4]](#references).
 
 ## File Structure
 ```
 📁 03_experiment_management/
-├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer and callbacks
-├── 📁 02_mlflow/  # 
-├── 📁 03_hyperparameters/
-├── 📁 04_interpretability/
+├── 📁 01_lightning_module/ # Single-run baseline with Lightning (data module, model, trainer, callbacks)
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/ 
+│   ├── 📁 profiler_output/  
+│   ├── lightning_flower.py
+│   └── README.md
+│
+├── 📁 02_mlflow/  # MLflow experiment tracking for a single run
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/  
+│   ├── 📁 profiler_output/  
+│   ├── MLflow_flower.py
+│   ├── mlflow.db
+│   ├── mlflow.png
+│   └── README.md
+│
+├── 📁 03_hyperparameters/ # Hyperparameter search (LR / optimizer) with LightningCLI + MLflow
+│   ├── 📁 preprocess/  
+│   ├── 📁 logs/  
+│   ├── 📁 profiler_output/ 
+│   ├── 📁 yaml_lr/
+│   ├── 📁 yaml_optimizer/
+│   ├── hyperparameters_flower.py 
+│   ├── mlflow.db
+│   ├── lr.png
+│   ├── optimizer.png
+│   ├── run_config.py
+│   └── README.md
+│
+├── 📁 04_interpretability/ # Error analysis, Grad-CAM, and saliency for model interpretation
+│   ├── 📁 preprocess/          
+│   ├── 📁 outputs/            
+│   ├── base.yaml               
+│   ├── checkpoint_base_epoch=34_val_acc=0.9568.ckpt 
+│   ├── hyperparameters_flower.py
+│   ├── run_code.py          
+│   ├── # Interpretability Scripts
+│   ├── gradcam_flower.py         
+│   ├── gradcam_flower_true.py    
+│   ├── saliency_flower.py        
+│   ├── saliency_flower_true.py    
+│   ├── error_analysis_lightning.py
+│   ├── select_right_prediction.py 
+│   ├── select_wrong_prediction.py
+│
 └── README.md 
 ```
 
@@ -33,17 +74,17 @@ This stage introduces experiment management: setting up proper tooling to organi
 The Stage 2 training loop (`model/training_loop.py`) was reasonably clean, but it still required manually handling the epoch loop, metric accumulation, best‑model tracking, device placement, and learning‑rate scheduling. 
 PyTorch Lightning handles all of this via `Trainer`, so the module code only needs to define *what* happens (forward pass, loss, optimizer) rather than *how* the training loop is executed.
 
-In this stage, I also take advantage of several built‑in and custom callbacks:
+In this stage, several built‑in and custom callbacks are also deployed:
 
 - `LearningRateMonitor`: logs the learning rate each epoch automatically, with no manual tracking code.
 - `ModelCheckpoint`: saves the best and/or last checkpoints based on `val_acc` without any custom save logic.
 - `ProgressiveBackboneFinetuning`: encodes the gradual unfreezing strategy as a reusable callback, instead of hard‑coding it into the training loop.
 - `PostFreezeModelSummary`: prints the total and trainable parameter counts whenever the finetuning state changes.
-- `MLFlowLogger` (in folder '02_mlflow'): plugs directly into `Trainer` so that hyperparameters, metrics, and artifacts are logged to MLflow with minimal extra code.
+- `MLFlowLogger` (in folder `02_mlflow`): plugs directly into `Trainer` so that hyperparameters, metrics, and artifacts are logged to MLflow with minimal extra code.
 
 Other useful tools:
 
-- Profiler: records detailed timing and memory information during training to help identify performance bottlenecks.
+- `Profiler`: records detailed timing and memory information during training to help identify performance bottlenecks.
 
 **2. Why MLflow**
 
@@ -57,99 +98,117 @@ Key capabilities used:
 
 **3. Experiment Design: Change One Variable at a Time**
 
-At this stage, lightningCLI is used for speedup, in case of messy  each experiment group has only one variable, like lr or optimizer. This makes direct comparison clear for variable changing.
+At this stage I use LightningCLI to speed up running multiple experiments. Each experiment group changes **only one** variable (for example, learning rate or optimizer), while keeping all other settings fixed. 
+This makes it easy to compare runs and see the isolated effect of that single change.
 
 **4. Interpretability: use tools to understand model behavior instead of relying only on accuracy**
-- Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
 - Confusion matrix, per-class accuracy, and a few failure examples to see which flower classes are hardest and how the model makes mistakes.
-  
+- Saliency and (Grad-)CAM heatmaps to show which image regions drive each prediction.
+
 ---  
 ## Hyperparameter Experiment Plan
 
 ### Group 1 — Learning Rate
-Fixed: `optimizer=AdamW`, `batch_size=64`
+Fixed: `optimizer=SGD`, `batch_size=128`, `epochs = 40`
 
 | LR | Val Acc (%) | Best Epoch | Notes |
 |----|-------------|------------|-------|
-| 1e-4 | — | — | |
-| 3e-4 | — | — | |
-| 1e-3 | — | — | |
-| 3e-3 | — | — | |
+| 1e-4| 0.2769     | 40    | Very slow learning    |
+| 1e-3| 0.8461     | 40    | slow learning and still underfits after 40 epochs |
+| 1e-2| 0.9568     | 34    | Fast, stable convergence; reaches ~0.9 validation acc by epoch 10        |
+| 1e-1| 0.9739     | 35    | fast learning, better validation acc       |
 
 ### Group 2 — Optimizer
-Fixed: `lr=3e-4`, `batch_size=64`
+Fixed: `lr=1e-2`, `batch_size=64`, `epochs = 40` 
 
 | Optimizer | Val Acc (%) | Best Epoch | Notes |
 |-----------|-------------|------------|-------|
-| SGD + momentum=0.9 | — | — | Stage 2 baseline |
-| Adam | — | — | |
-| AdamW | — | — | |
+| AdamW     | 0.9650      | 38         | Fast, stable convergence, slightly best acc |
+| Adam      | 0.9471      | 04         | Converges quickly, final acc slightly lower |
+| SGD       | 0.9568      | 34         | Strong, stable baseline with simple SGD     |
+| RMSprop   | 0.4414      | 27         | numerically unstable and poor final acc  |
 
-### Group 3 — Batch Size & DataLoader Efficiency
-Fixed: `optimizer=AdamW`, `lr=3e-4`
-
-| Batch Size | num_workers | Val Acc (%) | Epoch Time (s) | Notes |
-|------------|-------------|-------------|----------------|-------|
-| 32 | 4 | — | — | |
-| 64 | 4 | — | — | |
-| 128 | 4 | — | — | |
-| 64 | 2 | — | — | dataloader bottleneck check |
-| 64 | 8 | — | — | dataloader bottleneck check |
-
-*All tables will be filled in after experiments complete. Final results summary in `03_hyperparameters/results.md`.*
+*All information are summarized in `03_hyperparameters/README.md`.*
 
 ---
 
 ## Results
 
-*(To be filled after experiments complete)*
-
-| Group | Best Config | Val Acc (%) | Key Finding |
-|-------|-------------|-------------|-------------|
-| LR sweep | — | — | — |
-| Optimizer | — | — | — |
-| Batch size | — | — | — |
+| Group      | Best config | Val acc (%) | Key finding                                           |
+|-----------|-------------|-------------|-------------------------------------------------------|
+| LR sweep  | 1e-1        | 97.39       | A relatively large learning rate works best for the newly added classifier head. |
+| Optimizer | AdamW       | 96.50       | The choice of optimizer has a noticeable impact on convergence and final accuracy. |
 
 ---
 
-## How to Run
+## (Grad-)CAM and Saliency heatmap  
+**windflower**  
+  - Wrong: sample **ID 87**, true `windflower` but predicted `giant white arum lily` with confidence **0.650**.  
+  - Correct: sample **ID 277**, true `windflower`, predicted `windflower` with confidence **0.998**.  
 
-**1. Install dependencies**
-```bash
-pip install pytorch-lightning mlflow
-```
+<figure>
+  <figcaption>CAM – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./04_interpretability/outputs/gradcam_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="CAM ID 31"
+    width="400"
+  >
+</figure>
 
-**2. Train with default config**
-```bash
-cd 01_lightning_module
-python train.py
-```
+<figure>
+  <figcaption>CAM – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./04_interpretability/outputs/gradcam_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="CAM ID 98"
+    width="400"
+  >
+</figure>
 
-**3. Launch MLflow dashboard**
-```bash
-mlflow ui --backend-store-uri sqlite:///mlflow.db
-# Open http://localhost:5000 in browser
-```
+<figure>
+  <figcaption>Saliency – misclassified (ID 87, conf 0.650)</figcaption>
+  <img
+    src="./04_interpretability/outputs/saliency_images/windflower/id87_true_68_pred_19_giant_white_arum_lily_conf_0.650.png"
+    alt="Saliency ID 87"
+    width="400"
+  >
+</figure>
 
-**4. Run full hyperparameter sweep**
-```bash
-cd 03_hyperparameters
-python run_experiments.py
-```
+<figure>
+  <figcaption>Saliency – correctly classified (ID 277, conf 0.998)</figcaption>
+  <img
+    src="./04_interpretability/outputs/saliency_images/windflower/id277_true_68_pred_68_windflower_conf_0.998.png"
+    alt="Saliency ID 277"
+    width="400"
+  >
+</figure>
 
----
+For the windflower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
 
-## Connection to Stage 2
+- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges, the intricate structures near the center and leaf.
+- In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
+- The saliency maps show clear difference among misclassified and correctly classified examples.  
 
-Stage 2 ended with a practical question (quoted from Stage 2 README):
+*All information are summarized in `04_interpretability/README.md`.*
 
-> *"How to log metrics and artifacts without producing an unmanageable number of files,
-> and how to inspect the training process in enough detail to decide when to stop or
-> adjust hyperparameters?"*
+## Key Findings
 
-Stage 3 directly answers this. The six separate scripts from Stage 2 collapse into a single
-`train.py` entry point, and all run history is stored and queryable in MLflow.
+- A structured experiment-management setup (PyTorch Lightning + MLflow + LightningCLI) makes it much easier to run, reproduce, and compare many CNN experiments than hand-written training loops and ad‑hoc scripts. It turns hyperparameter tuning into a traceable, data-driven process rather than guesswork.
 
+- On Oxford 102 Flowers, a relatively large learning rate for the classifier head (1e‑1 with SGD) achieves the best validation accuracy (97.39%), and the choice of optimizer (AdamW vs SGD vs Adam vs RMSprop) has a clear impact on convergence speed and final performance.
+
+- Detailed error analysis (per-class accuracy, confusion matrix, f1 scores) shows that most remaining errors come from very small or visually similar classes, rather than from a fundamentally flawed model, which explains the gap between macro and weighted metrics.
+
+- Grad-CAM and saliency maps confirm that the model mostly focuses on meaningful flower structures (petals, center, filaments) instead of background artifacts; when it fails, the attention patterns reveal whether the model is confused by similar petal textures or distracted by leaves and background.
+
+- The interpretability results directly suggest next steps: improve data balance for tail classes, strengthen background-robust augmentations, and consider fine-grained methods (e.g. better backbones or metric-learning losses) to separate species with very similar petal shapes and textures.
+
+## Questions
+
+- For low-sample classes, how can we improve their accuracy without simply collecting more data (e.g. class-balanced sampling, targeted augmentation, or loss re-weighting), and which techniques are most effective in practice?
+
+- Interpretability clearly helps us understand model behavior behind the screen. Based on the Grad-CAM and saliency figures in this stage, what are the most important next steps to improve the model, and are there established best practices we can follow?
+
+- In an industrial pipeline, once we have a model with satisfactory accuracy on a benchmark dataset, what should happen next before deployment? In particular, how should we evaluate inference latency, throughput, and model size for edge devices, and what optimization techniques (quantization, pruning, distillation) are appropriate?
 ---
 
 ## References

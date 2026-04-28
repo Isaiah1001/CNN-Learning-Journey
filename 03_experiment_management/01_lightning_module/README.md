@@ -5,7 +5,7 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 
 ## File Structure
 ```
-📁 01_Lightning_module/
+📁 01_lightning_module/
 ├── 📁 preprocess/  # dataset access and split utilities
 ├── 📁 logs/  # CSV logs and checkpoints
 ├── 📁 profiler_output/  # Lightning profiler outputs and trace files
