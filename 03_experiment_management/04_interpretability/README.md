@@ -92,10 +92,9 @@ We visualize both Grad-CAM and saliency maps on four flower classes:
 `mexican petunia`, `windflower`, `sweet pea`, and `hibiscus`.  
 For each class, we compare at least one misclassified sample with one correctly classified sample at high confidence.
 
-- **mexican petunia**  
+**mexican petunia**  
   - Wrong: sample **ID 31**, true `mexican petunia` but predicted `pelargonium` with confidence **0.856**.  
   - Correct: sample **ID 98**, true `mexican petunia`, predicted `mexican petunia` with confidence **0.987**.  
-  These two cases illustrate how similar purple flowers can lead the model to focus on slightly different petal/leaf regions.
 
 <figure>
   <figcaption>CAM – misclassified (ID 31, conf 0.856)</figcaption>
@@ -133,10 +132,14 @@ For each class, we compare at least one misclassified sample with one correctly 
   >
 </figure>
 
-- **windflower**  
+For the mexican petunia class, Grad-CAM highlights different parts of the flower for the correct and misclassified samples.
+
+- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower and the surrounding petals, and the saliency map shows strong responses along the petal edges and the intricate structures near the center.
+- In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
+
+**windflower**  
   - Wrong: sample **ID 87**, true `windflower` but predicted `giant white arum lily` with confidence **0.650**.  
   - Correct: sample **ID 277**, true `windflower`, predicted `windflower` with confidence **0.998**.  
-  Here we compare a confusion between two white flowers against a clean, high-confidence success.
 
 <figure>
   <figcaption>CAM – misclassified (ID 87, conf 0.650)</figcaption>
@@ -174,10 +177,15 @@ For each class, we compare at least one misclassified sample with one correctly 
   >
 </figure>
 
-- **sweet pea**  
+For the wind flower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
+
+- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges, the intricate structures near the center and leaf.
+- In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
+- The saliency maps show clear difference among misclassified and correctly classified examples.
+
+**sweet pea**  
   - Wrong: sample **ID 14**, true `sweet pea` but predicted `toad lily` with confidence **0.517**.  
   - Correct: sample **ID 22**, true `sweet pea`, predicted `sweet pea` with confidence **0.985**.  
-  This pair shows how the model sometimes misinterprets spotted or striped petal patterns.
 
 <figure>
   <figcaption>CAM – misclassified (ID 14, conf 0.517)</figcaption>
@@ -213,12 +221,12 @@ For each class, we compare at least one misclassified sample with one correctly 
     alt="Saliency ID 22"
     width="400"
   >
-</figure>
+</figure>  
+For the sweet pea class, the misclassified sample shows Grad-CAM and saliency spreading more onto the surrounding leaves and background, while the correctly classified sample keeps most of the attention on the flower cluster itself.  
 
-- **hibiscus**  
+**hibiscus**  
   - Wrong: sample **ID 124**, true `hibiscus` but predicted `cape flower` with confidence **0.217**.  
   - Correct: sample **ID 229**, true `hibiscus`, predicted `hibiscus` with confidence **0.994**.  
-  These examples highlight when the model correctly focuses on the large central petals versus when it is distracted by background or other structures.
 
 <figure>
   <figcaption>CAM – misclassified (ID 124, conf 0.217)</figcaption>
@@ -255,6 +263,8 @@ For each class, we compare at least one misclassified sample with one correctly 
     width="400"
   >
 </figure>
+
+In the misclassified sample , the attention is still roughly on the flower, but Grad-CAM spreads more diffusely across the petals and nearby structures, and the saliency map shows noisier responses.
 
 ## Key Findings
 - **Learning rate** is critical: lr=1e-2 reaches ~0.9 validation accuracy by epoch 10 and stabilizes around 0.96
