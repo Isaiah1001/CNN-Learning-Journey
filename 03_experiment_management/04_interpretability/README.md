@@ -31,9 +31,9 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 |--------|-----------|---------|
 | `gradcam_flower*.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
 | `saliency_flower*.py` | Saliency Maps | Show pixel-level importance based on gradient |
-| `error_analysis_lightning.py` | Error Analysis | Analyze misclassified samples to understand model weaknesses |
-| `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for analysis |
-| `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for analysis |
+| `error_analysis_lightning.py` | Error Analysis | Evaluate the checkpoint on the 410-image test set, show the inference statistics |
+| `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for CAM and Saliency map |
+| `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for CAM and Saliency map |
 
 ## Artifact
 The artifacts are inside folder `./outputs`
@@ -42,10 +42,10 @@ The artifacts are inside folder `./outputs`
 | `all_predictions.csv` | the results for all 410 test cases |
 | `condusion_matrix.png` | plot to show confusion matrix of all 410 test cases |
 | `per_class_accuracy.csv` | inference accuracy for every class, from worst to best |
-| `summary.txt` | accuracy, f1 scores, precision and recall calculations are here |
-| `wrong_predictions.csv` | Filter misclassified samples for analysis |
-| `gradcam_targets.csv` | Analyze misclassified samples to understand model weaknesses |
-| `gradcam_targets_true.csv` | Filter correctly classified samples for analysis |
+| `summary.txt` | accuracy, f1 scores, precision recall calculations and statistics are here |
+| `wrong_predictions.csv` |  misclassified samples |
+| `gradcam_targets.csv` | filter 4 types of misclassified samples for CAM and Saliency map  |
+| `gradcam_targets_true.csv` | filter 4 types of correctly classified samples for CAM and Saliency map |
 
 
 
