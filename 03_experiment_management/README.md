@@ -8,21 +8,59 @@ But the training process itself was messy: no unified way to log hyperparameters
 files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: '工欲善其事，必先利其器' (if a craftsman wants to do good work,  he must first sharpen his tools). 
 Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
-This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, and interpret model behavior, then using this workflow to study how key hyperparameters affect accuracy..
+This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Last, use CAM and saliency map to interpret model behavior.
 
 ## What This Stage Covers
 - Lighting module: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - Hyperparameters: Use the 'LightningCLI' + MLflow workflow to systematically compare learning rates, optimizers; produce a clean results table.
-- Interpretability: Saliency maps and CAM/Grad-CAM to visualize which regions drive predictions, error analysis to show more prediction details.
+- Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions.
 
 ## File Structure
 ```
 📁 03_experiment_management/
 ├── 📁 01_lightning_module/ #Data Module, Model Module, Trainer and callbacks
-├── 📁 02_mlflow/  # 
-├── 📁 03_hyperparameters/
-├── 📁 04_interpretability/
+    ├── 📁 preprocess/  
+    ├── 📁 logs/ 
+    ├── 📁 profiler_output/  
+    ├── lightning_flower.py
+    └── README.md 
+├── 📁 02_mlflow/  # mlflow to show experiment
+    ├── 📁 preprocess/  
+    ├── 📁 logs/  
+    ├── 📁 profiler_output/  
+    ├── MLflow_flower.py
+    ├── mlflow.db
+    ├── mlflow.png
+    └── README.md 
+├── 📁 03_hyperparameters/ # different lr and optimizers experiment by lightningCLI
+    ├── 📁 preprocess/  
+    ├── 📁 logs/  
+    ├── 📁 profiler_output/ 
+    ├── 📁 yaml_lr/
+    ├── 📁 yaml_optimizer/
+    ├── hyperparameters_flower.py 
+    ├── mlflow.db
+    ├── lr.png
+    ├── optimizer.png
+    ├── run_config.py
+    └── README.md 
+├── 📁 04_interpretability/ # error analysis, Grad-CAM and saliency map for interpretation
+    ├── 📁 preprocess/          
+    ├── 📁 outputs/            
+    ├── base.yaml               
+    ├── checkpoint_base_epoch=34_val_acc=0.9568.ckpt 
+    ├── hyperparameters_flower.py
+    ├── run_code.py          
+    │
+    ├── # Interpretability Scripts
+    ├── gradcam_flower.py         
+    ├── gradcam_flower_true.py    
+    ├── saliency_flower.py        
+    ├── saliency_flower_true.py    
+    ├── error_analysis_lightning.py
+    ├── select_right_prediction.py 
+    ├── select_wrong_prediction.py
 └── README.md 
 ```
 
