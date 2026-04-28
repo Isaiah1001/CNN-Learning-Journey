@@ -46,7 +46,8 @@ The artifacts are inside folder `./outputs`
 | `wrong_predictions.csv` |  misclassified samples |
 | `gradcam_targets.csv` | filter 4 types of misclassified samples for CAM and Saliency map  |
 | `gradcam_targets_true.csv` | filter 4 types of correctly classified samples for CAM and Saliency map |
-
+| `gradcam_images` | CAM results |
+| `saliency_images` | Saliency map |
 
 
 ## Results
