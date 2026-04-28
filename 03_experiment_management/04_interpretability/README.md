@@ -52,6 +52,39 @@ The artifacts are inside folder `./outputs`
 
 ## Results
 ### Statistics
+The best checkpoint (`checkpoint_base_epoch=34_val_acc=0.9568.ckpt`) from **Stage3.3** is evaluated on the test set of 410 images:
+
+- Overall test accuracy: **94.39%** (23 / 410 wrong predictions)
+- Macro precision / recall / F1: **0.929 / 0.928 / 0.922**
+- Weighted precision / recall / F1: **0.949 / 0.944 / 0.942**
+
+The 10 worst classes by test accuracy are:
+- `spring crocus`: 0.000 (0/1)
+- `bolero deep blue`: 0.000 (0/1)
+- `desert-rose`: 0.500 (1/2)
+- `mallow`: 0.500 (1/2)
+- `hibiscus`: 0.667 (4/6)
+- `peruvian lily`: 0.667 (2/3)
+- `sweet pea`: 0.667 (4/6)
+- `trumpet creeper`: 0.667 (2/3)
+- `gaura`: 0.667 (2/3)
+- `siam tulip`: 0.667 (2/3)
+
+Many of these classes have only 1–3 test samples, so a single mistake heavily affects their accuracy.
+
+Typical confusion pairs (true → predicted, count) include:
+- `sweet pea` → `toad lily`: 1
+- `lenten rose` → `camellia`: 1
+- `mexican petunia` → `pelargonium`: 1
+- `carnation` → `sweet william`: 1
+- `gaura` → `hibiscus`: 1
+- `windflower` → `giant white arum lily`: 1
+- `peruvian lily` → `passion flower`: 1
+- `lotus` → `cyclamen`: 1
+- `hibiscus` → `cape flower`: 1
+- `bolero deep blue` → `sweet pea`: 1
+
+Most confusions occur between visually similar species (e.g. `carnation` vs `sweet william`, `sweet pea` vs `toad lily`), which motivates the interpretability analysis in this folder (Grad-CAM and saliency maps on both correct and misclassified samples).
 
 ### CAM and Saliency
 
