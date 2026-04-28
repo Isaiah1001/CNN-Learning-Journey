@@ -23,22 +23,16 @@ This stage focuses on understanding and visualizing what the CNN model learns th
 ├── select_wrong_prediction.py  # Tools to select misclassified samples
 ```
 
-## Quick Start
-
-Run interpretability analysis:
-```bash
-python run_code.py
-```
-
-## Available Techniques
-
+## Results
+**Code:** 'run_code.py' 
 | Script | Technique | Purpose |
 |--------|-----------|---------|
-| `gradcam_flower.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
-| `saliency_flower.py` | Saliency Maps | Show pixel-level importance based on gradient |
+| `gradcam_flower*.py` | Grad-CAM | Visualize important regions in input images for CNN predictions |
+| `saliency_flower*.py` | Saliency Maps | Show pixel-level importance based on gradient |
 | `error_analysis_lightning.py` | Error Analysis | Analyze misclassified samples to understand model weaknesses |
 | `select_right_prediction.py` | Sample Selection | Filter correctly classified samples for analysis |
 | `select_wrong_prediction.py` | Sample Selection | Filter misclassified samples for analysis |
+**Artifact:**  './output'
 
 ## Results
 **Code:** `hyperparameters_flower.py` and corresponding yaml files  
