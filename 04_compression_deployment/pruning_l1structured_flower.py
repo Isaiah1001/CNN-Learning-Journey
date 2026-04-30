@@ -7,6 +7,10 @@
 
 import argparse
 import functools
+import gzip
+import io
+import tempfile
+import os
 import torch
 import torch.nn.utils.prune as prune
 import lightning.pytorch as pl
@@ -99,6 +103,68 @@ def print_filter_report(filter_stats: dict) -> None:
                 f"  {name:<50} {s['filter_sparsity']:.1%}"
                 f"  ({s['zeroed_filters']}/{s['total_filters']} filters)"
             )
+
+
+# ==============================================
+# 1c) Effective vs nominal size diagnostic
+# ==============================================
+
+def effective_size_report(model: torch.nn.Module) -> dict:
+    """
+    Compare nominal in-memory tensor footprint vs the *effective* footprint
+    that an ideal channel-pruned model would have.
+
+    Why this exists: torch.nn.utils.prune.ln_structured + prune.remove zero
+    out filters but leave Conv2d.out_channels (and the next layer's
+    in_channels, plus the matching BatchNorm buffers) unchanged. So:
+      - param.numel() is unchanged -> in-memory size is unchanged
+      - dense conv kernels still execute over zero filters -> latency unchanged
+      - .pt / .ckpt file size is unchanged (zeros still take 4 bytes each)
+
+    The only place the savings show up "for free" is gzipped on disk, because
+    runs of zero compress well. Real RAM/latency savings require physically
+    rebuilding Conv2d/BN/Linear with smaller shapes (e.g. via
+    torch-pruning's DepGraph) -- not done here.
+    """
+    total_params = 0
+    nonzero_params = 0
+    for p in model.parameters():
+        total_params   += p.numel()
+        nonzero_params += (p != 0).sum().item()
+
+    nominal_mb   = total_params   * 4 / 1024 ** 2  # float32
+    effective_mb = nonzero_params * 4 / 1024 ** 2
+
+    # Gzipped state_dict size: shows the on-disk savings of zero-filled tensors.
+    buf = io.BytesIO()
+    torch.save(model.state_dict(), buf)
+    raw_bytes = buf.getvalue()
+    gz_bytes  = gzip.compress(raw_bytes, compresslevel=6)
+
+    stats = {
+        "total_params":   total_params,
+        "nonzero_params": nonzero_params,
+        "param_sparsity": 1 - nonzero_params / total_params if total_params else 0.0,
+        "nominal_mb":     nominal_mb,
+        "effective_mb":   effective_mb,
+        "state_dict_raw_mb":  len(raw_bytes) / 1024 ** 2,
+        "state_dict_gzip_mb": len(gz_bytes)  / 1024 ** 2,
+    }
+
+    print("\n── Effective Size Report ──")
+    print(f"  Total params         : {stats['total_params']:,}")
+    print(f"  Non-zero params      : {stats['nonzero_params']:,}  "
+          f"(param sparsity {stats['param_sparsity']:.1%})")
+    print(f"  Nominal float32 size : {stats['nominal_mb']:.2f} MB  "
+          f"(what benchmark.py reports today)")
+    print(f"  Effective size cap   : {stats['effective_mb']:.2f} MB  "
+          f"(only if Conv2d/BN/Linear were physically resized)")
+    print(f"  state_dict raw       : {stats['state_dict_raw_mb']:.2f} MB")
+    print(f"  state_dict gzipped   : {stats['state_dict_gzip_mb']:.2f} MB  "
+          f"(zeros compress well -> only on-disk win you get for free)")
+    print("  Note: in-memory size and forward-pass latency will NOT decrease")
+    print("        until you do channel surgery (e.g. torch-pruning DepGraph).")
+    return stats
 
 
 # ==============================================
@@ -202,6 +268,11 @@ def finetune_after_pruning(ckpt_path: str,
     print(f"\n  Weight sparsity after make_permanent: "
           f"{after_weight_stats['global_sparsity']:.1%}")
 
+    # Make the mask-only nature of this pipeline explicit: nominal vs
+    # effective size and gzipped state_dict size. This is the diagnostic
+    # that explains why benchmark.py reports unchanged size/latency.
+    eff_stats = effective_size_report(pl_model.model)
+
     # ── Patch optimizer with a lower lr for recovery fine-tune ─
     original_optimizer = pl_model.optimizer
     pl_model.optimizer = lambda params: original_optimizer(params, lr=lr)
@@ -257,6 +328,11 @@ def finetune_after_pruning(ckpt_path: str,
         "filter_sparsity_before":    round(filter_sparsity_global, 4),
         "zeroed_filters":             zeroed_filters,
         "total_filters":              total_filters,
+        "effective_param_sparsity":  round(eff_stats["param_sparsity"], 4),
+        "nominal_size_mb":           round(eff_stats["nominal_mb"], 3),
+        "effective_size_mb":         round(eff_stats["effective_mb"], 3),
+        "state_dict_gzip_mb":        round(eff_stats["state_dict_gzip_mb"], 3),
+        "physically_resized":        False,
     })
 
     # ── Fine-tune ─────────────────────────────────────────────
