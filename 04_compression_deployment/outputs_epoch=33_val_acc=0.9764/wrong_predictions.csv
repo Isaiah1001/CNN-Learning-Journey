@@ -1,0 +1,16 @@
+sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
+14,0,3,'sweet pea',78,'toad lily',0.931371808052063,0
+17,0,39,'lenten rose',95,'camellia',0.9982448816299438,0
+24,0,39,'lenten rose',95,'camellia',0.9772282242774963,0
+75,0,56,'gaura',82,'hibiscus',0.6169074177742004,0
+81,0,12,'king protea',20,'fire lily',0.834852933883667,0
+87,0,68,'windflower',61,'japanese anemone',0.5260986089706421,0
+106,0,77,'lotus',79,'anthurium',0.7308993339538574,0
+161,1,85,'tree mallow',50,'petunia',0.9837117791175842,0
+169,1,8,'monkshood',24,'grape hyacinth',0.7429690957069397,0
+199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.9883020520210266,0
+212,1,77,'lotus',95,'camellia',0.9885473251342773,0
+240,1,86,'magnolia',77,'lotus',0.5102303624153137,0
+275,2,81,'clematis',83,'columbine',0.7766748666763306,0
+351,2,27,'stemless gentian',92,'ball moss',0.7831609845161438,0
+368,2,61,'japanese anemone',77,'lotus',0.5351702570915222,0

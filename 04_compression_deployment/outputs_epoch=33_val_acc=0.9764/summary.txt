@@ -1,0 +1,38 @@
+Checkpoint: ./logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt
+Samples: 410
+Overall test accuracy: 0.9634
+Wrong predictions: 15
+
+Macro metrics (averaged over classes):
+- Precision (macro): 0.9566
+- Recall   (macro): 0.9483
+- F1       (macro): 0.9486
+
+Weighted metrics (support-weighted over classes):
+- Precision (weighted): 0.9746
+- Recall   (weighted): 0.9634
+- F1       (weighted): 0.9656
+
+Worst 10 classes by accuracy:
+- 'monkshood': 0.5000 (1/2)
+- 'gaura': 0.6667 (2/3)
+- 'lenten rose': 0.6667 (4/6)
+- 'lotus': 0.7143 (5/7)
+- 'windflower': 0.7500 (3/4)
+- 'magnolia': 0.7500 (3/4)
+- 'japanese anemone': 0.8000 (4/5)
+- 'stemless gentian': 0.8000 (4/5)
+- 'ruby-lipped cattleya': 0.8000 (4/5)
+- 'tree mallow': 0.8000 (4/5)
+
+Top 10 confusion pairs:
+- 'lenten rose' -> 'camellia': 2
+- 'sweet pea' -> 'toad lily': 1
+- 'gaura' -> 'hibiscus': 1
+- 'king protea' -> 'fire lily': 1
+- 'windflower' -> 'japanese anemone': 1
+- 'lotus' -> 'anthurium': 1
+- 'tree mallow' -> 'petunia': 1
+- 'monkshood' -> 'grape hyacinth': 1
+- 'ruby-lipped cattleya' -> 'desert-rose': 1
+- 'lotus' -> 'camellia': 1

@@ -37,7 +37,7 @@ class FlowerDataModule(pl.LightningDataModule):
     def __init__(self,
                  batch_size: int = 128, 
                  num_workers: int = 2,
-                 data_path: str = "../99_flower_data",
+                 data_path: str = "./99_flower_data",
                  image_size: int=model_input_size
                  ):
         """initialize the data module
@@ -74,7 +74,7 @@ class FlowerDataModule(pl.LightningDataModule):
         """setup the data module by applying transforms and creating datasets
         """
         # read data using predefined function
-        dataset = data_access(self.data_path)
+        dataset = data_access(self.hparams.data_path)
         # devide into train, val, test using predefined function
         self.train_dataset, self.val_dataset, self.test_dataset = get_dataset(
             dataset=dataset,
