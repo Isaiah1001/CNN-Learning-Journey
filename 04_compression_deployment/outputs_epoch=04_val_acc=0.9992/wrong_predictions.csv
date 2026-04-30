@@ -1,0 +1,2 @@
+sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
+91,0,17,'peruvian lily',83,'columbine',0.7953751683235168,0

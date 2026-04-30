@@ -1,0 +1,29 @@
+Checkpoint: ./logs/checkpoints/checkpoint_pruned_l1_30%_epoch=04_val_acc=0.9992.ckpt
+Samples: 410
+Overall test accuracy: 0.9976
+Wrong predictions: 1
+
+Macro metrics (averaged over classes):
+- Precision (macro): 0.9985
+- Recall   (macro): 0.9966
+- F1       (macro): 0.9972
+
+Weighted metrics (support-weighted over classes):
+- Precision (weighted): 0.9979
+- Recall   (weighted): 0.9976
+- F1       (weighted): 0.9974
+
+Worst 10 classes by accuracy:
+- 'peruvian lily': 0.6667 (2/3)
+- 'pink primrose': 1.0000 (2/2)
+- 'rose': 1.0000 (6/6)
+- 'water lily': 1.0000 (4/4)
+- 'azalea': 1.0000 (7/7)
+- 'gazania': 1.0000 (2/2)
+- 'windflower': 1.0000 (4/4)
+- 'bearded iris': 1.0000 (1/1)
+- 'spring crocus': 1.0000 (1/1)
+- 'osteospermum': 1.0000 (4/4)
+
+Top 10 confusion pairs:
+- 'peruvian lily' -> 'columbine': 1

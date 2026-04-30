@@ -1,0 +1,5 @@
+sample_id,batch_idx,true_label,true_class,pred_label,pred_class,confidence,correct
+14,0,3,'sweet pea',78,'toad lily',0.7963666915893555,0
+17,0,39,'lenten rose',95,'camellia',0.6356035470962524,0
+87,0,68,'windflower',61,'japanese anemone',0.38305461406707764,0
+199,1,35,'ruby-lipped cattleya',84,'desert-rose',0.9573243260383606,0
