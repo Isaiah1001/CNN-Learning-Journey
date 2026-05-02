@@ -101,6 +101,44 @@ def _weight_fingerprint(model: torch.nn.Module) -> dict:
     }
 
 
+def _evaluate_top1(
+    model: torch.nn.Module,
+    datamodule,
+    device: str | None = None,
+    max_batches: int | None = None,
+) -> float:
+    """Run validation on a plain nn.Module and return top-1 accuracy in [0, 1].
+
+    Used as a Lightning-independent diagnostic so we can print:
+      * accuracy of the original loaded checkpoint (before pruning)
+      * accuracy of the pruned model (before any fine-tune)
+    Both numbers are logged to console and to MLflow so a user can immediately
+    tell whether a poor first-epoch val_acc is "pruning damage" or "fine-tune
+    just hasn't started yet" — the original failure mode behind the
+    "validation accuracy starts from 0" report.
+    """
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else (
+            "mps" if torch.backends.mps.is_available() else "cpu"
+        )
+    model = model.to(device).eval()
+    datamodule.setup(stage="validate")
+    loader = datamodule.val_dataloader()
+    total, correct = 0, 0
+    with torch.inference_mode():
+        for i, batch in enumerate(loader):
+            if max_batches is not None and i >= max_batches:
+                break
+            inputs, labels, _ = batch
+            inputs = inputs.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
+            logits = model(inputs)
+            preds = logits.argmax(dim=1)
+            correct += int((preds == labels).sum().item())
+            total += int(labels.numel())
+    return correct / total if total else 0.0
+
+
 # ==============================================
 # 2) Physical channel pruning with DepGraph
 # ==============================================
@@ -269,10 +307,18 @@ def finetune_pruned(
     finetune_epochs: int,
     lr: float,
     pruning_ratio: float,
+    pre_finetune_val_acc: float | None = None,
 ) -> torch.nn.Module:
     """Recovery fine-tune that CONTINUES training the pruned weights.
 
     Returns the same nn.Module that was passed in (now with updated weights).
+
+    `pre_finetune_val_acc` (if provided) is the top-1 accuracy of `pruned_model`
+    measured by the caller on the validation set BEFORE fine-tuning. We log it
+    to MLflow under both `pre_finetune_val_acc` and `val_acc` at step 0, so the
+    plotted recovery curve starts from the actual pruned-model accuracy
+    instead of an empty origin (which previously read as "val_acc=0" and was
+    misinterpreted as the pruned weights being lost).
     """
     import lightning.pytorch as pl
     from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -330,7 +376,10 @@ def finetune_pruned(
         callbacks=[checkpoint_cb, lr_monitor],
         enable_model_summary=False,
         log_every_n_steps=10,
-        num_sanity_val_steps=0,
+        # Run a couple of validation batches before training starts so any
+        # data-pipeline / shape / device error surfaces immediately rather than
+        # silently presenting as "val_acc=0".
+        num_sanity_val_steps=2,
     )
 
     logger.log_hyperparams({
@@ -339,7 +388,34 @@ def finetune_pruned(
         "finetune_epochs": finetune_epochs,
         "finetune_lr": lr,
         "finetune_starts_from": "pruned_pretrained_weights",  # NOT random init
+        "pre_finetune_val_acc": (
+            round(float(pre_finetune_val_acc), 6)
+            if pre_finetune_val_acc is not None else "unknown"
+        ),
     })
+
+    # Run a full validation pass through Lightning BEFORE training starts.
+    # This:
+    #   * plots the pruned-model accuracy as the run's epoch-0 val_acc, so the
+    #     recovery curve no longer looks like it starts from nothing;
+    #   * verifies validation_step / metric / device wiring is healthy before
+    #     a single optimizer step is taken.
+    print("\n[Fine-tune] Pre-fit validation pass on pruned weights (Lightning)…")
+    pre_fit_metrics = trainer.validate(pl_module, datamodule=datamodule, verbose=False)
+    pre_fit_val_acc = None
+    if pre_fit_metrics:
+        # validate() returns a list of dicts (one per dataloader)
+        pre_fit_val_acc = float(pre_fit_metrics[0].get("val_acc", float("nan")))
+    print(f"  [pre-fit] val_acc (Lightning)        : {pre_fit_val_acc}")
+    if pre_finetune_val_acc is not None:
+        print(f"  [pre-fit] val_acc (manual eval)      : {pre_finetune_val_acc:.4f}")
+        # Cross-check the two diagnostics agree to within numerical noise. A
+        # large gap would point at a mismatched data pipeline, not pruning damage.
+        if pre_fit_val_acc is not None and abs(pre_fit_val_acc - pre_finetune_val_acc) > 0.05:
+            print(
+                "  WARNING: Lightning val_acc and manual eval disagree by >5%. "
+                "Check that validation_step / dataloader / labels are consistent."
+            )
 
     print(f"\n[Fine-tune] {finetune_epochs} epochs, lr={lr} — continuing from pruned weights")
     trainer.fit(pl_module, datamodule=datamodule)
@@ -367,7 +443,7 @@ def run(
     os.makedirs(output_dir, exist_ok=True)
 
     # ── [STAGE 1] Load original Lightning checkpoint with trained weights ────
-    from base_flower import FlowerLightModule  # lazy import — Lightning needed
+    from base_flower import FlowerLightModule, FlowerDataModule  # lazy
     print("\n" + "=" * 60)
     print("[STAGE 1] Loading original trained Lightning checkpoint")
     print("=" * 60)
@@ -383,6 +459,23 @@ def run(
     print(f"  trained-weight fingerprint: {fp_loaded}")
 
     example_inputs = torch.randn(1, 3, image_size, image_size)
+
+    # ── [STAGE 1b] Baseline: validate the loaded ckpt before any pruning ─────
+    # Quick sanity pass: run 32 validation batches through the original model
+    # so the user sees the trained checkpoint's accuracy in the same units used
+    # downstream (val_acc on the same val split). If this is already low,
+    # subsequent low numbers are NOT a pruning bug — the ckpt itself is bad.
+    print("\n[STAGE 1b] Baseline validation of the loaded checkpoint "
+          "(quick pass, max 32 batches)")
+    try:
+        _baseline_dm = FlowerDataModule()
+        baseline_acc = _evaluate_top1(model, _baseline_dm, max_batches=32)
+        print(f"  original ckpt val_acc (quick) : {baseline_acc:.4f}")
+    except Exception as exc:  # noqa: BLE001
+        baseline_acc = None
+        print(f"  baseline eval skipped ({exc!r})")
+    # Make sure the model is back on CPU for the in-place pruning pass below.
+    model = model.to("cpu").eval()
 
     # ── [STAGE 2] Physical channel pruning (in-place, weight-preserving) ─────
     print("\n" + "=" * 60)
@@ -422,6 +515,28 @@ def run(
     assert y.shape == (1, 102), f"Unexpected output shape: {y.shape}"
     print(f"  OK — output shape {tuple(y.shape)}")
 
+    # ── [STAGE 2b] Post-prune, pre-finetune validation ───────────────────────
+    # This is the diagnostic the previous version was missing: it gives users
+    # the accuracy of the pruned (but not-yet-fine-tuned) model on the actual
+    # validation set. Without this, the first MLflow point during fine-tune
+    # looked like "val_acc=0" simply because nothing had been logged yet, and
+    # users mistakenly concluded the pruned weights had been wiped out.
+    print("\n[STAGE 2b] Post-prune, pre-finetune validation "
+          "(full val pass on pruned model)")
+    pruned_acc: float | None = None
+    try:
+        _pruned_dm = FlowerDataModule()
+        pruned_acc = _evaluate_top1(model, _pruned_dm)
+        print(f"  pruned val_acc (no fine-tune): {pruned_acc:.4f}")
+        if baseline_acc is not None:
+            drop = baseline_acc - pruned_acc
+            print(f"  pruning damage              : {drop*100:+.2f} pp "
+                  f"(baseline {baseline_acc:.4f} → pruned {pruned_acc:.4f})")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  post-prune eval skipped ({exc!r})")
+    # Pruning rewrote shapes on CPU; move back to CPU for the wrapper.
+    model = model.to("cpu").eval()
+
     # ── [STAGE 3] Fine-tune the pruned weights (NOT from scratch) ────────────
     if finetune_epochs > 0:
         print("\n" + "=" * 60)
@@ -430,7 +545,10 @@ def run(
         print(f"  epochs={finetune_epochs}, lr={lr}")
         print("  (the wrapper reuses the pruned nn.Module; it does NOT build a fresh model)")
         try:
-            ft_model = finetune_pruned(model, finetune_epochs, lr, pruning_ratio)
+            ft_model = finetune_pruned(
+                model, finetune_epochs, lr, pruning_ratio,
+                pre_finetune_val_acc=pruned_acc,
+            )
             # Same-object guard at the script level too.
             assert ft_model is model, (
                 "finetune_pruned returned a different object — refusing to save."
@@ -463,6 +581,8 @@ def run(
         "finetune_epochs": finetune_epochs,
         "finetune_starts_from": "pruned_pretrained_weights",
         "lr": lr,
+        "baseline_val_acc_quick": baseline_acc,       # original ckpt, 32 batches
+        "post_prune_pre_finetune_val_acc": pruned_acc,  # full val pass
         **{k: v for k, v in info.items() if k not in ("ignored_layer_count",)},
     }
     with open(meta_path, "w") as fh:
