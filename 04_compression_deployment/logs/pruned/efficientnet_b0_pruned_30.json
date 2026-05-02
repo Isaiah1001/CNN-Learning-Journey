@@ -1,0 +1,24 @@
+{
+  "base_ckpt": "/Users/huizhang/Documents/GitHub/CNN-Learning-Journey/04_compression_deployment/logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt",
+  "pruning_method": "physical_channel_depgraph",
+  "pruning_ratio": 0.3,
+  "round_to": 8,
+  "example_input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "model_save_path": "/Users/huizhang/Documents/GitHub/CNN-Learning-Journey/04_compression_deployment/logs/pruned/efficientnet_b0_pruned_30.pth",
+  "finetune_epochs": 50,
+  "finetune_starts_from": "pruned_pretrained_weights",
+  "lr": 0.001,
+  "iterative_steps": 1,
+  "global_pruning": true,
+  "macs_before": 400519394,
+  "macs_after": 212786018,
+  "params_before": 4138210,
+  "params_after": 2659050,
+  "macs_reduction": 0.46872480786785575,
+  "params_reduction": 0.35743956928237086
+}
