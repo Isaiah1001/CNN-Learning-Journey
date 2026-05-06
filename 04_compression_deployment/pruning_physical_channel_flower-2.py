@@ -16,12 +16,9 @@
 #   STAGE 5 — save pruned nn.Module (.pth) + metadata (.json)
 #
 # Label note:
-#   Oxford Flowers-102 labels are 1-indexed (1–102).
-#   The model outputs logits for 102 classes with argmax in [0, 101].
-#   Wherever we compare predictions to labels we apply `labels - 1`.
-#   The Lightning training loop uses torchmetrics Accuracy which handles
-#   this correctly internally, but our manual quick_validate must do it
-#   explicitly.
+#   data_load.py already subtracts 1 from raw .mat labels:
+#       self.data_labels = loadmat(...)['labels'][0] - 1
+#   So batch[1] is already 0-indexed (0~101). Do NOT subtract 1 again.
 #
 # round_to (default 8):
 #   After pruning, channel counts are rounded UP to the nearest multiple
@@ -184,9 +181,8 @@ def calibrate_bn(model: nn.Module, datamodule, n_batches: int = 20) -> None:
 def quick_validate(model: nn.Module, datamodule) -> float:
     """Simple CPU validation loop — no Lightning overhead.
 
-    IMPORTANT: Oxford Flowers-102 labels are 1-indexed (range 1–102).
-    The model's argmax output is 0-indexed (range 0–101).
-    We apply `labels - 1` before comparing so the ranges align.
+    batch[1] is already 0-indexed (0~101): data_load.py subtracts 1
+    from the raw .mat labels at load time. No offset needed here.
 
     Returns val_acc as a plain float.
     """
@@ -197,7 +193,7 @@ def quick_validate(model: nn.Module, datamodule) -> float:
     with torch.no_grad():
         for batch in loader:
             imgs   = batch[0]
-            labels = batch[1] - 1   # <-- 1-indexed -> 0-indexed
+            labels = batch[1]           # already 0-indexed
             preds  = model(imgs).argmax(dim=1)
             correct += (preds == labels).sum().item()
             total   += labels.size(0)
@@ -214,9 +210,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
              pruning_ratio: float) -> None:
     """Recovery fine-tune: continue training the pruned weights (not from scratch).
 
-    Uses torchmetrics Accuracy which expects 0-indexed labels. We subtract 1
-    from the raw batch labels inside training_step / validation_step.
-
+    batch[1] is already 0-indexed — no label offset needed.
     Modifies `model` in-place via Lightning. Returns nothing.
     """
     import lightning.pytorch as pl
@@ -238,8 +232,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
             return self.model(x)
 
         def training_step(self, batch, _):
-            x      = batch[0]
-            labels = batch[1] - 1           # 1-indexed -> 0-indexed
+            x, labels = batch[0], batch[1]  # labels already 0-indexed
             logits = self(x)
             loss   = self.loss_fn(logits, labels)
             self.train_acc(logits, labels)
@@ -248,8 +241,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
             return loss
 
         def validation_step(self, batch, _):
-            x      = batch[0]
-            labels = batch[1] - 1           # 1-indexed -> 0-indexed
+            x, labels = batch[0], batch[1]  # labels already 0-indexed
             logits = self(x)
             loss   = self.loss_fn(logits, labels)
             self.val_acc(logits, labels)
