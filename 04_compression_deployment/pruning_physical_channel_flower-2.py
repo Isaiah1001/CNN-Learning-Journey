@@ -8,14 +8,43 @@
 # Pipeline:
 #   STAGE 1 — load trained Lightning checkpoint, extract nn.Module
 #   STAGE 2 — prune channels in-place with DepGraph (weights preserved)
+#              Per-layer by default: each layer independently drops
+#              `pruning_ratio` fraction of its own channels.
+#              Pass --global_pruning to use a single global ranking instead.
 #   STAGE 3 — recalibrate BN running stats (momentum=1.0, ~20 batches)
 #   STAGE 4 — optional recovery fine-tune (continues from pruned weights)
 #   STAGE 5 — save pruned nn.Module (.pth) + metadata (.json)
+#
+# round_to (default 8):
+#   After pruning, channel counts are rounded UP to the nearest multiple
+#   of this value. Modern GPU/NPU matrix units run most efficiently when
+#   channel counts are multiples of 8 or 16. Without rounding, a layer
+#   pruned from 96 to 67 channels gains almost no real speedup because
+#   the hardware still pads to 72 internally. round_to=8 makes the trim
+#   explicit and hardware-friendly. Set --round_to 1 to disable rounding.
+#
+# Global vs per-layer pruning:
+#   Per-layer (default, --global_pruning not set):
+#     Each layer independently drops exactly `pruning_ratio` of its own
+#     channels. Every layer is trimmed by the same fraction regardless of
+#     how important its channels are relative to other layers.
+#     More predictable compression ratio; safer for shallow layers.
+#   Global (--global_pruning):
+#     All channels across all prunable layers are ranked together.
+#     The bottom `pruning_ratio` fraction is removed globally.
+#     Important layers keep more channels; unimportant layers lose more.
+#     Can be more accurate after fine-tuning, but some layers may be
+#     pruned very aggressively.
 #
 # Usage:
 #   python3.10 pruning_physical_channel_flower-2.py \
 #       --ckpt logs/checkpoints/best.ckpt --pruning_ratio 0.3
 #
+#   # Enable global pruning:
+#   python3.10 pruning_physical_channel_flower-2.py \
+#       --ckpt logs/checkpoints/best.ckpt --pruning_ratio 0.3 --global_pruning
+#
+#   # With fine-tune:
 #   python3.10 pruning_physical_channel_flower-2.py \
 #       --ckpt logs/checkpoints/best.ckpt --pruning_ratio 0.3 --finetune_epochs 5
 
@@ -53,11 +82,23 @@ def load_model(ckpt_path: str, image_size: int) -> tuple[nn.Module, torch.Tensor
 # ----------------------------------------------------------------------
 
 def prune(model: nn.Module, dummy: torch.Tensor,
-          ratio: float, round_to: int = 8) -> dict:
+          ratio: float, round_to: int = 8,
+          global_pruning: bool = False) -> dict:
     """Physically remove low-magnitude channels in-place via DepGraph.
-    Surviving channel weights are unchanged. Returns a stats dict."""
 
-    # Do not prune the final classifier or the stem conv.
+    global_pruning=False (default): each layer independently drops
+        `ratio` fraction of its own channels (per-layer pruning).
+    global_pruning=True: channels from all layers are ranked together
+        and the bottom `ratio` fraction is removed globally.
+
+    round_to: pruned channel counts are rounded UP to the nearest
+        multiple of this value for hardware alignment. Set to 1 to
+        disable rounding.
+
+    Surviving channel weights are kept unchanged. Returns a stats dict.
+    """
+    # Do not prune the final classifier (output = num_classes) or the
+    # EfficientNet stem conv (features[0]) — both are fragile.
     ignored = []
     for m in model.classifier.modules():
         if isinstance(m, nn.Linear):
@@ -75,9 +116,9 @@ def prune(model: nn.Module, dummy: torch.Tensor,
 
     pruner = tp.pruner.MagnitudePruner(
         model, dummy,
-        importance=tp.importance.MagnitudeImportance(p=2),
+        importance=tp.importance.MagnitudeImportance(p=2),  # L2 norm
         pruning_ratio=ratio,
-        global_pruning=True,
+        global_pruning=global_pruning,
         round_to=round_to,
         ignored_layers=ignored,
     )
@@ -101,15 +142,15 @@ def calibrate_bn(model: nn.Module, datamodule, n_batches: int = 20) -> None:
 
     After DepGraph resizes BN tensors the running stats still reflect the
     OLD (larger) channel distributions, causing random-guess accuracy in
-    eval() mode. Fix: run a few forward passes in train() mode with
-    momentum=1.0 so each batch fully replaces the stale stats.
+    eval() mode. Fix: run forward passes in train() mode with momentum=1.0
+    so each batch fully replaces the stale stats instantly.
     20 batches is enough; original momentum values are restored afterwards.
     """
     datamodule.setup(stage="fit")
     loader = datamodule.train_dataloader()
     device = next(model.parameters()).device
 
-    # Back up momentum and set to 1.0 for instant overwrite.
+    # Back up momentum and set to 1.0 so each batch fully overwrites stats.
     backup = {}
     for name, m in model.named_modules():
         if isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d)):
@@ -123,7 +164,7 @@ def calibrate_bn(model: nn.Module, datamodule, n_batches: int = 20) -> None:
                 break
             model(batch[0].to(device))
 
-    # Restore original momentum.
+    # Restore per-layer momentum to original values.
     for name, m in model.named_modules():
         if name in backup:
             m.momentum = backup[name]
@@ -133,7 +174,7 @@ def calibrate_bn(model: nn.Module, datamodule, n_batches: int = 20) -> None:
 
 
 def quick_validate(model: nn.Module, datamodule) -> float:
-    """Run a quick CPU validation loop without Lightning overhead.
+    """Simple CPU validation loop — no Lightning overhead.
     Returns val_acc as a plain float."""
     datamodule.setup(stage="fit")
     loader = datamodule.val_dataloader()
@@ -165,7 +206,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
     from base_flower import FlowerDataModule
 
     class _Module(pl.LightningModule):
-        """Minimal LightningModule that wraps the already-pruned nn.Module."""
+        """Minimal LightningModule wrapping the already-pruned nn.Module."""
         def __init__(self):
             super().__init__()
             self.model = model          # same object — no re-init
@@ -180,7 +221,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
             x, y = batch[0], batch[1]
             loss = self.loss_fn(self(x), y)
             self.train_acc(self(x), y)
-            self.log("train_loss", loss,           on_epoch=True, prog_bar=True)
+            self.log("train_loss", loss,            on_epoch=True, prog_bar=True)
             self.log("train_acc",  self.train_acc,  on_epoch=True, prog_bar=True)
             return loss
 
@@ -188,7 +229,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
             x, y = batch[0], batch[1]
             loss = self.loss_fn(self(x), y)
             self.val_acc(self(x), y)
-            self.log("val_loss", loss,          on_epoch=True, prog_bar=True)
+            self.log("val_loss", loss,           on_epoch=True, prog_bar=True)
             self.log("val_acc",  self.val_acc,   on_epoch=True, prog_bar=True)
 
         def configure_optimizers(self):
@@ -222,7 +263,7 @@ def finetune(model: nn.Module, epochs: int, lr: float,
 # ----------------------------------------------------------------------
 
 def run(ckpt_path, pruning_ratio, finetune_epochs, lr,
-        output_dir, round_to, image_size, bn_batches):
+        output_dir, round_to, image_size, bn_batches, global_pruning):
     os.makedirs(output_dir, exist_ok=True)
     from base_flower import FlowerDataModule
 
@@ -232,8 +273,10 @@ def run(ckpt_path, pruning_ratio, finetune_epochs, lr,
     print(f"  params before pruning: {sum(p.numel() for p in model.parameters()):,}")
 
     # STAGE 2 ── prune
-    print("\n[STAGE 2] Pruning")
-    stats = prune(model, dummy, ratio=pruning_ratio, round_to=round_to)
+    mode_str = "global" if global_pruning else "per-layer"
+    print(f"\n[STAGE 2] Pruning  (mode={mode_str}, ratio={pruning_ratio}, round_to={round_to})")
+    stats = prune(model, dummy, ratio=pruning_ratio,
+                  round_to=round_to, global_pruning=global_pruning)
     print(f"  params : {stats['params_before']:,} -> {stats['params_after']:,}"
           f"  ({stats['param_reduction']*100:.1f}% reduction)")
     print(f"  MACs   : {stats['macs_before']:,} -> {stats['macs_after']:,}"
@@ -269,6 +312,7 @@ def run(ckpt_path, pruning_ratio, finetune_epochs, lr,
         json.dump({
             "base_ckpt": os.path.abspath(ckpt_path),
             "pruning_ratio": pruning_ratio,
+            "pruning_mode": mode_str,
             "round_to": round_to,
             "bn_calibration_batches": bn_batches,
             "finetune_epochs": finetune_epochs,
@@ -287,13 +331,18 @@ def main():
     p.add_argument("--finetune_epochs", type=int,   default=0)
     p.add_argument("--lr",              type=float, default=1e-4)
     p.add_argument("--output_dir",      default="./logs/pruned")
-    p.add_argument("--round_to",        type=int,   default=8)
+    p.add_argument("--round_to",        type=int,   default=8,
+                   help="Round pruned channel counts up to nearest multiple of this "
+                        "value for hardware alignment (set 1 to disable).")
     p.add_argument("--image_size",      type=int,   default=224)
     p.add_argument("--bn_batches",      type=int,   default=20,
                    help="BN recalibration batches (momentum=1.0). 20 is enough.")
+    p.add_argument("--global_pruning",  action="store_true",
+                   help="Use global channel ranking instead of per-layer pruning.")
     args = p.parse_args()
     run(args.ckpt, args.pruning_ratio, args.finetune_epochs, args.lr,
-        args.output_dir, args.round_to, args.image_size, args.bn_batches)
+        args.output_dir, args.round_to, args.image_size, args.bn_batches,
+        args.global_pruning)
 
 
 if __name__ == "__main__":
