@@ -1,5 +1,7 @@
 # benchmark.py
 import os
+import gzip
+import io
 import time
 import argparse
 import torch
@@ -21,10 +23,30 @@ def get_model_size(model):
     buffer_size = sum(b.numel() * b.element_size() for b in model.buffers())
     total_params     = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    # Non-zero parameter accounting -- distinguishes mask-only ("structured")
+    # pruning (zeros baked into full-shape tensors) from physical channel
+    # surgery. For mask-only pruning, total_params and param_size_mb stay
+    # constant; only nonzero_params drops.
+    nonzero_params = sum((p != 0).sum().item() for p in model.parameters())
+    effective_param_size = nonzero_params * 4  # float32 lower bound
+
+    # Gzipped state_dict size -- the only on-disk savings you get "for free"
+    # from a mask-only pruned model, because zero runs compress well.
+    buf = io.BytesIO()
+    torch.save(model.state_dict(), buf)
+    raw_bytes = buf.getvalue()
+    gz_bytes  = gzip.compress(raw_bytes, compresslevel=6)
+
     return {
         "total_params": total_params, "trainable_params": trainable_params,
+        "nonzero_params": nonzero_params,
+        "param_sparsity": 1 - nonzero_params / total_params if total_params else 0.0,
         "param_size_mb": param_size / 1024**2, "buffer_size_mb": buffer_size / 1024**2,
         "model_size_mb": (param_size + buffer_size) / 1024**2,
+        "effective_param_size_mb": effective_param_size / 1024**2,
+        "state_dict_raw_mb":  len(raw_bytes) / 1024**2,
+        "state_dict_gzip_mb": len(gz_bytes)  / 1024**2,
     }
 
 def get_checkpoint_file_size(ckpt_path):
@@ -71,9 +93,21 @@ def print_report(ckpt_path, size_stats, cpu_stats, mps_stats):
     print(f"\n── Model Size ──")
     print(f"  Total params    : {size_stats['total_params']:,}")
     print(f"  Trainable params: {size_stats['trainable_params']:,}")
-    print(f"  Param size      : {size_stats['param_size_mb']:.2f} MB")
+    print(f"  Non-zero params : {size_stats['nonzero_params']:,}  "
+          f"(param sparsity {size_stats['param_sparsity']:.1%})")
+    print(f"  Param size      : {size_stats['param_size_mb']:.2f} MB  (nominal, dense)")
+    print(f"  Effective size  : {size_stats['effective_param_size_mb']:.2f} MB  "
+          f"(non-zero params * 4B; only realized after channel surgery)")
     print(f"  Buffer size     : {size_stats['buffer_size_mb']:.2f} MB")
     print(f"  Model size      : {size_stats['model_size_mb']:.2f} MB")
+    print(f"  state_dict raw  : {size_stats['state_dict_raw_mb']:.2f} MB")
+    print(f"  state_dict gzip : {size_stats['state_dict_gzip_mb']:.2f} MB")
+    if size_stats["param_sparsity"] > 0.01 and \
+       abs(size_stats["effective_param_size_mb"] - size_stats["param_size_mb"]) > 0.01:
+        print("  NOTE: this checkpoint contains zeroed channels but full-shape")
+        print("        tensors. In-memory size and forward latency will not")
+        print("        decrease until Conv2d/BN/Linear are physically resized")
+        print("        (e.g. via torch-pruning DepGraph).")
     print(f"\n── CPU Latency (bs={cpu_stats['batch_size']}, runs={cpu_stats['runs']}) ──")
     for k in ["mean_ms","min_ms","p50_ms","p95_ms","max_ms"]:
         print(f"  {k:<9}: {cpu_stats[k]:.2f} ms")
@@ -93,9 +127,14 @@ def log_to_mlflow(run_name, ckpt_path, size_stats, cpu_stats, mps_stats, batch_s
         mlflow.log_metrics({
             "model/total_params":     size_stats["total_params"],
             "model/trainable_params": size_stats["trainable_params"],
+            "model/nonzero_params":   size_stats["nonzero_params"],
+            "model/param_sparsity":   round(size_stats["param_sparsity"],4),
             "model/param_size_mb":    round(size_stats["param_size_mb"],3),
+            "model/effective_param_size_mb": round(size_stats["effective_param_size_mb"],3),
             "model/buffer_size_mb":   round(size_stats["buffer_size_mb"],3),
             "model/total_size_mb":    round(size_stats["model_size_mb"],3),
+            "model/state_dict_raw_mb":  round(size_stats["state_dict_raw_mb"],3),
+            "model/state_dict_gzip_mb": round(size_stats["state_dict_gzip_mb"],3),
             "ckpt/file_size_mb":      round(get_checkpoint_file_size(ckpt_path),2),
             "latency_cpu/mean_ms":    round(cpu_stats["mean_ms"],3),
             "latency_cpu/min_ms":     round(cpu_stats["min_ms"],3),
