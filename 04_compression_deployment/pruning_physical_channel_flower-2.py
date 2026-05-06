@@ -1,4 +1,4 @@
-# pruning_physical_channel_flower.py
+# pruning_physical_channel_flower-2.py
 # Post-training PHYSICAL channel pruning using Torch-Pruning (DepGraph),
 # followed by a fine-tune that *continues training the pruned weights*.
 #
@@ -10,15 +10,21 @@
 #       Pruning rewrites Conv2d / BN / Linear shapes IN-PLACE; surviving
 #       channels keep their trained values. The Python object identity
 #       (id(model)) is preserved — there is no `model = build_new_model()`.
-#   (4) Wrap the *same* pruned nn.Module into a thin LightningModule
+#   (4) [NEW] Recalibrate BatchNorm running statistics on a few training
+#       batches. After channel pruning the BN running_mean / running_var
+#       tensors are resized to match the new channel count, but their values
+#       were computed over the OLD (larger) feature distributions. Running a
+#       short calibration pass in train() mode lets BN update those stats
+#       with the actual post-pruning activations, restoring accurate inference.
+#   (5) Wrap the *same* pruned nn.Module into a thin LightningModule
 #       (PrunedFlowerLightModule). The wrapper assigns `self.model = pruned_model`;
 #       it does NOT reconstruct a fresh torchvision model. We assert
 #       `pl_module.model is pruned_model` and compare a weight fingerprint
 #       before/after wrapping, so any accidental re-init shows up immediately.
-#   (5) Fine-tune the wrapped module. trainer.fit moves it to the accelerator
+#   (6) Fine-tune the wrapped module. trainer.fit moves it to the accelerator
 #       and continues SGD on the existing pruned weights (i.e. recovery
 #       fine-tuning, not training from scratch).
-#   (6) Save the whole pruned + fine-tuned nn.Module via torch.save(model, path)
+#   (7) Save the whole pruned + fine-tuned nn.Module via torch.save(model, path)
 #       plus a sidecar JSON with provenance.
 #
 # Why a different save format?
@@ -34,13 +40,13 @@
 #   pip install torch-pruning   # imports as `torch_pruning`
 #
 # Usage:
-#   python3.10 pruning_physical_channel_flower.py \
+#   python3.10 pruning_physical_channel_flower-2.py \
 #       --ckpt logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt \
 #       --pruning_ratio 0.3 \
 #       --finetune_epochs 0
 #
 #   # With short fine-tune recovery on the pruned weights (NOT from scratch):
-#   python3.10 pruning_physical_channel_flower.py \
+#   python3.10 pruning_physical_channel_flower-2.py \
 #       --ckpt logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt \
 #       --pruning_ratio 0.3 --finetune_epochs 5
 #
@@ -85,13 +91,16 @@ def _format_si(x: float) -> str:
 
 
 def _weight_fingerprint(model: torch.nn.Module) -> dict:
-    """Cheap fingerprint of a model's parameters. Used as a safety check that the
-    fine-tune wrapper is wrapping the *same* trained tensor objects rather than
-    silently re-initializing a fresh backbone."""
+    """Return a cheap fingerprint of a model's parameters.
+
+    Used as a safety check that the fine-tune wrapper is holding the *same*
+    trained tensor objects rather than silently re-initializing a fresh backbone.
+    The fingerprint captures total parameter count, tensor count, identity of
+    the first parameter tensor, and the L1 sum of the first 8 parameter tensors.
+    Any of these will change instantly if a layer is swapped for a fresh init.
+    """
     params = list(model.parameters())
     total_numel = sum(p.numel() for p in params)
-    # Sum of a few statistics that change instantly if any layer is replaced
-    # with a fresh torchvision init.
     sample_sum = float(sum(float(p.detach().abs().sum()) for p in params[:8]))
     return {
         "n_params": total_numel,
@@ -113,8 +122,7 @@ def physical_prune(
     iterative_steps: int = 1,
     global_pruning: bool = True,
 ) -> tuple[torch.nn.Module, dict]:
-    """
-    Physically prune output channels of a torchvision EfficientNet-B0 model.
+    """Physically prune output channels of a torchvision EfficientNet-B0 model.
 
     DepGraph automatically discovers groups of layers that must be pruned
     together (e.g. a Conv2d + its BatchNorm2d + the next Conv2d's in_channels +
@@ -131,8 +139,7 @@ def physical_prune(
             the network.
         pruning_ratio: fraction of channels to drop globally.
         round_to: round resulting channel counts up to a multiple of this value
-            (8 is hardware-friendly for most accelerators). Set to None to
-            disable.
+            (8 is hardware-friendly for most accelerators). Set to None to disable.
         iterative_steps: spread pruning across this many steps. We call .step()
             once for each step; for one-shot pruning leave this at 1.
         global_pruning: True = single global ranking; False = per-layer ratio.
@@ -140,9 +147,8 @@ def physical_prune(
     Returns:
         (pruned_model, info_dict) — pruned_model is `model` itself, mutated in-place.
     """
-    # Layers we refuse to prune. The final classifier output channels equal the
-    # number of classes, so we pin it. The EfficientNet stem conv is fragile and
-    # often left intact in the literature — we keep it as-is here too.
+    # Pin the final classifier (output dim = num_classes) and the EfficientNet
+    # stem conv (features[0]) — both are fragile and intentionally left intact.
     ignored_layers: list[torch.nn.Module] = []
     if hasattr(model, "classifier"):
         for m in model.classifier.modules():
@@ -153,7 +159,7 @@ def physical_prune(
             if isinstance(m, torch.nn.Conv2d):
                 ignored_layers.append(m)
 
-    importance = tp.importance.MagnitudeImportance(p=2)  # L2 magnitude
+    importance = tp.importance.MagnitudeImportance(p=2)  # L2 channel magnitude
 
     pruner = tp.pruner.MagnitudePruner(
         model,
@@ -168,7 +174,7 @@ def physical_prune(
 
     macs_before, params_before = _macs_params(model, example_inputs)
 
-    for step in range(iterative_steps):
+    for _ in range(iterative_steps):
         pruner.step()  # rewrites Conv/BN/Linear shapes IN-PLACE on `model`
 
     macs_after, params_after = _macs_params(model, example_inputs)
@@ -190,24 +196,82 @@ def physical_prune(
 
 
 # ==============================================
-# 3) Fine-tune wrapper that PRESERVES the pruned weights
+# 3) BatchNorm recalibration after pruning
 # ==============================================
 
-def _build_pruned_lightmodule(pruned_model: torch.nn.Module, num_classes: int = 102,
-                              lr: float = 1e-4, weight_decay: float = 1e-4):
-    """Wrap an already-pruned nn.Module into a Lightning module compatible
-    with FlowerLightModule's training API.
+def calibrate_bn(
+    model: torch.nn.Module,
+    datamodule,
+    n_batches: int = 100,
+) -> None:
+    """Recalibrate BatchNorm running statistics after physical channel pruning.
+
+    WHY THIS IS NECESSARY
+    ---------------------
+    torch_pruning rewrites Conv2d / BN / Linear shapes in-place by removing
+    the lowest-magnitude channels. The BN running_mean and running_var tensors
+    are resized to match the new (smaller) channel count, but their *values*
+    were accumulated under the old (larger) feature distributions. Using those
+    stale statistics during eval() inference causes wildly incorrect
+    normalisation — observed as val_loss > 12 and val_acc ≈ 1/num_classes
+    (i.e. random-guess level), even though the surviving channel weights are
+    perfectly intact.
+
+    The fix is straightforward: run a short forward-pass loop in train() mode
+    so that BN accumulates fresh running_mean / running_var from the actual
+    post-pruning activations, then switch back to eval() for inference.
+
+    Args:
+        model: the pruned nn.Module (in-place update of BN running stats).
+        datamodule: a FlowerDataModule instance (must already be set up, or
+            setup() is called here).
+        n_batches: number of training mini-batches to process. 100 batches
+            (≈12,800 images at batch_size=128) is enough for stable stats.
+    """
+    print(f"\n[BN Calibration] Recalibrating BatchNorm stats over {n_batches} batches ...")
+
+    # setup() is idempotent in FlowerDataModule, so calling it again is safe.
+    datamodule.setup(stage="fit")
+    loader = datamodule.train_dataloader()
+
+    # train() mode activates the BN momentum update for running_mean/running_var.
+    # We do NOT want gradients — this is purely a statistics pass.
+    model.train()
+    device = next(model.parameters()).device
+
+    with torch.no_grad():
+        for i, batch in enumerate(loader):
+            if i >= n_batches:
+                break
+            imgs = batch[0].to(device)  # batch = (images, labels, extras)
+            model(imgs)
+
+    model.eval()
+    print(f"  Done — BN running stats recalibrated over {min(n_batches, i + 1)} batches.")
+
+
+# ==============================================
+# 4) Fine-tune wrapper that PRESERVES the pruned weights
+# ==============================================
+
+def _build_pruned_lightmodule(
+    pruned_model: torch.nn.Module,
+    num_classes: int = 102,
+    lr: float = 1e-4,
+    weight_decay: float = 1e-4,
+):
+    """Wrap an already-pruned nn.Module into a Lightning module.
 
     Critical contract:
       * We do NOT call FlowerLightModule.__init__ — that would build a fresh
-        stock `torchvision.efficientnet_b0` and overwrite `self.model`,
-        discarding the pruned (and previously trained) weights.
-      * We assign `self.model = pruned_model` so the Lightning module wraps the
-        *same* Python object that was returned from physical_prune. The caller
-        verifies `pl_module.model is pruned_model` after construction.
+        stock torchvision.efficientnet_b0 and overwrite self.model, discarding
+        the pruned (and previously trained) weights.
+      * We assign self.model = pruned_model so the Lightning module wraps the
+        *same* Python object returned from physical_prune.
+      * The caller verifies pl_module.model is pruned_model after construction.
 
-    Defined inside a function so this file imports cleanly when Lightning isn't
-    installed.
+    Defined inside a helper function so this file imports cleanly when
+    Lightning is not installed (e.g. pure pruning smoke tests).
     """
     import lightning.pytorch as pl
     from torchmetrics import Accuracy
@@ -218,26 +282,30 @@ def _build_pruned_lightmodule(pruned_model: torch.nn.Module, num_classes: int = 
 
         The pruned model is supplied from outside; this class never builds a
         replacement backbone. Hence pruned + trained weights survive into
-        trainer.fit and are updated by SGD (i.e. recovery fine-tuning), they
-        are NOT trained from scratch.
+        trainer.fit and are updated by the optimiser (recovery fine-tuning,
+        NOT training from scratch).
         """
 
-        def __init__(self, pruned_model: torch.nn.Module, num_classes: int = 102,
-                     lr: float = 1e-4, weight_decay: float = 1e-4):
-            # IMPORTANT: skip FlowerLightModule.__init__ so we don't rebuild a
-            # stock efficientnet_b0 and clobber the pruned weights.
+        def __init__(
+            self,
+            pruned_model: torch.nn.Module,
+            num_classes: int = 102,
+            lr: float = 1e-4,
+            weight_decay: float = 1e-4,
+        ):
+            # Skip FlowerLightModule.__init__ to avoid rebuilding a stock
+            # efficientnet_b0 and clobbering the pruned weights.
             pl.LightningModule.__init__(self)
-            # Don't try to pickle the live nn.Module into hparams.
+            # Exclude the live nn.Module from hyperparameter pickling.
             self.save_hyperparameters(ignore=["pruned_model"])
 
-            # Bind the SAME object we received. This is the load-bearing line:
-            # if anything ever replaces `self.model` with a freshly constructed
-            # backbone, training resumes from random init instead of the pruned
-            # weights.
+            # Bind the SAME object. If anything replaces self.model with a
+            # freshly constructed backbone, training will resume from random
+            # init instead of the pruned weights — the assert below catches it.
             self.model = pruned_model
 
-            # Closures over hparams, not raw torch callables, so configure_optimizers
-            # produces a real optimizer/scheduler over `self.parameters()`.
+            # Store optimiser / scheduler as callables so configure_optimizers
+            # can call them over self.parameters() at training start.
             self.optimizer = lambda params: torch.optim.AdamW(
                 params, lr=lr, weight_decay=weight_decay
             )
@@ -249,14 +317,28 @@ def _build_pruned_lightmodule(pruned_model: torch.nn.Module, num_classes: int = 
             self.train_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
             self.val_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
 
+        # ------------------------------------------------------------------
+        # Override epoch-end hooks so Lightning (not us) owns the reset cycle.
+        # torchmetrics Accuracy objects passed to self.log() are automatically
+        # computed at epoch end and reset by Lightning. Adding a manual reset
+        # here would cause a double-reset and corrupt the logged metric value.
+        # ------------------------------------------------------------------
+        def on_train_epoch_end(self):
+            pass  # Lightning handles metric reset automatically
+
+        def on_validation_epoch_end(self):
+            pass  # Lightning handles metric reset automatically
+
     pl_module = PrunedFlowerLightModule(
-        pruned_model=pruned_model, num_classes=num_classes,
-        lr=lr, weight_decay=weight_decay,
+        pruned_model=pruned_model,
+        num_classes=num_classes,
+        lr=lr,
+        weight_decay=weight_decay,
     )
 
-    # Hard guard: the wrapper must hold the *exact same* pruned object we passed
-    # in. If this fails, something replaced the model and fine-tuning would
-    # silently start from a fresh init.
+    # Hard guard: the wrapper must hold the exact same pruned object we passed
+    # in. If this assertion fails, something replaced the model and fine-tuning
+    # would silently start from a fresh initialisation.
     assert pl_module.model is pruned_model, (
         "PrunedFlowerLightModule.model is not the same object as the pruned model. "
         "Fine-tune would discard the pruned weights — refusing to continue."
@@ -273,14 +355,15 @@ def finetune_pruned(
     """Recovery fine-tune that CONTINUES training the pruned weights.
 
     Returns the same nn.Module that was passed in (now with updated weights).
+    BN recalibration must have been run before calling this function so that
+    the first validation epoch reports a meaningful accuracy (not ~1/num_classes).
     """
     import lightning.pytorch as pl
     from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
     from lightning.pytorch.loggers import MLFlowLogger
     from base_flower import FlowerDataModule
 
-    # Fingerprint BEFORE wrapping — used to verify the wrapper does not silently
-    # swap in a freshly constructed backbone.
+    # Capture weight fingerprint before wrapping to verify no silent re-init.
     fp_before = _weight_fingerprint(pruned_model)
     print(f"  [finetune] weight fingerprint pre-wrap : {fp_before}")
 
@@ -309,13 +392,17 @@ def finetune_pruned(
         run_name=run_name,
     )
 
-    # Pruned-model checkpoints saved by Lightning won't reload into
-    # FlowerLightModule (shape mismatch). We save the whole module separately
-    # via torch.save; this checkpoint is here only for training resume.
+    # Lightning checkpoints from the pruned model cannot be reloaded into
+    # FlowerLightModule (shape mismatch after DepGraph rewrites). We save the
+    # whole nn.Module separately via torch.save; this .ckpt is only for
+    # training resume if the job is interrupted.
     checkpoint_cb = ModelCheckpoint(
         dirpath="./logs/checkpoints",
         monitor="val_acc",
-        filename=f"checkpoint_pruned_physical_{pruning_ratio:.0%}" + "_{epoch:02d}_{val_acc:.4f}",
+        filename=(
+            f"checkpoint_pruned_physical_{pruning_ratio:.0%}"
+            + "_{epoch:02d}_{val_acc:.4f}"
+        ),
         save_top_k=1,
         mode="max",
     )
@@ -325,8 +412,8 @@ def finetune_pruned(
         max_epochs=finetune_epochs,
         accelerator="auto",
         devices=1,
-        precision="bf16-mixed",
-        logger=logger,
+        precision="32",           # float32 — safe on all accelerators including MPS.
+        logger=logger,            # bf16-mixed is NOT used: MPS bf16 support is incomplete
         callbacks=[checkpoint_cb, lr_monitor],
         enable_model_summary=False,
         log_every_n_steps=10,
@@ -344,7 +431,7 @@ def finetune_pruned(
     print(f"\n[Fine-tune] {finetune_epochs} epochs, lr={lr} — continuing from pruned weights")
     trainer.fit(pl_module, datamodule=datamodule)
 
-    # Sanity: same object came out the other side.
+    # Final identity guard: verify Lightning did not swap pl_module.model.
     assert pl_module.model is pruned_model, (
         "Lightning swapped pl_module.model during training — pruned weights lost."
     )
@@ -352,7 +439,7 @@ def finetune_pruned(
 
 
 # ==============================================
-# 4) Main pipeline
+# 5) Main pipeline
 # ==============================================
 
 def run(
@@ -363,11 +450,12 @@ def run(
     output_dir: str,
     round_to: int,
     image_size: int,
+    bn_calibration_batches: int,
 ) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
     # ── [STAGE 1] Load original Lightning checkpoint with trained weights ────
-    from base_flower import FlowerLightModule  # lazy import — Lightning needed
+    from base_flower import FlowerLightModule, FlowerDataModule
     print("\n" + "=" * 60)
     print("[STAGE 1] Loading original trained Lightning checkpoint")
     print("=" * 60)
@@ -375,12 +463,12 @@ def run(
     torch.serialization.add_safe_globals([functools.partial])
     pl_model = FlowerLightModule.load_from_checkpoint(ckpt_path, map_location="cpu")
     pl_model.eval()
-    # Extract the underlying torchvision EfficientNet-B0 (with 102-class head)
-    # — the trained weights live on this object. Everything downstream operates
-    # on this same Python object; the original backbone is NEVER reconstructed.
+    # Extract the underlying torchvision EfficientNet-B0 (with 102-class head).
+    # All downstream stages operate on this same Python object; the original
+    # backbone is NEVER reconstructed.
     model = pl_model.model
     fp_loaded = _weight_fingerprint(model)
-    print(f"  trained-weight fingerprint: {fp_loaded}")
+    print(f"  Trained-weight fingerprint: {fp_loaded}")
 
     example_inputs = torch.randn(1, 3, image_size, image_size)
 
@@ -398,8 +486,8 @@ def run(
         iterative_steps=1,
         global_pruning=True,
     )
-    # Pruning must mutate in-place; if id changed, downstream finetune would be
-    # operating on a different object than the one that was reported.
+    # Pruning must mutate in-place; a changed id means a different object was
+    # returned and downstream stages would operate on the wrong tensor graph.
     assert id(model) == model_id_before, (
         "physical_prune returned a different object — expected in-place rewrite."
     )
@@ -414,7 +502,7 @@ def run(
         f"  Surviving weights kept: YES (DepGraph drops low-norm channels in place)"
     )
 
-    # ── Validate forward pass on the pruned model ────────────────────────────
+    # Quick sanity check that the pruned model still produces the right shape.
     print("\n[Forward-pass validation on pruned model]")
     model.eval()
     with torch.inference_mode():
@@ -422,16 +510,47 @@ def run(
     assert y.shape == (1, 102), f"Unexpected output shape: {y.shape}"
     print(f"  OK — output shape {tuple(y.shape)}")
 
-    # ── [STAGE 3] Fine-tune the pruned weights (NOT from scratch) ────────────
+    # ── [STAGE 3] BatchNorm recalibration ────────────────────────────────────
+    # After DepGraph resizes BN tensors, the running_mean / running_var values
+    # are stale (computed over the old channel count). A short calibration pass
+    # in train() mode refreshes those statistics so eval() inference is correct.
+    # Without this step, val_loss exceeds 12 and val_acc is near random chance.
+    print("\n" + "=" * 60)
+    print("[STAGE 3] BatchNorm recalibration after pruning")
+    print("=" * 60)
+    if bn_calibration_batches > 0:
+        dm_calib = FlowerDataModule()
+        calibrate_bn(model, dm_calib, n_batches=bn_calibration_batches)
+    else:
+        print("  Skipped (bn_calibration_batches=0). Not recommended.")
+
+    # Validate the calibrated model before any fine-tuning so we can confirm
+    # that accuracy has recovered from the pruning-induced BN disruption.
+    print("\n[Post-calibration validation — before fine-tuning]")
+    import lightning.pytorch as pl
+    calib_trainer = pl.Trainer(
+        accelerator="cpu",   # CPU avoids MPS bf16 issues for this quick check
+        devices=1,
+        precision="32",
+        enable_model_summary=False,
+        logger=False,
+        num_sanity_val_steps=0,
+    )
+    from base_flower import FlowerDataModule as _FDM
+    calib_trainer.validate(
+        _build_pruned_lightmodule(model),
+        datamodule=_FDM(),
+    )
+
+    # ── [STAGE 4] Fine-tune the pruned weights (NOT from scratch) ────────────
     if finetune_epochs > 0:
         print("\n" + "=" * 60)
-        print("[STAGE 3] Fine-tuning the pruned model — continuing from pruned weights")
+        print("[STAGE 4] Fine-tuning the pruned model — continuing from pruned weights")
         print("=" * 60)
         print(f"  epochs={finetune_epochs}, lr={lr}")
         print("  (the wrapper reuses the pruned nn.Module; it does NOT build a fresh model)")
         try:
             ft_model = finetune_pruned(model, finetune_epochs, lr, pruning_ratio)
-            # Same-object guard at the script level too.
             assert ft_model is model, (
                 "finetune_pruned returned a different object — refusing to save."
             )
@@ -439,17 +558,17 @@ def run(
         except Exception as exc:  # noqa: BLE001
             print(f"  Fine-tune failed ({exc!r}); keeping pruned-but-not-finetuned weights.")
     else:
-        print("\n[STAGE 3] Fine-tune skipped (finetune_epochs=0)")
+        print("\n[STAGE 4] Fine-tune skipped (finetune_epochs=0)")
 
-    # ── [STAGE 4] Save the whole pruned (and possibly fine-tuned) nn.Module ──
+    # ── [STAGE 5] Save the whole pruned (and possibly fine-tuned) nn.Module ──
     print("\n" + "=" * 60)
-    print("[STAGE 4] Saving pruned model + metadata")
+    print("[STAGE 5] Saving pruned model + metadata")
     print("=" * 60)
     pct = int(round(pruning_ratio * 100))
     model_path = os.path.join(output_dir, f"efficientnet_b0_pruned_{pct}.pth")
     meta_path = os.path.join(output_dir, f"efficientnet_b0_pruned_{pct}.json")
 
-    # Move to CPU before serializing — keeps the file portable.
+    # Move to CPU before serialising to keep the file device-agnostic.
     model = model.to("cpu").eval()
     torch.save(model, model_path)
 
@@ -462,6 +581,7 @@ def run(
         "model_save_path": os.path.abspath(model_path),
         "finetune_epochs": finetune_epochs,
         "finetune_starts_from": "pruned_pretrained_weights",
+        "bn_calibration_batches": bn_calibration_batches,
         "lr": lr,
         **{k: v for k, v in info.items() if k not in ("ignored_layer_count",)},
     }
@@ -483,26 +603,50 @@ def run(
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Physical channel pruning for EfficientNet-B0 Flower using "
-            "Torch-Pruning DepGraph, followed by recovery fine-tuning that "
-            "continues from the pruned weights (NOT from scratch)."
+            "Physical channel pruning for EfficientNet-B0 Flower-102 using "
+            "Torch-Pruning DepGraph, followed by BN recalibration and optional "
+            "recovery fine-tuning that continues from the pruned weights (NOT from scratch)."
         )
     )
-    parser.add_argument("--ckpt", type=str, required=True,
-                        help="Path to base Lightning checkpoint (.ckpt) with trained weights")
-    parser.add_argument("--pruning_ratio", type=float, default=0.3,
-                        help="Global channel-pruning ratio (e.g. 0.3 = drop 30%% of channels)")
-    parser.add_argument("--finetune_epochs", type=int, default=0,
-                        help="Recovery fine-tune epochs that continue from the pruned weights "
-                             "(0 to skip fine-tuning)")
-    parser.add_argument("--lr", type=float, default=1e-4,
-                        help="Learning rate for recovery fine-tune")
-    parser.add_argument("--output_dir", type=str, default="./logs/pruned",
-                        help="Where to save the pruned nn.Module (.pth) and metadata (.json)")
-    parser.add_argument("--round_to", type=int, default=8,
-                        help="Round pruned channel counts to a multiple of this value (8 = HW-friendly)")
-    parser.add_argument("--image_size", type=int, default=224,
-                        help="Input image size used for tracing (matches base.yaml)")
+    parser.add_argument(
+        "--ckpt", type=str, required=True,
+        help="Path to base Lightning checkpoint (.ckpt) with trained weights",
+    )
+    parser.add_argument(
+        "--pruning_ratio", type=float, default=0.3,
+        help="Global channel-pruning ratio (e.g. 0.3 = drop 30%% of channels)",
+    )
+    parser.add_argument(
+        "--finetune_epochs", type=int, default=0,
+        help=(
+            "Recovery fine-tune epochs that continue from the pruned weights "
+            "(0 to skip fine-tuning and keep the BN-recalibrated weights only)"
+        ),
+    )
+    parser.add_argument(
+        "--lr", type=float, default=1e-4,
+        help="Learning rate for recovery fine-tune",
+    )
+    parser.add_argument(
+        "--output_dir", type=str, default="./logs/pruned",
+        help="Where to save the pruned nn.Module (.pth) and metadata (.json)",
+    )
+    parser.add_argument(
+        "--round_to", type=int, default=8,
+        help="Round pruned channel counts to a multiple of this value (8 = HW-friendly)",
+    )
+    parser.add_argument(
+        "--image_size", type=int, default=224,
+        help="Input image size used for tracing (must match base.yaml)",
+    )
+    parser.add_argument(
+        "--bn_calibration_batches", type=int, default=100,
+        help=(
+            "Number of training mini-batches used to recalibrate BatchNorm running "
+            "statistics after pruning. 100 batches (≈12 800 images at batch_size=128) "
+            "is sufficient for stable stats. Set to 0 to skip calibration (not recommended)."
+        ),
+    )
     args = parser.parse_args()
 
     run(
@@ -513,6 +657,7 @@ def main() -> None:
         output_dir=args.output_dir,
         round_to=args.round_to,
         image_size=args.image_size,
+        bn_calibration_batches=args.bn_calibration_batches,
     )
 
 
