@@ -15,6 +15,14 @@
 #   STAGE 4 — optional recovery fine-tune (continues from pruned weights)
 #   STAGE 5 — save pruned nn.Module (.pth) + metadata (.json)
 #
+# Label note:
+#   Oxford Flowers-102 labels are 1-indexed (1–102).
+#   The model outputs logits for 102 classes with argmax in [0, 101].
+#   Wherever we compare predictions to labels we apply `labels - 1`.
+#   The Lightning training loop uses torchmetrics Accuracy which handles
+#   this correctly internally, but our manual quick_validate must do it
+#   explicitly.
+#
 # round_to (default 8):
 #   After pruning, channel counts are rounded UP to the nearest multiple
 #   of this value. Modern GPU/NPU matrix units run most efficiently when
@@ -175,17 +183,24 @@ def calibrate_bn(model: nn.Module, datamodule, n_batches: int = 20) -> None:
 
 def quick_validate(model: nn.Module, datamodule) -> float:
     """Simple CPU validation loop — no Lightning overhead.
-    Returns val_acc as a plain float."""
+
+    IMPORTANT: Oxford Flowers-102 labels are 1-indexed (range 1–102).
+    The model's argmax output is 0-indexed (range 0–101).
+    We apply `labels - 1` before comparing so the ranges align.
+
+    Returns val_acc as a plain float.
+    """
     datamodule.setup(stage="fit")
     loader = datamodule.val_dataloader()
     model.eval()
     correct = total = 0
     with torch.no_grad():
         for batch in loader:
-            imgs, labels = batch[0], batch[1]
-            preds = model(imgs).argmax(dim=1)
+            imgs   = batch[0]
+            labels = batch[1] - 1   # <-- 1-indexed -> 0-indexed
+            preds  = model(imgs).argmax(dim=1)
             correct += (preds == labels).sum().item()
-            total += labels.size(0)
+            total   += labels.size(0)
     acc = correct / total if total else 0.0
     print(f"  [Quick Val] val_acc = {acc:.4f}  ({correct}/{total})")
     return acc
@@ -198,7 +213,12 @@ def quick_validate(model: nn.Module, datamodule) -> float:
 def finetune(model: nn.Module, epochs: int, lr: float,
              pruning_ratio: float) -> None:
     """Recovery fine-tune: continue training the pruned weights (not from scratch).
-    Modifies `model` in-place via Lightning. Returns nothing."""
+
+    Uses torchmetrics Accuracy which expects 0-indexed labels. We subtract 1
+    from the raw batch labels inside training_step / validation_step.
+
+    Modifies `model` in-place via Lightning. Returns nothing.
+    """
     import lightning.pytorch as pl
     from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
     from lightning.pytorch.loggers import MLFlowLogger
@@ -209,8 +229,8 @@ def finetune(model: nn.Module, epochs: int, lr: float,
         """Minimal LightningModule wrapping the already-pruned nn.Module."""
         def __init__(self):
             super().__init__()
-            self.model = model          # same object — no re-init
-            self.loss_fn = nn.CrossEntropyLoss()
+            self.model     = model
+            self.loss_fn   = nn.CrossEntropyLoss()
             self.train_acc = Accuracy(task="multiclass", num_classes=102)
             self.val_acc   = Accuracy(task="multiclass", num_classes=102)
 
@@ -218,17 +238,21 @@ def finetune(model: nn.Module, epochs: int, lr: float,
             return self.model(x)
 
         def training_step(self, batch, _):
-            x, y = batch[0], batch[1]
-            loss = self.loss_fn(self(x), y)
-            self.train_acc(self(x), y)
+            x      = batch[0]
+            labels = batch[1] - 1           # 1-indexed -> 0-indexed
+            logits = self(x)
+            loss   = self.loss_fn(logits, labels)
+            self.train_acc(logits, labels)
             self.log("train_loss", loss,            on_epoch=True, prog_bar=True)
             self.log("train_acc",  self.train_acc,  on_epoch=True, prog_bar=True)
             return loss
 
         def validation_step(self, batch, _):
-            x, y = batch[0], batch[1]
-            loss = self.loss_fn(self(x), y)
-            self.val_acc(self(x), y)
+            x      = batch[0]
+            labels = batch[1] - 1           # 1-indexed -> 0-indexed
+            logits = self(x)
+            loss   = self.loss_fn(logits, labels)
+            self.val_acc(logits, labels)
             self.log("val_loss", loss,           on_epoch=True, prog_bar=True)
             self.log("val_acc",  self.val_acc,   on_epoch=True, prog_bar=True)
 
