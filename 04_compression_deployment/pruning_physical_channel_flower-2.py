@@ -10,12 +10,13 @@
 #       Pruning rewrites Conv2d / BN / Linear shapes IN-PLACE; surviving
 #       channels keep their trained values. The Python object identity
 #       (id(model)) is preserved — there is no `model = build_new_model()`.
-#   (4) [NEW] Recalibrate BatchNorm running statistics on a few training
-#       batches. After channel pruning the BN running_mean / running_var
-#       tensors are resized to match the new channel count, but their values
-#       were computed over the OLD (larger) feature distributions. Running a
-#       short calibration pass in train() mode lets BN update those stats
-#       with the actual post-pruning activations, restoring accurate inference.
+#   (4) Recalibrate BatchNorm running statistics using a momentum=1.0 trick:
+#       after channel pruning the BN running_mean / running_var tensors are
+#       resized to match the new channel count, but their values were computed
+#       over the OLD (larger) feature distributions. Temporarily setting
+#       momentum=1.0 means each forward pass *directly replaces* the running
+#       stats with the current batch statistics, so only ~20 batches are needed
+#       instead of hundreds. Original momentum values are restored afterwards.
 #   (5) Wrap the *same* pruned nn.Module into a thin LightningModule
 #       (PrunedFlowerLightModule). The wrapper assigns `self.model = pruned_model`;
 #       it does NOT reconstruct a fresh torchvision model. We assert
@@ -202,7 +203,7 @@ def physical_prune(
 def calibrate_bn(
     model: torch.nn.Module,
     datamodule,
-    n_batches: int = 100,
+    n_batches: int = 20,
 ) -> None:
     """Recalibrate BatchNorm running statistics after physical channel pruning.
 
@@ -214,28 +215,44 @@ def calibrate_bn(
     were accumulated under the old (larger) feature distributions. Using those
     stale statistics during eval() inference causes wildly incorrect
     normalisation — observed as val_loss > 12 and val_acc ≈ 1/num_classes
-    (i.e. random-guess level), even though the surviving channel weights are
-    perfectly intact.
+    (random-guess level), even though the surviving channel weights are intact.
 
-    The fix is straightforward: run a short forward-pass loop in train() mode
-    so that BN accumulates fresh running_mean / running_var from the actual
-    post-pruning activations, then switch back to eval() for inference.
+    WHY momentum=1.0
+    ----------------
+    PyTorch BN default momentum is 0.1, meaning each batch contributes only
+    10% toward updating running_mean / running_var. Starting from completely
+    wrong stats, converging to correct values requires hundreds of batches —
+    slow and wasteful. Setting momentum=1.0 makes every forward pass directly
+    replace the running stats with the current batch statistics (no blending),
+    so ~20 batches are sufficient to recalibrate the entire network regardless
+    of depth. The original per-layer momentum values are backed up before the
+    loop and fully restored afterwards, leaving the model in its original state
+    except for the corrected running_mean / running_var buffers.
 
     Args:
-        model: the pruned nn.Module (in-place update of BN running stats).
-        datamodule: a FlowerDataModule instance (must already be set up, or
-            setup() is called here).
-        n_batches: number of training mini-batches to process. 100 batches
-            (≈12,800 images at batch_size=128) is enough for stable stats.
+        model: the pruned nn.Module (BN buffers updated in-place).
+        datamodule: a FlowerDataModule instance; setup() is called internally.
+        n_batches: number of training mini-batches to process. 20 batches is
+            sufficient with momentum=1.0. Ignored if set to 0 (not recommended).
     """
-    print(f"\n[BN Calibration] Recalibrating BatchNorm stats over {n_batches} batches ...")
+    print(f"\n[BN Calibration] Recalibrating BatchNorm stats "
+          f"(momentum=1.0) over {n_batches} batches ...")
 
-    # setup() is idempotent in FlowerDataModule, so calling it again is safe.
     datamodule.setup(stage="fit")
     loader = datamodule.train_dataloader()
 
-    # train() mode activates the BN momentum update for running_mean/running_var.
-    # We do NOT want gradients — this is purely a statistics pass.
+    # Back up original momentum values and set momentum=1.0 on every BN layer
+    # so each forward pass fully overwrites running_mean / running_var.
+    bn_momentum_backup: dict[str, float | None] = {}
+    for name, m in model.named_modules():
+        if isinstance(m, (torch.nn.BatchNorm1d,
+                          torch.nn.BatchNorm2d,
+                          torch.nn.BatchNorm3d)):
+            bn_momentum_backup[name] = m.momentum
+            m.momentum = 1.0
+
+    # train() mode activates the BN running-stat update path.
+    # torch.no_grad() ensures we never accumulate gradients during this pass.
     model.train()
     device = next(model.parameters()).device
 
@@ -243,11 +260,20 @@ def calibrate_bn(
         for i, batch in enumerate(loader):
             if i >= n_batches:
                 break
-            imgs = batch[0].to(device)  # batch = (images, labels, extras)
+            imgs = batch[0].to(device)  # batch = (images, labels, ...)
             model(imgs)
 
+    # Restore per-layer momentum to its original value.
+    for name, m in model.named_modules():
+        if isinstance(m, (torch.nn.BatchNorm1d,
+                          torch.nn.BatchNorm2d,
+                          torch.nn.BatchNorm3d)):
+            if name in bn_momentum_backup:
+                m.momentum = bn_momentum_backup[name]
+
     model.eval()
-    print(f"  Done — BN running stats recalibrated over {min(n_batches, i + 1)} batches.")
+    print(f"  Done — BN stats recalibrated over "
+          f"{min(n_batches, i + 1)} batches (momentum restored to original).")
 
 
 # ==============================================
@@ -270,8 +296,8 @@ def _build_pruned_lightmodule(
         *same* Python object returned from physical_prune.
       * The caller verifies pl_module.model is pruned_model after construction.
 
-    Defined inside a helper function so this file imports cleanly when
-    Lightning is not installed (e.g. pure pruning smoke tests).
+    Defined as a standalone helper so this file imports cleanly when Lightning
+    is not installed (e.g. pure pruning smoke tests).
     """
     import lightning.pytorch as pl
     from torchmetrics import Accuracy
@@ -301,11 +327,12 @@ def _build_pruned_lightmodule(
 
             # Bind the SAME object. If anything replaces self.model with a
             # freshly constructed backbone, training will resume from random
-            # init instead of the pruned weights — the assert below catches it.
+            # init — the assert after construction catches this immediately.
             self.model = pruned_model
 
             # Store optimiser / scheduler as callables so configure_optimizers
-            # can call them over self.parameters() at training start.
+            # (inherited from FlowerLightModule) can call them over
+            # self.parameters() at training start.
             self.optimizer = lambda params: torch.optim.AdamW(
                 params, lr=lr, weight_decay=weight_decay
             )
@@ -317,17 +344,14 @@ def _build_pruned_lightmodule(
             self.train_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
             self.val_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
 
-        # ------------------------------------------------------------------
-        # Override epoch-end hooks so Lightning (not us) owns the reset cycle.
-        # torchmetrics Accuracy objects passed to self.log() are automatically
-        # computed at epoch end and reset by Lightning. Adding a manual reset
-        # here would cause a double-reset and corrupt the logged metric value.
-        # ------------------------------------------------------------------
+        # Override epoch-end hooks with no-ops so Lightning owns the metric
+        # reset cycle. A manual reset here would cause a double-reset and
+        # corrupt the logged metric value.
         def on_train_epoch_end(self):
-            pass  # Lightning handles metric reset automatically
+            pass
 
         def on_validation_epoch_end(self):
-            pass  # Lightning handles metric reset automatically
+            pass
 
     pl_module = PrunedFlowerLightModule(
         pruned_model=pruned_model,
@@ -336,9 +360,9 @@ def _build_pruned_lightmodule(
         weight_decay=weight_decay,
     )
 
-    # Hard guard: the wrapper must hold the exact same pruned object we passed
-    # in. If this assertion fails, something replaced the model and fine-tuning
-    # would silently start from a fresh initialisation.
+    # Hard guard: the wrapper must hold the exact same pruned object. If this
+    # assertion fails, something replaced the model and fine-tuning would
+    # silently start from a fresh initialisation.
     assert pl_module.model is pruned_model, (
         "PrunedFlowerLightModule.model is not the same object as the pruned model. "
         "Fine-tune would discard the pruned weights — refusing to continue."
@@ -354,9 +378,10 @@ def finetune_pruned(
 ) -> torch.nn.Module:
     """Recovery fine-tune that CONTINUES training the pruned weights.
 
-    Returns the same nn.Module that was passed in (now with updated weights).
     BN recalibration must have been run before calling this function so that
-    the first validation epoch reports a meaningful accuracy (not ~1/num_classes).
+    the first validation epoch reports a meaningful accuracy.
+
+    Returns the same nn.Module that was passed in (now with updated weights).
     """
     import lightning.pytorch as pl
     from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -395,7 +420,7 @@ def finetune_pruned(
     # Lightning checkpoints from the pruned model cannot be reloaded into
     # FlowerLightModule (shape mismatch after DepGraph rewrites). We save the
     # whole nn.Module separately via torch.save; this .ckpt is only for
-    # training resume if the job is interrupted.
+    # training resume if the run is interrupted.
     checkpoint_cb = ModelCheckpoint(
         dirpath="./logs/checkpoints",
         monitor="val_acc",
@@ -412,8 +437,8 @@ def finetune_pruned(
         max_epochs=finetune_epochs,
         accelerator="auto",
         devices=1,
-        precision="32",           # float32 — safe on all accelerators including MPS.
-        logger=logger,            # bf16-mixed is NOT used: MPS bf16 support is incomplete
+        precision="32",       # float32 — stable on all backends including MPS.
+        logger=logger,        # bf16-mixed is NOT used: MPS bf16 support is incomplete.
         callbacks=[checkpoint_cb, lr_monitor],
         enable_model_summary=False,
         log_every_n_steps=10,
@@ -502,7 +527,7 @@ def run(
         f"  Surviving weights kept: YES (DepGraph drops low-norm channels in place)"
     )
 
-    # Quick sanity check that the pruned model still produces the right shape.
+    # Quick sanity: verify the pruned model still produces the right output shape.
     print("\n[Forward-pass validation on pruned model]")
     model.eval()
     with torch.inference_mode():
@@ -511,10 +536,9 @@ def run(
     print(f"  OK — output shape {tuple(y.shape)}")
 
     # ── [STAGE 3] BatchNorm recalibration ────────────────────────────────────
-    # After DepGraph resizes BN tensors, the running_mean / running_var values
-    # are stale (computed over the old channel count). A short calibration pass
-    # in train() mode refreshes those statistics so eval() inference is correct.
-    # Without this step, val_loss exceeds 12 and val_acc is near random chance.
+    # After DepGraph resizes BN tensors, running_mean / running_var are stale.
+    # calibrate_bn() sets momentum=1.0 so each batch fully replaces the stats;
+    # only ~20 batches are needed (vs. hundreds with the default momentum=0.1).
     print("\n" + "=" * 60)
     print("[STAGE 3] BatchNorm recalibration after pruning")
     print("=" * 60)
@@ -524,22 +548,20 @@ def run(
     else:
         print("  Skipped (bn_calibration_batches=0). Not recommended.")
 
-    # Validate the calibrated model before any fine-tuning so we can confirm
-    # that accuracy has recovered from the pruning-induced BN disruption.
+    # Validate immediately after calibration to confirm accuracy has recovered.
     print("\n[Post-calibration validation — before fine-tuning]")
     import lightning.pytorch as pl
     calib_trainer = pl.Trainer(
-        accelerator="cpu",   # CPU avoids MPS bf16 issues for this quick check
+        accelerator="cpu",  # CPU avoids any MPS precision edge-cases for this check
         devices=1,
         precision="32",
         enable_model_summary=False,
         logger=False,
         num_sanity_val_steps=0,
     )
-    from base_flower import FlowerDataModule as _FDM
     calib_trainer.validate(
         _build_pruned_lightmodule(model),
-        datamodule=_FDM(),
+        datamodule=FlowerDataModule(),
     )
 
     # ── [STAGE 4] Fine-tune the pruned weights (NOT from scratch) ────────────
@@ -604,8 +626,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
             "Physical channel pruning for EfficientNet-B0 Flower-102 using "
-            "Torch-Pruning DepGraph, followed by BN recalibration and optional "
-            "recovery fine-tuning that continues from the pruned weights (NOT from scratch)."
+            "Torch-Pruning DepGraph, followed by fast BN recalibration "
+            "(momentum=1.0) and optional recovery fine-tuning that continues "
+            "from the pruned weights (NOT from scratch)."
         )
     )
     parser.add_argument(
@@ -640,11 +663,11 @@ def main() -> None:
         help="Input image size used for tracing (must match base.yaml)",
     )
     parser.add_argument(
-        "--bn_calibration_batches", type=int, default=100,
+        "--bn_calibration_batches", type=int, default=20,
         help=(
             "Number of training mini-batches used to recalibrate BatchNorm running "
-            "statistics after pruning. 100 batches (≈12 800 images at batch_size=128) "
-            "is sufficient for stable stats. Set to 0 to skip calibration (not recommended)."
+            "statistics after pruning. Uses momentum=1.0 so 20 batches is sufficient "
+            "to fully recalibrate all BN layers. Set to 0 to skip (not recommended)."
         ),
     )
     args = parser.parse_args()
