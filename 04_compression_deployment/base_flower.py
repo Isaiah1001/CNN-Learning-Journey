@@ -1,3 +1,4 @@
+# ./base_flower.py
 # =========================
 # 1) Imports
 # =========================
@@ -149,6 +150,9 @@ class FlowerLightModule(pl.LightningModule):
         return x
     
     def training_step(self, batch, batch_idx = None):
+        # if batch_idx == 0:
+        #     print(f"[training_step] self.training       = {self.training}")
+        #     print(f"[training_step] self.model.training = {self.model.training}")
         inputs, labels, _ = batch
         outputs = self(inputs)
         # update and log training loss 
@@ -174,10 +178,12 @@ class FlowerLightModule(pl.LightningModule):
         self.log("val_acc", self.val_accuracy, on_step=False, on_epoch=True, prog_bar=True, batch_size=bs)
     
     def on_train_epoch_end(self):
-        return self.train_accuracy.reset()
+        pass
+        # return self.train_accuracy.reset()
     
     def on_validation_epoch_end(self):
-        return self.val_accuracy.reset()
+        pass
+        # return self.val_accuracy.reset()
     
     def configure_optimizers(self):
         optimizer = self.optimizer(

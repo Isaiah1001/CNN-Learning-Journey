@@ -1,3 +1,6 @@
+# Usage:
+# python3.10 base_flower.py fit -c base.yaml
+
 seed_everything: 42
 
 trainer:
@@ -32,12 +35,12 @@ trainer:
         mode: max
         save_last: false
 
-    - class_path: hyperparameters_flower.ProgressiveBackboneFinetuning
+    - class_path: base_flower.ProgressiveBackboneFinetuning
       init_args:
         unfreeze_at_epoch_1: None
         unfreeze_at_epoch_2: 20
 
-    - class_path: hyperparameters_flower.PostFreezeModelSummary
+    - class_path: base_flower.PostFreezeModelSummary
       init_args: {}
 
   profiler:
