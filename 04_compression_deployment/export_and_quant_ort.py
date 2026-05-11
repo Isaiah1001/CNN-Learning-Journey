@@ -12,11 +12,11 @@ from onnxruntime.quantization import (
 from base_flower import FlowerLightModule, FlowerDataModule
 
 
-CKPT_PATH = "./logs/checkpoints/checkpoint_pruned_l1unstructured_30%_epoch=02_val_acc=0.9984.ckpt"
+CKPT_PATH = "./logs/checkpoints/checkpoint_base_epoch=29_val_acc=0.9756.ckpt"
 DATA_PATH = "./99_flower_data"
 
-FP32_ONNX = "flower_efficientnet_b0_fp32_1.onnx"
-INT8_ONNX = "flower_efficientnet_b0_int8_u8u8_1.onnx"
+FP32_ONNX = "flower_efficientnet_basemodel.onnx"
+INT8_ONNX = "flower_efficientnet_quantization.onnx"
 
 
 class FlowerDataReader(CalibrationDataReader):
@@ -43,7 +43,7 @@ class FlowerDataReader(CalibrationDataReader):
 
 
 def export_onnx():
-    lit_model = FlowerLightModule.load_from_checkpoint(CKPT_PATH, map_location="cpu", laogelaoheliugongweights_only=False,)
+    lit_model = FlowerLightModule.load_from_checkpoint(CKPT_PATH, map_location="cpu", weights_only=False,)
     model = lit_model.model
     model.eval()
 
