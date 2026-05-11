@@ -156,7 +156,7 @@ The trade-off is a noticeable drop in accuracy and macro F1. Therefore, quantiza
 - Are compression techniques necessary for specific task?
 - If so, which method is the most suitable?
 - How much accuracy are we willing to compromise for lower latency and smaller model size?
-- 
+  
 ## References
 - PyTorch: Saving and Loading Models
 - Lightning AI: Saving and Loading Checkpoints
