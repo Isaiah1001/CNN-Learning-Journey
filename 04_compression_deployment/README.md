@@ -118,14 +118,22 @@ python3.10 -m mlflow server --backend-store-uri sqlite:///mlflow.db
 
 ## Results
 
-### Compression benchmark template
-
+### Compression benchmark
+**on pth model**
 | Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
 |--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | -- | .9854 | .9852 | 16.13 | 85.49 |
+| Baseline | -- | .9854 | .9852 | 16.13 | 10.36 |
 | Unstructured L1 pruning | sparsity = 0.3 | .9976 | .9970 | 16.13 | 85.72 |
-| Structured L1 pruning | sparsity = 0.3 | .9780 | .9740 | 16.13 | 75.06 |
+| Structured L1 pruning | sparsity = 0.3 | .9780 | .9740 | 16.13 | 85.06 |
 | Physical channel removal | pruning ratio = 0.15 | .9805 | .9742 | 13.66 | 68.76 |
+
+untructured pruning helps the model in accuracy, because our base model is overfitting, and set some tiny values in our model benefits. However, unstructured and structured pruning does not help in terms of model size and latency. This could be understood that the pruning technique just sets the less important parameters zeros, and those zeros are still stored in those models, and the calculation still involved. When we physically remove those filters, 15% in this case, we see the model size and lantency decreases by around 15% for model size and 20% in latency.
+
+**on onnx model**
+| Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
+|--------|---------|-------------|:-------------:|:------------:|:---------:|
+| Baseline | -- | .9976 | .9946 | 15.78 | 85.49 |
+| Quantization | sparsity = 0.3 | .9488 | .9474 | 4.94 | 4.78 |
 
 ## Key Findings
 - Unstructured pruning is useful for sparsity analysis, but not always for real acceleration.
