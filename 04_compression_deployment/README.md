@@ -118,37 +118,45 @@ python3.10 -m mlflow server --backend-store-uri sqlite:///mlflow.db
 
 ## Results
 
-### Compression benchmark
-**on pth model**
-| Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
-|--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | -- | .9854 | .9852 | 16.13 | 85.49 |
-| Unstructured L1 pruning | sparsity = 0.3 | .9976 | .9970 | 16.13 | 85.72 |
-| Structured L1 pruning | sparsity = 0.3 | .9780 | .9740 | 16.13 | 85.06 |
-| Physical channel removal | pruning ratio = 0.15 | .9805 | .9742 | 13.66 | 68.76 |
+### PyTorch benchmark
+| Method | Setting | Accuracy | F1 Macro | Model size (MB) | Latency (ms) |
+|--------|---------|----------|----------|:------------------:|:--------------:|
+| Baseline | -- | 0.9854 | 0.9852 | 16.13 | 85.49 |
+| Unstructured L1 pruning | sparsity = 0.3 | 0.9976 | 0.9970 | 16.13 | 85.72 |
+| Structured L1 pruning | sparsity = 0.3 | 0.9780 | 0.9740 | 16.13 | 85.06 |
+| Physical channel removal | pruning ratio = 0.15 | 0.9805 | 0.9742 | 13.66 | 68.76 |
 
-untructured pruning helps the model in accuracy, because our base model is overfitting, and set some tiny values in our model benefits. However, unstructured and structured pruning does not help in terms of model size and latency. This could be understood that the pruning technique just sets the less important parameters zeros, and those zeros are still stored in those models, and the calculation still involved. When we physically remove those filters, 15% in this case, we see the model size and lantency decreases by around 15% for model size and 20% in latency.
+### ONNX Runtime benchmark
+| Method | Setting | Accuracy | F1 Macro | Model size (MB) | Latency (ms) |
+|--------|---------|----------|----------|:------------------:|:--------------:|
+| Baseline | FP32 | 0.9976 | 0.9946 | 15.78 | 10.36 |
+| Quantization | INT8 | 0.9488 | 0.9474 | 4.78 | 4.94 |
 
-**on onnx model**
-| Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
-|--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | FP32 | .9976 | .9946 | 15.78 | 10.36 |
-| Quantization | INT8 | .9488 | .9474 | 4.78 | 4.94 |
 
 ## Key Findings
-- Unstructured pruning is useful for sparsity analysis, but not always for real acceleration.
-- Structured pruning is more suitable for deployment because it preserves hardware-friendly dense computation patterns.
-- Physical channel removal is important when the goal is to create a genuinely smaller and faster model.
-- Quantization is a strong final-stage optimization for ONNX Runtime deployment.
-- Benchmarking is necessary because fewer parameters do not automatically mean lower latency.
+### 1. Unstructured pruning improved accuracy but not deployment efficiency
+Unstructured L1 pruning slightly improved both accuracy and macro F1 compared with the PyTorch baseline. This suggests that the original model may have been slightly overfitted, and zeroing out less important small-magnitude weights acted as a form of regularization.
+
+However, unstructured pruning did not reduce model size or latency. This is because pruning masks only set selected weights to zero, while the model still stores the same tensor shape and performs nearly the same dense computation during inference.
+
+### 2. Structured pruning alone still gave limited runtime benefit
+Structured L1 pruning reduced accuracy slightly and did not produce meaningful gains in model size or latency. Although structured pruning is more deployment-friendly than unstructured pruning in theory, mask-based structured pruning still keeps the original computational graph in many implementations.
+
+### 3. Physical channel removal produced real compression
+Physical channel removal gave the clearest practical benefit among the pruning-based methods. Compared with the PyTorch baseline, model size dropped from 16.13 MB to 13.66 MB, which is about a 15.3% reduction, and latency dropped from 85.49 ms to 68.76 ms, which is about a 19.6% reduction.
+
+This result shows that actual filter removal is much more effective than masked pruning when the goal is real deployment acceleration.
+
+### 4. Quantization gave the best size and latency improvement
+The ONNX INT8 quantized model reduced model size from 15.78 MB to 4.78 MB, which is about 3.30x smaller. Latency also improved from 10.36 ms to 4.94 ms, giving about 2.10x speedup.
+
+The trade-off is a noticeable drop in accuracy and macro F1. Therefore, quantization provides the strongest deployment gain, but its performance loss must be considered depending on the application requirement.
 
 ## Questions
-- How much validation accuracy is lost after each compression method?
-- Does structured pruning lead to lower latency than unstructured pruning?
-- How much improvement comes specifically from physical channel removal?
-- Does ONNX quantization provide the best accuracy-efficiency trade-off?
-- Which compressed model should be selected for real deployment?
-
+- Are compression techniques necessary for specific task?
+- If so, which method is the most suitable?
+- How much accuracy are we willing to compromise for lower latency and smaller model size?
+- 
 ## References
 - PyTorch: Saving and Loading Models
 - Lightning AI: Saving and Loading Checkpoints
