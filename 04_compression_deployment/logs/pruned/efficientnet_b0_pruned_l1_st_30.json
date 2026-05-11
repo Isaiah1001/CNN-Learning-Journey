@@ -1,5 +1,5 @@
 {
-  "base_ckpt": "/Users/huizhang/Documents/GitHub/CNN-Learning-Journey/04_compression_deployment/logs/checkpoints/checkpoint_base_epoch=29_val_acc=0.9756.ckpt",
+  "base_ckpt": "/Users/huizhang/Documents/GitHub/CNN-Learning-Journey/04_compression_deployment/logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt",
   "pruning_method": "l1_structured_perlayer",
   "sparsity": 0.3,
   "params_before": 4138210,

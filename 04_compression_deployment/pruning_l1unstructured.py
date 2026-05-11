@@ -2,7 +2,7 @@
 # Post-training L1 unstructured pruning + fine-tune recovery
 #
 # Usage:
-#   python3.10 pruning_l1unstructured.py --ckpt logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt --sparsity 0.3 --finetune_epochs 5
+#   python3.10 pruning_l1unstructured.py --ckpt logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt --sparsity 0.3 --finetune_epochs 10
 #
 # Pipeline:
 #   STAGE 1 — load trained Lightning checkpoint
@@ -285,19 +285,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# ── Usage examples ─────────────────────────────────────────────────────────────
-# 30% sparsity, 5-epoch fine-tune:
-#   python3.10 pruning_l1unstructured.py \
-#       --ckpt logs/checkpoints/checkpoint_base_xx.ckpt \
-#       --sparsity 0.3 --finetune_epochs 5
-#
-# 50% sparsity, no fine-tune:
-#   python3.10 pruning_l1unstructured.py \
-#       --ckpt logs/checkpoints/checkpoint_base_xx.ckpt \
-#       --sparsity 0.5 --finetune_epochs 0
-#
-# Then benchmark:
-#   python3.10 benchmark.py \
-#       --ckpt logs/pruned/efficientnet_b0_pruned_l1_30.pth \
-#       --run_name benchmark_pruned_l1unstructured_0.3

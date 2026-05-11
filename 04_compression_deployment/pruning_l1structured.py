@@ -1,7 +1,7 @@
 # pruning_l1structured.py
 # Post-training L1 structured pruning + fine-tune recovery
 # Usage:
-#   python3.10 pruning_l1structured.py --ckpt logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt --sparsity 0.3 --finetune_epochs 5
+#   python3.10 pruning_l1structured.py --ckpt logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt --sparsity 0.3 --finetune_epochs 10
 
 import argparse
 import functools

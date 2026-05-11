@@ -4,7 +4,7 @@
 seed_everything: 42
 
 trainer:
-  max_epochs: 40
+  max_epochs: 20
   max_steps: -1
   accelerator: gpu
   devices: 1
@@ -38,7 +38,7 @@ trainer:
     - class_path: base_flower.ProgressiveBackboneFinetuning
       init_args:
         unfreeze_at_epoch_1: None
-        unfreeze_at_epoch_2: 20
+        unfreeze_at_epoch_2: 10
 
     - class_path: base_flower.PostFreezeModelSummary
       init_args: {}
@@ -65,5 +65,5 @@ model:
   scheduler:
     class_path: torch.optim.lr_scheduler.StepLR
     init_args:
-      step_size: 20
+      step_size: 10
       gamma: 0.2

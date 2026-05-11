@@ -5,7 +5,7 @@
 # runs a short recovery fine-tune.
 #
 # Usage:
-# python3.10 pruning_physical_channel.py --ckpt logs/checkpoints/checkpoint_base_epoch=29_val_acc=0.9756.ckpt --pruning_ratio 0.3 --global_pruning --finetune_epochs 5
+# python3.10 pruning_physical_channel.py --ckpt logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt --pruning_ratio 0.15 --global_pruning --finetune_epochs 10
 
 # Pipeline:
 #   STAGE 1 — load trained Lightning checkpoint, extract nn.Module
@@ -301,15 +301,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# ── Usage examples ─────────────────────────────────────────────────────────────
-# 30% per-layer pruning, no fine-tune:
-#   python3.10 pruning_physical_channel_flower.py \
-#       --ckpt logs/checkpoints/best.ckpt --pruning_ratio 0.3
-#
-# 30% global pruning + 5-epoch fine-tune:
-#   python3.10 pruning_physical_channel_v2.py --ckpt logs/checkpoints/checkpoint_base_epoch=33_val_acc=0.9764.ckpt --pruning_ratio 0.3 --global_pruning --finetune_epochs 5
-#
-# Then benchmark:
-#   python3.10 benchmark.py \
-#       --ckpt logs/pruned/efficientnet_b0_pruned_physical_30.pth \
-#       --run_name benchmark_pruned_physical_0.3

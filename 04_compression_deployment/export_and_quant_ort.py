@@ -12,7 +12,7 @@ from onnxruntime.quantization import (
 from base_flower import FlowerLightModule, FlowerDataModule
 
 
-CKPT_PATH = "./logs/checkpoints/checkpoint_base_epoch=29_val_acc=0.9756.ckpt"
+CKPT_PATH = "./logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt"
 DATA_PATH = "./99_flower_data"
 
 FP32_ONNX = "flower_efficientnet_basemodel.onnx"
