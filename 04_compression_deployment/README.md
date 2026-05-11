@@ -122,7 +122,7 @@ python3.10 -m mlflow server --backend-store-uri sqlite:///mlflow.db
 **on pth model**
 | Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
 |--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | -- | .9854 | .9852 | 16.13 | 10.36 |
+| Baseline | -- | .9854 | .9852 | 16.13 | 85.49 |
 | Unstructured L1 pruning | sparsity = 0.3 | .9976 | .9970 | 16.13 | 85.72 |
 | Structured L1 pruning | sparsity = 0.3 | .9780 | .9740 | 16.13 | 85.06 |
 | Physical channel removal | pruning ratio = 0.15 | .9805 | .9742 | 13.66 | 68.76 |
@@ -132,8 +132,8 @@ untructured pruning helps the model in accuracy, because our base model is overf
 **on onnx model**
 | Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
 |--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | FP32 | .9976 | .9946 | 15.78 | 85.49 |
-| Quantization | INT8 | .9488 | .9474 | 4.94 | 4.78 |
+| Baseline | FP32 | .9976 | .9946 | 15.78 | 10.36 |
+| Quantization | INT8 | .9488 | .9474 | 4.78 | 4.94 |
 
 ## Key Findings
 - Unstructured pruning is useful for sparsity analysis, but not always for real acceleration.
