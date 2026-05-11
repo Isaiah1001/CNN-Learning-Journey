@@ -132,8 +132,8 @@ untructured pruning helps the model in accuracy, because our base model is overf
 **on onnx model**
 | Method | Setting | Accracy| F1 Macro | Model size(mb) | Latency (ms) | 
 |--------|---------|-------------|:-------------:|:------------:|:---------:|
-| Baseline | -- | .9976 | .9946 | 15.78 | 85.49 |
-| Quantization | sparsity = 0.3 | .9488 | .9474 | 4.94 | 4.78 |
+| Baseline | FP32 | .9976 | .9946 | 15.78 | 85.49 |
+| Quantization | INT8 | .9488 | .9474 | 4.94 | 4.78 |
 
 ## Key Findings
 - Unstructured pruning is useful for sparsity analysis, but not always for real acceleration.
