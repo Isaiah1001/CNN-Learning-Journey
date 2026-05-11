@@ -1,10 +1,14 @@
 # Stage 4 — Compression Deployment
 
 ## Goal
-
+This part explores the compression techniques, like unstructured, structured pruning and quantization. 
 
 ## What This Stage Covers
-
+- unstructured l1 pruning
+- structured l1 pruning
+- structured l1 pruning and remove the corresponding filters
+- quantization
+- benchmark
 ## File Structure
 ```
 📁 04_compression_deployment/
@@ -21,19 +25,6 @@
 
 
 ---  
-## Hyperparameter Experiment Plan
-
-### Group 1 — Learning Rate
-Fixed: `optimizer=SGD`, `batch_size=128`, `epochs = 40`
-
-| LR | Val Acc (%) | Best Epoch | Notes |
-|----|-------------|------------|-------|
-| 1e-4| 0.2769     | 40    | Very slow learning    |
-| 1e-3| 0.8461     | 40    | slow learning and still underfits after 40 epochs |
-| 1e-2| 0.9568     | 34    | Fast, stable convergence; reaches ~0.9 validation acc by epoch 10        |
-| 1e-1| 0.9739     | 35    | fast learning, better validation acc       |
-
----
 
 ## Results
 
