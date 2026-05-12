@@ -50,7 +50,7 @@ First, train the baseline model with the Lightning configuration file:
 python3.10 base_flower.py fit -c base.yaml
 ```
 
-Then export the trained checkpoint into a deployable PyTorch weight file:
+Then export the trained checkpoint into a PyTorch weight file:
 
 ```bash
 python3.10 save_base_model.py --ckpt logs/checkpoints/checkpoint_base_epoch=15_val_acc=0.9788.ckpt
@@ -85,7 +85,7 @@ python3.10 pruning_physical_channel.py \
 ```
 
 ### 3. Benchmark PyTorch models
-After pruning, benchmark the baseline and pruned `.pth` models:
+After pruning, benchmark the baseline and pruned models:
 
 ```bash
 python3.10 benchmark.py --model_path logs/base_models/base_epoch=15_val_acc=0.9788.pth --run_name base
@@ -156,8 +156,3 @@ The trade-off is a noticeable drop in accuracy and macro F1. Therefore, quantiza
 - Are compression techniques necessary for specific task?
 - If so, which method is the most suitable?
 - How much accuracy are we willing to compromise for lower latency and smaller model size?
-- 
-## References
-- PyTorch: Saving and Loading Models
-- Lightning AI: Saving and Loading Checkpoints
-- ONNX Runtime Quantization Documentation
