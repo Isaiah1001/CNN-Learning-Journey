@@ -18,7 +18,7 @@ training loop design — by building everything from scratch.
 
 ## File Structure
 ```
-📁 01_custom_cnn/
+📁 01_custom_CNN_from_scratch/
 ├── main.py # Full pipeline: data loading → training → visualization
 ├── 📁 model/ # SimpleCNN basic block, structure, inspection tools and training loop setup
 ├── 📁 preprocess/ # data manipulate tools
