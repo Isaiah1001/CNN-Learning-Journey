@@ -8,7 +8,7 @@ training loop design — by building everything from scratch
 
 ## What This Stage Covers
 
-- data read and custom `Dataset` class with Oxford `.mat` label file parsing
+- data read and custom `Dataset` class with Oxford `.mat` label file parsing[^1]
 - Per-channel mean/std computed from the training set (not ImageNet defaults)
 - Data augmentation with `torchvision.transforms`
 - `SimpleCNN` built from scratch: Conv → BN → ReLU → MaxPool blocks
@@ -56,3 +56,6 @@ Thus, update preprocess/data_split_subset.py, improve training time from 46s/epo
 
 Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
 and 97.3% for EfficientNet-B0, better data manipulation，training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
+
+## Reference
+[^1]: Maria-Elena Nilsback and Andrew Zisserman. Automated Flower Classification over a Large Number of Classes. Indian Conference on Computer Vision, Graphics and Image Processing, 2008.
