@@ -6,7 +6,7 @@
 Stage 1 established a working CNN pipeline on the Oxford 102 Flowers dataset,
 but the custom SimpleCNN reached only ~42% top-1 accuracy — well below the
 SOTA benchmark of 99.85% (Efficient Adaptive Ensembling) and even the
-EfficientNet-B0 paper result of 97.3%[[1]](#references) .
+EfficientNet-B0 paper result of 97.3%[^1].
 
 The accuracy gap points to a fundamental limitation: training a shallow CNN
 from scratch on a small dataset (8,189 images, 102 classes) cannot match
@@ -144,11 +144,11 @@ deeper layers on this dataset. The following section explores whether a learning
 The lack of improvement from the learning rate schedule is counterintuitive, given that adaptive LR strategies are widely reported to benefit fine-tuning.
 The underlying reasons warrant further investigation, but are left for future work.
 
-The BiT paper[[2]](#references) shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
+The BiT paper[^2] shows that fine-tuning will benefits without the weight decays, using group normalization and weight standard, instead of using BN. Worth trying later
 
 ## Key Finding
 **1. Classifier head fine-tuning**  
-With only 10 epoches, inference accuracy reach around 90%, which is a huge improvement, compared with the model trained at **Stage 1**. This shows that the model backbone, especially the early layers， which have already been trained on large‑scale data, 
+With only 10 epoches, inference accuracy reaches around 90%, which is a huge improvement, compared with the model trained at **Stage 1**. This shows that the model backbone, especially the early layers， which have already been trained on large‑scale data, 
 provide generic features that capture common visual characteristics of objects. Large learning rate should be used for this stage, since the weights for head are randomly initialized and large lr will help them converge quickly.
 
 **2.Unfreezing layers of backbone + classifier head fine-tuning**  
@@ -174,6 +174,6 @@ Ideally, we want tools and workflows that save time, compute, and personal energ
 reasonable hardware cost, simple algorithms, and as little manual intervention as possible. Stage 3 is designed to address exactly these concerns by
 introducing more systematic experiment tracking and workflow tooling.
 ## Reference
-- Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
-- Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020. 
-- Nilsback & Zisserman, [Automated Flower Classification over a Large Number of Classes](https://www.robots.ox.ac.uk/~vgg/publications/2008/Nilsback08/), ICCVGIP 2008.
+[^1]: Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
+[^2]: Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
+[^3]: Nilsback & Zisserman, [Automated Flower Classification over a Large Number of Classes](https://www.robots.ox.ac.uk/~vgg/publications/2008/Nilsback08/), ICCVGIP 2008.
