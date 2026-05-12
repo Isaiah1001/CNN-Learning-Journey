@@ -1,4 +1,4 @@
-# Stage 4 — Compression Deployment
+# Stage 4 — Compression & Deployment
 
 ## Goal
 This stage explores model compression and deployment optimization for the flower classification task. The main focus is to evaluate whether pruning and quantization can reduce model size and improve inference efficiency while maintaining strong validation accuracy.
@@ -8,7 +8,7 @@ This stage explores model compression and deployment optimization for the flower
 - Structured L1 pruning
 - Structured L1 pruning with physical channel removal
 - Quantization
-- Benchmark in compression models
+- Benchmark compressed models
 
 ## File Structure
 ```
@@ -34,7 +34,7 @@ This stage explores model compression and deployment optimization for the flower
 ```
 
 ## Overview
-This stage starts from a baseline EfficientNet B0 model, then fine-tunes classifier  and last three layers, then applies multiple compression methods and benchmarks their performance.
+This stage starts from a baseline EfficientNet B0 model, then fine-tunes the classifier  and the last three layers, then applies multiple compression methods and benchmarks their performance.
 
 ## Key Design Decisions
 
