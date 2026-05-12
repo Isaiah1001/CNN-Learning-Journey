@@ -55,7 +55,6 @@ This stage introduces experiment management: setting up proper tooling to organi
 │   ├── checkpoint_base_epoch=34_val_acc=0.9568.ckpt 
 │   ├── hyperparameters_flower.py
 │   ├── run_code.py          
-│   ├── # Interpretability Scripts
 │   ├── gradcam_flower.py         
 │   ├── gradcam_flower_true.py    
 │   ├── saliency_flower.py        
