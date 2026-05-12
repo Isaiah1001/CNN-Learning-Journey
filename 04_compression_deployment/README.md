@@ -11,26 +11,26 @@ This stage explores model compression and deployment optimization for the flower
 - Benchmark in compression models
 
 ## File Structure
-```text
+```
 📁 04_compression_deployment/
-├── 📁__pycache__/
-├── 📁logs/
-├── 📁preprocess/
-├── 📁profiler_output/
-├── README.md
-├── base.yaml
-├── base_flower.py
-├── benchmark.py
-├── benchmark_onnx.py
-├── export_and_quant_ort.py
-├── flower_efficientnet_basemodel.onnx
-├── flower_efficientnet_quantization.onnx
-├── mlflow.db
-├── pruning_l1structured.py
-├── pruning_l1unstructured.py
-├── pruning_physical_channel.py
-├── runbash.py
-└── save_base_model.py
+├── 📁 __pycache__/                
+├── 📁 logs/                       # Checkpoints, benchmark logs, and compression experiment outputs
+├── 📁 preprocess/                 # Dataset preprocessing and data pipeline utilities
+├── 📁 profiler_output/            # Profiling outputs for runtime and performance analysis
+├── README.md                      # Stage 4 overview, experimental workflow, results, and deployment findings
+├── base.yaml                      # Configuration file for baseline model training
+├── base_flower.py                 # Train the baseline EfficientNet-B0 model used for later compression
+├── benchmark.py                   # Benchmark compressed PyTorch models in terms of accuracy, size, and latency
+├── benchmark_onnx.py              # Benchmark exported ONNX models with ONNX Runtime
+├── export_and_quant_ort.py        # Export the baseline model to ONNX and generate an INT8 quantized version
+├── flower_efficientnet_basemodel.onnx      # Baseline ONNX model exported from PyTorch
+├── flower_efficientnet_quantization.onnx   # INT8-quantized ONNX model for faster and smaller deployment
+├── mlflow.db                      # Local MLflow database for tracking runs and benchmark results
+├── pruning_l1structured.py        # Structured L1 pruning experiment
+├── pruning_l1unstructured.py      # Unstructured L1 pruning experiment
+├── pruning_physical_channel.py    # Structured pruning with physical channel removal for real compression
+├── runbash.py                     # Utility script for running experiment commands more conveniently
+└── save_base_model.py             # Save a trained checkpoint as a standalone PyTorch .pth model
 ```
 
 ## Overview
@@ -152,7 +152,10 @@ The ONNX INT8 quantized model reduced model size from 15.78 MB to 4.78 MB, which
 
 The trade-off is a noticeable drop in accuracy and macro F1. Therefore, quantization provides the strongest deployment gain, but its performance loss must be considered depending on the application requirement.
 
-## Questions
+## Lesson Learned & Questions
+This stage shows that compression methods must be judged by real deployment benefit. While mask-based pruning provides no gains in model size and latency, physical channel removal and quantization lead to more meaningful improvements in efficiency, though often with some trade-off in accuracy. The key lesson is that deployment optimization is a multi-objective problem involving accuracy, model size, latency, and framework compatibility.
+
+These results raise several practical questions:
 - Are compression techniques necessary for specific task?
 - If so, which method is the most suitable?
 - How much accuracy are we willing to compromise for lower latency and smaller model size?
