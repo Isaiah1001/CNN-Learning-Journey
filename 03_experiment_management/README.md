@@ -14,7 +14,7 @@ This stage introduces experiment management: setting up proper tooling to organi
 - Lighting module[^1]: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow[^2]: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - Hyperparameters: Use the `LightningCLI` + `MLflow` workflow to systematically compare learning rates, optimizers; produce a clean results table.
-- Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[^3][^4]
+- Interpretability: Analyze errors to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[^3][^4]
 
 ## File Structure
 ```
@@ -93,7 +93,7 @@ solves this by treating each training run as a named artifact with full paramete
 Key capabilities used:
 
 - `mlflow ui`: browser-based dashboard to compare runs side by side
-- Artifact logging: best checkpoint `.pth` stored alongside its run, always traceable
+- Artifact logging: best checkpoint `.ckpt` stored alongside its run, always traceable
 - No external server needed: local SQLite backend (`mlflow.db`) sufficient for solo projects
 
 **3. Experiment Design: Change One Variable at a Time**
