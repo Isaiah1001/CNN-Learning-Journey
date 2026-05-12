@@ -1,80 +1,64 @@
-# CNN-Learning-Journey — From Scratch to EfficientNet Deployment
-> A physicist-trained engineer's structured path through deep learning:  
-> building CNN intuition from first principles, then scaling to production-ready deployment.
+# CNN Learning Journey
 
-## Background: 
-PhD in Wind Science & Engineering with expertise in computational fluid dynamics, large eddy simulation, 
-and physical laboratory experimentation (tornado simulator). 
-This repository documents the transition from physical simulation 
-and computational fluid dynamics to computer vision engineering.
+This repository documents an end-to-end CNN learning journey on the Oxford 102 Flowers dataset, starting from a custom CNN built from scratch and progressing through transfer learning, experiment management, and deployment-oriented compression. The project is designed not only to improve classification accuracy, but also to understand how deep learning workflows evolve from basic modeling to reproducible experimentation and practical deployment. [cite:2][cite:4][cite:5][cite:6][cite:7][web:34]
 
-## Motivation
+## Overview
 
-This project is part of a self-directed, 700+ hour deep learning curriculum 
-spanning Feb 2025 – present, built entirely outside of formal CS training:
+This is a first CNN project, but it is structured as a complete learning path rather than a single training script. The work begins with a hand-built CNN pipeline, then moves to pretrained EfficientNet fine-tuning, introduces systematic experiment tooling with PyTorch Lightning and MLflow, and finally evaluates pruning, ONNX export, and quantization for deployment efficiency. [cite:4][cite:5][cite:6][cite:7]
 
-| Period | Focus | Hours |
-|--------|-------|-------|
-| Feb – May 2025 | Statistical learning foundations (*Elements of Statistical Learning*) | ~100h |
-| May – Sep 2025 | Coursera: ML Specialization → Deep Learning Specialization → AI Agent Developer | ~347h |
-| Sep 2025 – Feb 2026 | Kaggle projects (tabular + image classification), YOLO, CS231N | ~247h |
-| Feb 2026 – present | CNN architecture deep dive, fine-tuning, MLflow, pruning, quantization, ONNX | ongoing |
+The dataset used throughout the project is the Oxford 102 Flowers dataset, which contains 8,189 images across 102 flower categories. Its relatively small size makes it a good benchmark for understanding both the limitations of training from scratch and the practical value of transfer learning. [cite:4][web:34]
 
-**Why this matters:** Most CV portfolios show the end result. This repository 
-documents the reasoning behind each technical decision — the questions asked, 
-the experiments that failed, and what was learned from them.
+## Journey Structure
 
-## Learning Roadmap
-This project is **not** a starting point. It is built on top of a self-learning curriculum of 700+ hours in machine learning and deep learning,  
-including completing Coursera’s Machine Learning Specialization (4 courses) and Deep Learning Specialization (8 courses), plus multiple applied projects on Kaggle and YOLO.
-```
-Stage 1: SimpleCNN from scratch (PyTorch implementation)
-↓
-Stage 2: Transfer Learning with EfficientNet (fine-tuning)
-↓
-Stage 3: Experiment Management (pipeline tools, MLflow tracking, training tricks, hyperparameter search)
-↓
-Stage 4: Model Compression & Deployment (pruning → INT8 quantization → ONNX)
-```
+| Stage | Focus | Core Question | Main Outcome |
+|------|------|------|------|
+| [01_custom_CNN_from_scratch](./01_custom_CNN_from_scratch) | CNN fundamentals | Why does a simple CNN trained from scratch struggle on limited data? | Built the full pipeline from data loading to training and found that a shallow CNN plateaued at 42.52% top-1 accuracy. [cite:4] |
+| [02_transfer_learning](./02_transfer_learning) | Pretrained models and fine-tuning | How can pretrained features improve performance efficiently? | EfficientNet-B0 fine-tuning raised accuracy from about 42% to 93%+ with classifier-head tuning and up to 97.31% with deeper unfreezing. [cite:5] |
+| [03_experiment_management](./03_experiment_management) | Reproducibility and interpretability | How can training runs be organized, compared, and understood more systematically? | Added PyTorch Lightning, MLflow, hyperparameter sweeps, and interpretability analysis to make experiments easier to reproduce and inspect. [cite:6] |
+| [04_compression_deployment](./04_compression_deployment) | Compression and deployment | How can the model be made smaller and faster while keeping acceptable accuracy? | Benchmarked pruning, structural compression, ONNX export, and INT8 quantization to study size-speed-accuracy trade-offs. [cite:7] |
+
 ## Repository Structure
+
+```text
+CNN-Learning-Journey/
+├── 01_custom_CNN_from_scratch/   # Build and train a SimpleCNN from scratch
+├── 02_transfer_learning/         # Fine-tune pretrained EfficientNet-B0 models
+├── 03_experiment_management/     # Add Lightning, MLflow, hyperparameter studies, and interpretability
+├── 04_compression_deployment/    # Benchmark pruning, quantization, and ONNX deployment
+└── README.md
 ```
-📁 01_custom_cnn/
-├── main.py # Full pipeline: data loading → training → visualization
-├── 📁 model/ # SimpleCNN basic block, structure, inspection tools and training loop setup
-├── 📁 preprocess/ # data manipulate tools
-└── README.md # Design decisions and key findings
 
-📁 02_transfer_learning/
-├── efficientnet_finetune.py
-└── README.md
+Each stage has its own README with implementation details, experimental results, and reflections. The root README serves as the high-level guide that connects these stages into one coherent progression. [cite:3][cite:4][cite:5][cite:6][cite:7]
 
-📁 03_experiment_tracking/
-├── ??
-└── README.md
+## Key Results
 
-📁 04_compression_deployment/
-├── ??
-└── README.md
+| Stage | Model / Method | Best Result | Main Takeaway |
+|------|------|------|------|
+| Stage 1 | SimpleCNN from scratch | 42.52% top-1 accuracy [cite:4] | Building from scratch is valuable for understanding the full pipeline, but limited data and shallow capacity strongly constrain performance. [cite:4] |
+| Stage 2 | EfficientNet-B0 transfer learning | 97.31% best top-1 accuracy [cite:5] | Pretraining provides strong generic visual representations, and staged fine-tuning is much more effective than training a shallow CNN from scratch. [cite:5] |
+| Stage 3 | Structured experiment workflow | 97.39% best validation accuracy in the LR sweep [cite:6] | Better tooling improves reproducibility, comparison quality, and model understanding, not just convenience. [cite:6] |
+| Stage 4 | Compression and deployment benchmarking | INT8 ONNX model reduced size from 15.78 MB to 4.78 MB and latency from 10.36 ms to 4.94 ms, while physical channel removal reduced PyTorch model size from 16.13 MB to 13.66 MB and latency from 85.49 ms to 68.76 ms. [cite:7] | Deployment optimization is a trade-off across accuracy, latency, model size, and framework support. [cite:7] |
 
-📁 99_flower_data/ # The data for model training
+## Main Takeaways
 
-📁 assets/ # Training curves, Grad-CAM, confusion matrix
-README.md
-requirements.txt
-```
-## AI Transparency — Who Did What?
+- Training a CNN from scratch is useful for learning data preprocessing, model design, and optimization, but it is often not the most practical path when the dataset is small. [cite:4][web:34]
+- Transfer learning is a highly effective solution when limited data makes feature learning from scratch difficult. Fine-tuning a pretrained backbone can close most of the performance gap with far less effort. [cite:5]
+- Once a strong model exists, workflow quality becomes critical. Experiment tracking, hyperparameter comparison, and interpretability tools make iteration more systematic and reproducible. [cite:6]
+- Accuracy alone is not enough for real-world use. Practical deployment also depends on model size, inference latency, and compatibility with deployment runtimes such as ONNX Runtime. [cite:7]
+- A deep learning project naturally evolves from modeling questions to engineering questions: first how to learn, then how to train efficiently, and finally how to deploy under constraints. [cite:4][cite:5][cite:6][cite:7]
 
-This project was built with a clear separation between **personal work** and
-**AI-assisted work**.
+## Highlights
 
-| Phase      | Personal work                                                                               | AI-assisted work                                                                 |
-|-----------|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| Discover  | Selected the Oxford 102 Flowers dataset, defined the learning goals, and designed the 4-stage roadmap (scratch CNN → EfficientNet → Experiment → compression and deployment). | Asked for high-level learning resources and clarified trade-offs between different CV architectures. |
-| Design    | Designed the SimpleCNN architecture, data pipeline, and training strategy (optimizer, schedule, splits). | Used as a writing partner to refine naming, restructure modules, and compare alternative designs in plain language. |
-| Develop   | Implemented and debugged all training, preprocessing, and evaluation code; ran experiments; interpreted metrics and failure modes. | Used an LLM to draft some helper utilities (e.g., plotting functions, error-inspection snippets) and to sanity-check edge cases in the training loop. All AI-suggested code was reviewed, modified, and tested before inclusion. |
-| Document  | Decided what to disclose, summarized key findings, and curated the learning timeline and benchmarks. | Used to polish English phrasing and improve the clarity of explanations in README. |
+- Built a complete CNN pipeline from scratch, including preprocessing, augmentation, training, and visualization. [cite:4]
+- Fine-tuned EfficientNet-B0 with staged unfreezing and compared multiple transfer learning strategies. [cite:5]
+- Introduced PyTorch Lightning and MLflow for cleaner training code, run tracking, and structured hyperparameter experiments. [cite:6]
+- Used Grad-CAM and saliency maps to inspect model behavior beyond scalar metrics. [cite:6]
+- Evaluated pruning, channel removal, ONNX export, and INT8 quantization for deployment-oriented optimization. [cite:7]
 
-**Summary:** AI tools were used for **material search, code suggestions, and documentation support**, 
-not as an automatic end-to-end code generator. All model architectures, training logic, and 
-experimental decisions were owned, implemented, and validated by the author; the author assumes full responsibility for all code and results, 
-including parts initially drafted with AI assistance.
+## Future Directions
+
+Possible next steps include trying stronger backbones, exploring distillation, improving robustness for visually similar flower classes, and testing deployment on actual edge or industrial hardware. Another useful extension would be combining compression methods, such as pruning plus quantization, to study whether a better efficiency-accuracy balance can be achieved. [cite:6][cite:7]
+
+## AI Transparency
+
+Parts of the project documentation, README refinement, and wording cleanup were assisted by AI tools. The core project design, code implementation, experiments, result analysis, and final technical decisions were completed and verified manually. This disclosure is included to make the writing process transparent while keeping clear ownership of the technical work. [web:24][web:33]
