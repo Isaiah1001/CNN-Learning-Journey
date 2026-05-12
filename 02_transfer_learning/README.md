@@ -46,7 +46,7 @@ classification task on a small dataset (8,189 images), B0 offers a strong accura
 Given limited compute resources, a small backbone like EfficientNet‑B0 makes fast experimentation and iteration possible.
 
 **2. Why classifier head -> last layer -> last three layers fine-tuning**  
-To better understanding the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing offers good oppotunities. Comparison among classifier head, last layer and last three layers unfreezing will show the effects of each part of the CNN backbone on inference accuracy. Last, with gradual unfreezing strategy, the model training process will be under control. If going to last three layers + head fine-tuning directly, some avoid catastrophic forgettings occur easily and the reasons are hard to catch. By unfreezing one stage at a time, the training process remains interpretable and any performance degradation can be traced back to a specific change.
+To better understand the magic of fine-tuning art and the performance of CNN backbone, gradual unfreezing offers good opportunities. Comparison among classifier head, last layer and last three layers unfreezing will show the effects of each part of the CNN backbone on inference accuracy. Last, with gradual unfreezing strategy, the model training process will be under control. If going to last three layers + head fine-tuning directly, catastrophic forgetting can easily occur and the reasons are hard to catch. By unfreezing one stage at a time, the training process remains interpretable and any performance degradation can be traced back to a specific change.
 
 ## Results
 **1. Classifier head fine-tuning**  
@@ -90,7 +90,7 @@ yields only a marginal accuracy gain of 0.83%. Several adjustments could be made
 | Dataset | Oxford 102 Flowers |
 | Top-1 Accuracy | 94.14% (best:94.14%) |
 | Epochs | 40 |
-| Optimizer | SGD, lr=1e-3, momentum=0.9, weight_decay=1e-4，CosineAnnealingLR|
+| Optimizer | SGD, lr=1e-3, momentum=0.9, weight_decay=1e-4, CosineAnnealingLR|
 
 ![Loss and Accuracy](./plot_results/lastlayer_plus_head_Scheduler.png)
 
@@ -123,7 +123,7 @@ deeper layers on this dataset. The following section explores whether a learning
 | Dataset | Oxford 102 Flowers |
 | Top-1 Accuracy | 96.58% (best:96.74%) |
 | Epochs | 40 |
-| Optimizer | SGD, lr=1e-3, momentum=0.9, weight_decay=1e-4，CosineAnnealingLR|
+| Optimizer | SGD, lr=1e-3, momentum=0.9, weight_decay=1e-4, CosineAnnealingLR|
 
 ![Loss and Accuracy](./plot_results/last3layer_plus_head_Scheduler.png)
 
@@ -136,7 +136,7 @@ deeper layers on this dataset. The following section explores whether a learning
 | Dataset | Oxford 102 Flowers |
 | Top-1 Accuracy | 96.42% (best:96.42%) |
 | Epochs | 40 |
-| Optimizer | SGD, momentum = 0.9 weight_decay=1e-4 |
+| Optimizer | SGD, momentum = 0.9, weight_decay=1e-4 |
 | lr | 1e-4, 5e-4, 1e-3, 1e-2 for last three blocks and head|
 
 ![Loss and Accuracy](./plot_results/last3layer_plus_head_difflr.png)
