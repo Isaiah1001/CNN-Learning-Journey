@@ -152,7 +152,7 @@ The ONNX INT8 quantized model reduced model size from 15.78 MB to 4.78 MB, which
 
 The trade-off is a noticeable drop in accuracy and macro F1. Therefore, quantization provides the strongest deployment gain, but its performance loss must be considered depending on the application requirement.
 
-## Lesson Learned & Questions
+## Lessons Learned & Questions
 This stage shows that compression methods must be judged by real deployment benefit. While mask-based pruning provides no gains in model size and latency, physical channel removal and quantization lead to more meaningful improvements in efficiency, though often with some trade-off in accuracy. The key lesson is that deployment optimization is a multi-objective problem involving accuracy, model size, latency, and framework compatibility.
 
 These results raise several practical questions:
