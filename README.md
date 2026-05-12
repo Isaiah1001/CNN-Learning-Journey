@@ -1,6 +1,6 @@
 # CNN Learning Journey
 
-This repository documents an end-to-end CNN learning journey on the Oxford 102 Flowers dataset[^2], starting from a custom CNN built from scratch by Pytorch[^1] and progressing through transfer learning, experiment management, and deployment-oriented compression. The project is designed not only to improve classification accuracy, but also to understand how deep learning workflows evolve from basic modeling to reproducible experimentation and practical deployment.
+This repository documents an end-to-end CNN learning journey on the Oxford 102 Flowers dataset[^2], starting from a custom CNN built from scratch with Pytorch[^1] and progressing through transfer learning, experiment management, and deployment-oriented compression. The project is designed not only to improve classification accuracy, but also to understand how deep learning workflows evolve from basic modeling to reproducible experimentation and practical deployment.
 
 ## Overview
 
