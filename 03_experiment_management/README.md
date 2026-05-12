@@ -2,16 +2,16 @@
 
 ## Goal
 
-Stage 1&2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset, with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
+Stage 1 and 2 established a strong CNN and transfer learning pipeline on the Oxford 102 Flowers dataset, with the best EfficientNet-B0 fine-tuning result reaching 97.31% top-1 accuracy.
 
 But the training process itself was messy: no unified way to log hyperparameters and metrics, no visibility into GPU/CPU utilization, which parts delaying training, and comparing runs required manually checking saved
 files one by one, how I can interpret the prediction results, etc.. These problems slow down iteration. As the Chinese saying goes: `工欲善其事，必先利其器` (if a craftsman wants to do good work,  he must first sharpen his tools). 
 Fortunately，the ML community has developed dedicated tooling to address exactly this class of workflow issues.
 
-This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Last, use CAM and saliency map to interpret model behavior.
+This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Finally, use CAM and saliency maps to interpret model behavior.
 
 ## What This Stage Covers
-- Lighting module[^1]: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
+- Lightning module[^1]: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
 - MLFlow[^2]: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - Hyperparameters: Use the `LightningCLI` + `MLflow` workflow to systematically compare learning rates, optimizers; produce a clean results table.
 - Interpretability: Analyze errors to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[^3][^4]
@@ -184,7 +184,7 @@ Fixed: `lr=1e-2`, `batch_size=64`, `epochs = 40`
 
 For the windflower class, Grad-CAM and saliency map highlight different parts of the flower for the correct and misclassified samples.
 
-- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges, the intricate structures near the center and leaf.
+- In the correctly classified sample, Grad-CAM focuses on both the central disk of the flower, the surrounding petals and leaf, and the saliency map shows strong responses along the petal edges and the intricate structures near the center and leaf.
 - In the misclassified sample, the model still concentrates on the flower region, but Grad-CAM and saliency shift more onto the petal shapes and textures, with less emphasis on the central structure.
 - The saliency maps show clear difference among misclassified and correctly classified examples.  
 
