@@ -217,4 +217,4 @@ At the same time, this stage raises a more deployment-oriented set of questions.
 
 [^3]: Selvaraju et al., [Grad-CAM: Visual Explanations from Deep Networks](https://arxiv.org/abs/1610.02391), ICCV 2017.
 
-[^4]: Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
+[^4]: Simonyan, K., Vedaldi, A., and Zisserman, A., [Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps (https://arxiv.org/abs/1312.6034), arXiv:1312.6034, 2013.
