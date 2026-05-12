@@ -14,7 +14,7 @@ but moves all training orchestration (epochs, device placement, checkpointing, L
 ```
 
 ## Results
-**Code:** `lightning_flower.py` 
+**Code:** `lightning_flower.py`   
 **Artifact:** `./logs`, `./profiler_output`
 | Metric | Value |
 |--------|-------|
