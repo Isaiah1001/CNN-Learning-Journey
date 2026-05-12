@@ -165,14 +165,10 @@ on this dataset, and benefit from being fine-tuned rather than kept frozen.
 
 However, neither CosineAnnealingLR nor discriminative learning rates (1e-4 → 5e-4 → 1e-3 → 1e-2 across blocks) produced further gains.
 All three variants of the last-3-blocks stage converge to approximately the same accuracy (~96.4–97.3%).
-## Questions  
-During model training, there are many practical questions and “to‑dos” that easily become overwhelming: how to fully utilize limited compute, how to
-increase training efficiency, how to log metrics and artifacts without producing an unmanageable number of files, and how to inspect the training
-process in enough detail to decide when to stop or adjust hyperparameters. 
+## Lessons Learned & Questions  
+Fine-tuning a larger-scale pretrained model immediately boosts performance from about 42% to over 93% by training only the classifier head. Gradually unfreezing deeper backbone layers brings further improvements, confirming that pretrained CNNs already encode strong, generic visual features, especially in the early layers.
 
-Ideally, we want tools and workflows that save time, compute, and personal energy: everyone wants the best possible model with minimal training time,
-reasonable hardware cost, simple algorithms, and as little manual intervention as possible. Stage 3 is designed to address exactly these concerns by
-introducing more systematic experiment tracking and workflow tooling.
+At the same time, many practical questions appear during training: how to fully utilize limited hardware, how to speed up experiments, how to log metrics and artifacts without creating a mess of files, and how to inspect runs in enough detail to decide when to stop or adjust hyperparameters. In practice, these questions are best answered with proper tooling and workflow design, not just more ad-hoc scripts. Stage 3 is therefore designed to introduce more systematic experiment tracking and training workflows to make fine-tuning more efficient, organized, and reproducible.
 ## Reference
 [^1]: Wizwand, [Oxford Flowers-102 Classification Leaderboard](https://www.wizwand.com/sota/image-classification-on-oxford-flowers-102-test), accessed April 2026.
 [^2]: Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
