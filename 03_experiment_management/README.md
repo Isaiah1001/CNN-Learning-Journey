@@ -11,10 +11,10 @@ Fortunately，the ML community has developed dedicated tooling to address exactl
 This stage introduces experiment management: setting up proper tooling to organize training code, track and compare runs, then using this workflow to study how key hyperparameters affect accuracy. Last, use CAM and saliency map to interpret model behavior.
 
 ## What This Stage Covers
-- Lighting module[[1]](#references): Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
-- MLFlow[[2]](#references): Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
+- Lighting module[^1]: Refactor EfficientNet-B0 training into `LightningDataModule` + `LightningModule`, replacing the hand-written training loop with Trainer-managed epochs, built-in LR logging, and `ModelCheckpoint` callbacks
+- MLFlow[^2]: Every training run automatically logs hyperparameters, per-epoch metrics, epoch time, and model artifacts; compare runs visually via `mlflow ui`.
 - Hyperparameters: Use the `LightningCLI` + `MLflow` workflow to systematically compare learning rates, optimizers; produce a clean results table.
-- Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[[3]](#references)[[4]](#references).
+- Interpretability: Analyze error to show more prediction details, use saliency maps and CAM/Grad-CAM to visualize which regions drive predictions[^1,^2]
 
 ## File Structure
 ```
@@ -213,7 +213,10 @@ For the windflower class, Grad-CAM and saliency map highlight different parts of
 
 ## References
 
-- Falcon et al., [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/), Lightning AI, 2019.
-- Zaharia et al., [MLflow: A Machine Learning Lifecycle Platform](https://mlflow.org), Databricks, 2018.
-- Selvaraju et al., [Grad-CAM: Visual Explanations from Deep Networks](https://arxiv.org/abs/1610.02391), ICCV 2017.
-- Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
+[^1] Falcon et al., [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/), Lightning AI, 2019.
+
+[^2] Zaharia et al., [MLflow: A Machine Learning Lifecycle Platform](https://mlflow.org), Databricks, 2018.
+
+[^3] Selvaraju et al., [Grad-CAM: Visual Explanations from Deep Networks](https://arxiv.org/abs/1610.02391), ICCV 2017.
+
+[^4] Kolesnikov et al., [Big Transfer (BiT): General Visual Representation Learning](https://arxiv.org/abs/1912.11370), ECCV 2020.
