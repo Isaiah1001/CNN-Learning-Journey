@@ -202,13 +202,12 @@ For the windflower class, Grad-CAM and saliency map highlight different parts of
 
 - The interpretability results directly suggest next steps: improve data balance for tail classes, strengthen background-robust augmentations, and consider fine-grained methods (e.g. better backbones or metric-learning losses) to separate species with very similar petal shapes and textures.
 
-## Questions
+## Lessons Learned & Questions
 
-- For low-sample classes, how can we improve their accuracy without simply collecting more data (e.g. class-balanced sampling, targeted augmentation, or loss re-weighting), and which techniques are most effective in practice?
+By introducing PyTorch Lightning, MLflow, and a more structured experiment setup, training becomes easier to organize, reproduce, and compare across runs. The experiments also show that good performance depends not only on model architecture, but on how efficiently experiments can be designed and interpreted. Systematic comparison of learning rates and optimizers makes it easier to identify effective settings, while interpretability tools such as Grad-CAM and saliency maps provide additional insight beyond accuracy alone. Together, these results highlight an important lesson: once a strong baseline model is available, better tooling and better visibility often become more valuable than simply adding more training code.
 
-- Interpretability clearly helps us understand model behavior behind the screen. Based on the Grad-CAM and saliency figures in this stage, what are the most important next steps to improve the model, and are there established best practices we can follow?
+At the same time, this stage raises a more deployment-oriented set of questions. Once a model achieves strong validation accuracy, what should be optimized next for practical use? How should model size, inference latency, and throughput be evaluated systematically? And which optimization methods, such as pruning, quantization, or export to deployment-friendly formats, can reduce cost while preserving acceptable accuracy? These questions naturally lead to Stage 4, which focuses on compression and deployment.
 
-- In an industrial pipeline, once we have a model with satisfactory accuracy on a benchmark dataset, what should happen next before deployment? In particular, how should we evaluate inference latency, throughput, and model size for edge devices, and what optimization techniques (quantization, pruning, distillation) are appropriate?
 ---
 
 ## References
