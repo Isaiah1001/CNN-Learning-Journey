@@ -3,7 +3,7 @@
 ## Goal
 
 Before using any pre-trained model, this stage establishes a solid 
-understanding of CNN pipeline by Prtorch[^1] — from raw data ingestion to 
+understanding of CNN pipeline by Pytorch[^1] — from raw data ingestion to 
 training loop design — by building everything from scratch
 
 ## What This Stage Covers
@@ -38,10 +38,6 @@ Building SimpleCNN from scratch before using EfficientNet can help me obtain a
 clear understanding of some basic CNN knowledge and pipeline, e.g., how data augmentation, gradient flow, receptive fields, and 
 loss function definition and validation in practice.
 
-**3. Make full use of computer resources**  
-GPU utilization during training was only ~20%, indicating that the data pipeline and batch configuration were under-optimized. That's due to dataloader without many tricks, like subprocesses.
-Thus, update preprocess/data_split_subset.py, improve training time from 46s/epoch to 6s/epoch. And set seed for productivity.
-
 ## Results
 **Code:** `main.py`
 | Metric | Value |
@@ -54,8 +50,11 @@ Thus, update preprocess/data_split_subset.py, improve training time from 46s/epo
 ![Loss and Accuracy](result.png)
 ## Key Finding
 
-Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
+Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy, this model is clearly underfitted. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
 and 97.3% for EfficientNet-B0, better data manipulation，training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
+
+## Lessons Learned & Questions
+Training a CNN from scratch is useful for learning the full pipeline, but with limited data and a shallow model, performance quickly saturates. This raises a practical question: how can stronger visual features be learned without collecting much more data or training a larger model from scratch? In industry, the common answer is transfer learning, which becomes the focus of Stage 2.
 
 ## Reference
 [^1]: Paszke, A., Gross, S., Massa, F., et al. PyTorch: An Imperative Style, High-Performance Deep Learning Library. NeurIPS 2019. https://pytorch.org/
