@@ -3,12 +3,12 @@
 ## Goal
 
 Before using any pre-trained model, this stage establishes a solid 
-understanding of CNN pipeline by Pytorch[^1] — from raw data ingestion to 
-training loop design — by building everything from scratch
+understanding of the CNN pipeline with Pytorch[^1] — from raw data ingestion to 
+training loop design — by building everything from scratch.
 
 ## What This Stage Covers
 
-- data read and custom `Dataset` class with Oxford `.mat` label file parsing[^2]
+- data loading and custom `Dataset` class with Oxford `.mat` label file parsing[^2]
 - Per-channel mean/std computed from the training set (not ImageNet defaults)
 - Data augmentation with `torchvision.transforms`
 - `SimpleCNN` built from scratch: Conv → BN → ReLU → MaxPool blocks
@@ -50,8 +50,7 @@ loss function definition and validation in practice.
 ![Loss and Accuracy](result.png)
 ## Key Finding
 
-Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy, this model is clearly underfitted. Compared to the SOTA model, e.g, 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16
-and 97.3% for EfficientNet-B0, better data manipulation，training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
+Using a custom SimpleCNN,the accuracy plateaus quickly, but only at poor accuracy, this model is clearly underfitted. Compared to the SOTA model, e.g., 99.847% for Efficient Adaptive Ensembling, 99.74% for Vision Transformer ViT-L/16 and 97.3% for EfficientNet-B0, better data manipulation, training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
 
 ## Lessons Learned & Questions
 Training a CNN from scratch is useful for learning the full pipeline, but with limited data and a shallow model, performance quickly saturates. This raises a practical question: how can stronger visual features be learned without collecting much more data or training a larger model from scratch? In industry, the common answer is transfer learning, which becomes the focus of Stage 2.
