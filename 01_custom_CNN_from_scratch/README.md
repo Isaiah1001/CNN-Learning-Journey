@@ -3,12 +3,12 @@
 ## Goal
 
 Before using any pre-trained model, this stage establishes a solid 
-understanding of CNN pipeline — from raw data ingestion to 
+understanding of CNN pipeline by Prtorch[^1] — from raw data ingestion to 
 training loop design — by building everything from scratch
 
 ## What This Stage Covers
 
-- data read and custom `Dataset` class with Oxford `.mat` label file parsing[^1]
+- data read and custom `Dataset` class with Oxford `.mat` label file parsing[^2]
 - Per-channel mean/std computed from the training set (not ImageNet defaults)
 - Data augmentation with `torchvision.transforms`
 - `SimpleCNN` built from scratch: Conv → BN → ReLU → MaxPool blocks
@@ -58,4 +58,5 @@ Using customed SimpleCNN,the accuracy plateaus quickly, but only at poor accurac
 and 97.3% for EfficientNet-B0, better data manipulation，training strategies(like lr, optimizer) and advanced backbones should be employed. Considering limited computer resource and current learning stage, this directly motivated the switch to pre-trained EfficientNet in Stage 2. 
 
 ## Reference
-[^1]: Maria-Elena Nilsback and Andrew Zisserman. Automated Flower Classification over a Large Number of Classes. Indian Conference on Computer Vision, Graphics and Image Processing, 2008.
+[^1]: Paszke, A., Gross, S., Massa, F., et al. PyTorch: An Imperative Style, High-Performance Deep Learning Library. NeurIPS 2019. https://pytorch.org/
+[^2]: Maria-Elena Nilsback and Andrew Zisserman. Automated Flower Classification over a Large Number of Classes. Indian Conference on Computer Vision, Graphics and Image Processing, 2008.
